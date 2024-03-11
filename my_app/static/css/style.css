@@ -1,0 +1,22 @@
+/* line 1, E:/PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
+.navbar-expand-lg {
+  padding-left: 10%;
+  margin-right: 10%;
+}
+
+/* line 5, E:/PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
+#logo {
+  margin-top: 10%;
+}
+
+/* line 8, E:/PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
+.custom-me-auto {
+  margin-right: 100px;
+}
+
+/* line 11, E:/PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
+.nav-link {
+  margin-right: 20px;
+}
+
+/*# sourceMappingURL=style.css.map */

@@ -1,0 +1,12 @@
+{
+	"version": 3,
+	"file": "style.css",
+	"sources": [
+		"../sass/style.sass"
+	],
+	"sourcesContent": [
+		".navbar-expand-lg {\n    padding-left: 10%;\n    margin-right: 10%; }\n\n#logo {\n    margin-top: 10%; }\n\n.custom-me-auto {\n    margin-right: 100px; }\n\n.nav-link {\n    margin-right: 20px; }\n"
+	],
+	"names": [],
+	"mappings": ";AAAA,AAAA,iBAAiB,CAAC;EACd,YAAY,EAAE,GAAG;EACjB,YAAY,EAAE,GAAG;CAAG;;;AAExB,AAAA,KAAK,CAAC;EACF,UAAU,EAAE,GAAG;CAAG;;;AAEtB,AAAA,eAAe,CAAC;EACZ,YAAY,EAAE,KAAK;CAAG;;;AAE1B,AAAA,SAAS,CAAC;EACN,YAAY,EAAE,IAAI;CAAG"
+}
