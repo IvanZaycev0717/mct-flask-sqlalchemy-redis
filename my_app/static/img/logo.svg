@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 183.29 26.27">
+  <defs>
+    <style>
+      .cls-1 {
+        letter-spacing: -.03em;
+      }
+
+      .cls-2 {
+        fill: #e69035;
+        font-family: Constantia-Bold, Constantia;
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .cls-3 {
+        letter-spacing: -.03em;
+      }
+
+      .cls-4 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-5 {
+        letter-spacing: -.02em;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <text class="cls-2" transform="translate(0 20.24)"><tspan x="0" y="0">МТ</tspan><tspan class="cls-1" x="37.31" y="0">К</tspan><tspan x="54.05" y="0">-</tspan><tspan class="cls-3" x="62.44" y="0">Р</tspan><tspan x="77.14" y="0">о</tspan><tspan class="cls-4" x="91.51" y="0">с</tspan><tspan x="102.66" y="0">сия.р</tspan><tspan class="cls-5" x="165.49" y="0">ф</tspan></text>
+  </g>
+</svg>
