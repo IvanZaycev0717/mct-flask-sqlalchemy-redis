@@ -1,55 +1,19 @@
-/* line 1, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
-.upper-section {
-  padding-top: 30px;
-  display: flex;
-  flex-direction: row;
-}
-
-/* line 5, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
-.upper-section__logo-container {
-  display: flex;
-  flex-direction: row;
-  height: 69px;
-  align-items: center;
-  margin-left: 200px;
-  margin-right: -220px;
-}
-
-/* line 12, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
-.upper-section__social-container {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-}
-
-/* line 16, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
-.upper-section__social-logo {
-  width: 50px;
-  margin-left: 20px;
-}
-
-/* line 19, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
-.upper-section__button-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-left: 100px;
-}
-
-/* line 25, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
-.custom-hr {
-  margin: 0px 0px 0px 0px;
-}
-
-/* line 28, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
+/* line 2, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
 .navbar-expand-lg {
   padding-left: 10%;
   margin-right: 10%;
+  margin-top: 20px;
 }
 
-/* line 33, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
+/* line 8, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
 .nav-link {
   margin-right: 80px;
+}
+
+/* line 12, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
+.carousel-item img {
+  height: 760px;
+  object-fit: cover;
 }
 
 /*# sourceMappingURL=style.css.map */
