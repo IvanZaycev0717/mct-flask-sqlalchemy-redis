@@ -21,4 +21,15 @@
   padding-left: 40px;
 }
 
+/* line 21, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
+.navbar-brand__footer-img {
+  filter: grayscale(100%);
+  transition: filter 0.5s;
+}
+
+/* line 24, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
+.navbar-brand__footer-img:hover {
+  filter: grayscale(0%);
+}
+
 /*# sourceMappingURL=style.css.map */

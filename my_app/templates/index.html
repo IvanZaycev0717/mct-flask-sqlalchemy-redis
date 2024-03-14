@@ -28,7 +28,28 @@
       <a class="navbar-brand" href="#">
         <img src="../static/img/youtube.svg" width="45px" class="d-inline-block align-top" alt="">
       </a>
-      <button type="button" class="btn btn-primary">Присоединиться к проекту</button>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        Присоединиться к проекту
+      </button>
+      <!-- Modal -->
+      <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Присоединиться к проекту</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Если Вы - профессиональный психотерапевт и хотите присоедиться к проекту,
+              чтобы получать клиентов на консультации, зайдите в раздел "Контакты" и напишите
+              на указанный адрес электронной почты.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </nav>
   </header>
   <nav class="navbar navbar-expand-lg bg-body">
@@ -95,16 +116,16 @@
       <div class="me-5 d-none d-lg-block">
         <span>Перейти в социальные сети проекта: </span>
         <a class="navbar-brand" href="#">
-          <img src="../static/img/github.svg" width="25px" class="d-inline-block align-top" alt="">
+          <img class="navbar-brand__footer-img" src="../static/img/github.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
         <a class="navbar-brand" href="#">
-          <img src="../static/img/telegram.svg" width="25px" class="d-inline-block align-top" alt="">
+          <img class="navbar-brand__footer-img"  src="../static/img/telegram.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
         <a class="navbar-brand" href="#">
-          <img src="../static/img/whatsapp.svg" width="25px" class="d-inline-block align-top" alt="">
+          <img class="navbar-brand__footer-img"  src="../static/img/whatsapp.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
         <a class="navbar-brand" href="#">
-          <img src="../static/img/youtube.svg" width="25px" class="d-inline-block align-top" alt="">
+          <img class="navbar-brand__footer-img" src="../static/img/youtube.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
       </div>
       <!-- Left -->
