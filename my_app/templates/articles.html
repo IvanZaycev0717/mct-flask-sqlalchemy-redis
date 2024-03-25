@@ -28,7 +28,7 @@
       <a class="navbar-brand" href="#">
         <img src="../static/img/youtube.svg" width="45px" class="d-inline-block align-top" alt="">
       </a>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+      <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
         Присоединиться к проекту
       </button>
       <!-- Modal -->
@@ -86,7 +86,98 @@
     </div>
   </nav>
   <main>
-    Здесь статьи
+    <div class="container d-flex justify-content-center">
+      <button class="btn btn-warning btn-articles" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Открыть список статей</button>
+    </div>
+    <div class="container d-flex justify-content-center">
+      <div class="card mb-3" style="max-width: 1024px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="../static/img/man2.jpg" class="img-fluid rounded-start" alt="...">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">Древнее исследование 2022</h5>
+              <p class="card-text">С другой стороны дальнейшее развитие различных форм деятельности представляет...</p>
+              <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+              <a href="#" class="btn btn-warning">Читать далее...</a>
+              <p></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container d-flex justify-content-center">
+      <nav aria-label="...">
+        <ul class="pagination">
+          <li class="page-item disabled">
+            <a class="page-link">Назад</a>
+          </li>
+          <li class="page-item"><a class="page-link active" href="#">1</a></li>
+          <li class="page-item" aria-current="page">
+            <a class="page-link" href="#">2</a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Далее</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    
+    <!-- OFFCANVAS SECTION -->
+    <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+      <div class="offcanvas-header">
+        <h4 class="offcanvas-title" id="offcanvasScrollingLabel">Стисок статей</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="card-body">
+          <h5 class="card-title">Март 2024</h5>
+          <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+              Статья 1
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 1</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 2</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 3</a>
+          </div>
+        <div class="card-body">
+          <h5 class="card-title">Февраль 2024</h5>
+          <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+              Статья 1
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 4</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 5</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 6</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 7</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 8</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 9</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 10</a>
+          </div>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Январь 2024</h5>
+          <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+              Статья 1
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 4</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 5</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 6</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 7</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 8</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 9</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 10</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 7</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 8</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 9</a>
+            <a href="#" class="list-group-item list-group-item-action">Статья 10</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
   <!-- Footer -->
   <footer class="text-center text-lg-start bg-body-tertiary text-muted">

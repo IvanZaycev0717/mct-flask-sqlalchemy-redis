@@ -32,4 +32,21 @@
   filter: grayscale(0%);
 }
 
+/* line 28, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
+.btn-articles {
+  margin-bottom: 20px;
+}
+
+/* line 32, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
+.card-title {
+  margin-bottom: 10px;
+}
+
+/* line 35, ../../PETS/metacognitive-therapy-flask-site/my_app/static/sass/style.sass */
+.list-group {
+  margin-left: 20px;
+  margin-right: 10px;
+  margin-bottom: 20px;
+}
+
 /*# sourceMappingURL=style.css.map */
