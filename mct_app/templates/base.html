@@ -13,19 +13,19 @@
 <body>
   <header>
     <nav class="navbar navbar-expand-lg bg-body">
-      <a class="navbar-brand" href="index.html">
+      <a class="navbar-brand" target="_parent", href="{{ url_for('site.home') }}">
         <img src="../static/img/logo.png" class="d-inline-block align-top" alt="">
       </a>
-      <a class="navbar-brand" href="#">
+      <a class="navbar-brand" target="_blank", href="{{ links('GitHub') }}">
         <img src="../static/img/github.svg" width="45px" class="d-inline-block align-top" alt="">
       </a>
-      <a class="navbar-brand" href="#">
+      <a class="navbar-brand" target="_blank", href="{{ links('Telegram') }}">
         <img src="../static/img/telegram.svg" width="45px" class="d-inline-block align-top" alt="">
       </a>
-      <a class="navbar-brand" href="#">
+      <a class="navbar-brand" target="_blank", href="{{ links('WhatsApp') }}">
         <img src="../static/img/whatsapp.svg" width="45px" class="d-inline-block align-top" alt="">
       </a>
-      <a class="navbar-brand" href="#">
+      <a class="navbar-brand" target="_blank", href="{{ links('YouTube') }}">
         <img src="../static/img/youtube.svg" width="45px" class="d-inline-block align-top" alt="">
       </a>
       <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
@@ -60,22 +60,22 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav custom-me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" href="news.html">Новости</a>
+            <a class="nav-link" href="{{ url_for('site.news') }}">Новости</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="articles.html">Статьи</a>
+            <a class="nav-link" href="{{ url_for('site.articles') }}">Статьи</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="textbook.html">Учебник МКТ</a>
+            <a class="nav-link" href="{{ url_for('site.textbook') }}">Учебник МКТ</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="questions.html">Ваши вопросы</a>
+            <a class="nav-link" href="{{ url_for('site.questions') }}">Ваши вопросы</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="consultations.html">Записаться на консультацию</a>
+            <a class="nav-link" href="{{ url_for('site.consultation') }}">Записаться на консультацию</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="contacts.html">Контакты</a>
+            <a class="nav-link" href="{{ url_for('site.contacts') }}">Контакты</a>
           </li>
         </ul>
         <form class="d-flex" role="search">
@@ -96,16 +96,16 @@
       <!-- Left -->
       <div class="me-5 d-none d-lg-block">
         <span>Перейти в социальные сети проекта: </span>
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" target="_blank", href="{{ links('GitHub') }}">
           <img class="navbar-brand__footer-img" src="../static/img/github.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" target="_blank", href="{{ links('Telegram') }}">
           <img class="navbar-brand__footer-img"  src="../static/img/telegram.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" target="_blank", href="{{ links('WhatsApp') }}">
           <img class="navbar-brand__footer-img"  src="../static/img/whatsapp.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" target="_blank", href="{{ links('YouTube') }}">
           <img class="navbar-brand__footer-img" src="../static/img/youtube.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
       </div>
@@ -161,13 +161,13 @@
               Информация
             </h6>
             <p>
-              <a href="news.html" class="text-reset">Новости</a>
+              <a href="{{ url_for('site.news') }}" class="text-reset">Новости</a>
             </p>
             <p>
-              <a href="articles.html" class="text-reset">Статьи</a>
+              <a href="{{ url_for('site.articles') }}" class="text-reset">Статьи</a>
             </p>
             <p>
-              <a href="textbook.html" class="text-reset">Учебник МКТ</a>
+              <a href="{{ url_for('site.textbook') }}" class="text-reset">Учебник МКТ</a>
             </p>
           </div>
           <!-- Grid column -->
@@ -179,13 +179,13 @@
               Мы и Вы
             </h6>
             <p>
-              <a href="questions.html" class="text-reset">Ваши вопросы</a>
+              <a href="{{ url_for('site.questions') }}" class="text-reset">Ваши вопросы</a>
             </p>
             <p>
-              <a href="consultations.html" class="text-reset">Записаться на консультацию</a>
+              <a href="{{ url_for('site.consultation') }}" class="text-reset">Записаться на консультацию</a>
             </p>
             <p>
-              <a href="contacts.html" class="text-reset">Контакты</a>
+              <a href="{{ url_for('site.contacts') }}" class="text-reset">Контакты</a>
             </p>
           </div>
           <!-- Grid column -->
@@ -198,8 +198,8 @@
 
     <!-- Copyright -->
     <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-      © 2024 Copyright:
-      <a class="text-reset fw-bold" href="index.html">мкт-россия.рф</a>
+      © 2022-{{ current_year }} Copyright:
+      <a class="text-reset fw-bold", target="_parent", href="{{ url_for('site.home') }}">мкт-россия.рф</a>
     </div>
     <!-- Copyright -->
   </footer>
