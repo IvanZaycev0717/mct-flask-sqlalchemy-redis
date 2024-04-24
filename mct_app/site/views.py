@@ -13,8 +13,16 @@ site = Blueprint('site', __name__)
 def page_not_found(e):
     return render_template('errors/404.html'), 404
 
+@site.app_errorhandler(werkzeug.exceptions.Forbidden)
+def access_denied(e):
+    return render_template('errors/403.html'), 403
 
-@site.context_processor
+@site.app_errorhandler(werkzeug.exceptions.InternalServerError)
+def server_error(e):
+    return render_template('errors/500.html'), 500
+
+
+@site.app_context_processor
 def base_template_data_processor() -> dict[str, Callable[[str | None], str]]:
 
     return {
