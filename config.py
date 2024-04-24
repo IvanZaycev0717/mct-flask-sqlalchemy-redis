@@ -2,7 +2,7 @@ import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-class Config(object):
+class Config:
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = False
@@ -20,9 +20,10 @@ class StagingConfig(Config):
 
 
 class DevelopmentConfig(Config):
-    DEVELOPMENT = False
+    DEVELOPMENT = True
     DEBUG = True
 
 
 class TestingConfig(Config):
+    print('net')
     TESTING = True
