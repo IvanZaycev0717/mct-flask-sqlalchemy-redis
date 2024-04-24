@@ -13,15 +13,14 @@ site = Blueprint('site', __name__)
 def page_not_found(e):
     return render_template('errors/404.html'), 404
 
+
 @site.context_processor
 def base_template_data_processor() -> dict[str, Callable[[str | None], str]]:
-    def get_social_media_links(link: str) -> str:
-        return SOICAL_MEDIA_LINKS[link]
 
-    def get_current_year() -> str:
-        return datetime.now().year
-
-    return dict(links=get_social_media_links, current_year=get_current_year)
+    return {
+        'links': lambda link: SOICAL_MEDIA_LINKS[link],
+        'current_year': datetime.now().year
+    }
 
 @site.route('/')
 @site.route('/home')
