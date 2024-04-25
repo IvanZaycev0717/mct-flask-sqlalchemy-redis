@@ -1,6 +1,7 @@
 from typing import Callable
 
 from datetime import datetime
+from flask import g
 from flask import Blueprint, render_template
 import werkzeug.exceptions 
 
@@ -27,7 +28,7 @@ def base_template_data_processor() -> dict[str, Callable[[str | None], str]]:
 
     return {
         'links': lambda link: SOICAL_MEDIA_LINKS[link],
-        'current_year': datetime.now().year
+        'current_year': datetime.now().year,
     }
 
 @site.route('/')
