@@ -27,7 +27,7 @@ def server_error(e):
 def base_template_data_processor() -> dict[str, Callable[[str | None], str]]:
 
     return {
-        'links': lambda link: SOICAL_MEDIA_LINKS[link],
+        'links': SOICAL_MEDIA_LINKS,
         'current_year': datetime.now().year,
     }
 

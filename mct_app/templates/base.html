@@ -7,7 +7,14 @@
     <script defer src="{{ url_for('static', filename='js/popper.min.js') }}" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script defer src="{{ url_for('static', filename='js/bootstrap.min.js') }}" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Метакогнитивная терапия</title>
+    <title>Метакогнитивная терапия - новости, статьи, учебник, консультации</title>
+    <link rel="apple-touch-icon" sizes="120x120" href="../static/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../static/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../static/favicon/site.webmanifest">
+    <link rel="mask-icon" href="../static/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <meta name="description" content="Самая полная информация о лечении психических расстройств с помощью метакогнитивной терапии">
 </head>
 <body>
@@ -16,16 +23,16 @@
       <a class="navbar-brand" target="_parent", href="{{ url_for('site.home') }}">
         <img src="../static/img/logo.png" class="d-inline-block align-top" alt="">
       </a>
-      <a class="navbar-brand" target="_blank", href="{{ links('GitHub') }}">
+      <a class="navbar-brand" target="_blank", href="{{ links['GitHub'] }}">
         <img src="../static/img/github.svg" width="45px" class="d-inline-block align-top" alt="">
       </a>
-      <a class="navbar-brand" target="_blank", href="{{ links('Telegram') }}">
+      <a class="navbar-brand" target="_blank", href="{{ links['Telegram'] }}">
         <img src="../static/img/telegram.svg" width="45px" class="d-inline-block align-top" alt="">
       </a>
-      <a class="navbar-brand" target="_blank", href="{{ links('WhatsApp') }}">
+      <a class="navbar-brand" target="_blank", href="{{ links['WhatsApp'] }}">
         <img src="../static/img/whatsapp.svg" width="45px" class="d-inline-block align-top" alt="">
       </a>
-      <a class="navbar-brand" target="_blank", href="{{ links('YouTube') }}">
+      <a class="navbar-brand" target="_blank", href="{{ links['YouTube'] }}">
         <img src="../static/img/youtube.svg" width="45px" class="d-inline-block align-top" alt="">
       </a>
       <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
@@ -96,16 +103,16 @@
       <!-- Left -->
       <div class="me-5 d-none d-lg-block">
         <span>Перейти в социальные сети проекта: </span>
-        <a class="navbar-brand" target="_blank", href="{{ links('GitHub') }}">
+        <a class="navbar-brand" target="_blank", href="{{ links['GitHub'] }}">
           <img class="navbar-brand__footer-img" src="../static/img/github.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
-        <a class="navbar-brand" target="_blank", href="{{ links('Telegram') }}">
+        <a class="navbar-brand" target="_blank", href="{{ links['Telegram'] }}">
           <img class="navbar-brand__footer-img"  src="../static/img/telegram.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
-        <a class="navbar-brand" target="_blank", href="{{ links('WhatsApp') }}">
+        <a class="navbar-brand" target="_blank", href="{{ links['WhatsApp'] }}">
           <img class="navbar-brand__footer-img"  src="../static/img/whatsapp.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
-        <a class="navbar-brand" target="_blank", href="{{ links('YouTube') }}">
+        <a class="navbar-brand" target="_blank", href="{{ links['YouTube'] }}">
           <img class="navbar-brand__footer-img" src="../static/img/youtube.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
       </div>
