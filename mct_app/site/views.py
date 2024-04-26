@@ -1,7 +1,4 @@
-from typing import Callable
-
 from datetime import datetime
-from flask import g
 from flask import Blueprint, render_template
 import werkzeug.exceptions 
 
@@ -24,7 +21,7 @@ def server_error(e):
 
 
 @site.app_context_processor
-def base_template_data_processor() -> dict[str, Callable[[str | None], str]]:
+def base_template_data_processor() -> dict[str, str]:
 
     return {
         'links': SOICAL_MEDIA_LINKS,

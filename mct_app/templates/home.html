@@ -1,42 +1,77 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-inner">
-      <div class="carousel-item active">
-        <div class="content__first">
-          <h1>Метакогнитивная терапия</h1>
-          <p>Современная когнитивно-поведенческая терапия XXI века, которая разработана в Университете Манчестера (Великобритания) профессором Эдрианом Уэллсом</p>
-        </div>
-        <img src="../static/img/1a.webp" class="d-block w-100" alt="...">
-      </div>
-      <div class="carousel-item">
-        <div class="content__second">
-          <h1>Самый современный метод психотерапии</h1>
-          <p>По состоянию на {{ current_year }} год Университет Манчестера проводит клинические исследования метакогнитивной терапии</p>
-        </div>
-        <img src="../static/img/2a.webp" class="d-block w-100" alt="...">
-      </div>
-      <div class="carousel-item">
-        <div class="content__third">
-          <h1>Возможноти сайта МКТ-Россия.рф</h1>
-          <p>☑️ Ознакомиться с новыми исследованиями в изучении МКТ</p>
-          <p>☑️ Изучить теорию и практику метокогнитивной терапии</p>
-          <p>☑️ Самостоятельно применить полученные на сайте знания, умения, навыки</p>
-          <p>☑️ Бесплатно задать любой вопрос и получить ответ МКТ-психотерапевта</p>
-          <p>☑️ Записаться на консультацию, проработать расстройства методами МКТ</p>
-          <p>☑️ Вести дневник самочувствия, который будет анализировать лечащий психотерапевт</p>
-        </div>
-        <img src="../static/img/3a.webp" class="d-block w-100" alt="...">
-      </div>
+<nav class="navbar navbar-expand-lg bg-body">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav nav-pills custom-me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('site.news') }}">Новости</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('site.articles') }}">Статьи</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('site.textbook') }}">Учебник МКТ</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('site.questions') }}">Ваши вопросы</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('site.consultation') }}">Записаться на консультацию</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('site.contacts') }}">Контакты</a>
+        </li>
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Что вас волнует" aria-label="Search">
+        <button class="btn btn-warning" type="submit">Найти</button>
+      </form>
     </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
-</div>
+  </div>
+</nav>
+<main>
+  <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <div class="content__first">
+            <h1>Метакогнитивная терапия</h1>
+            <p>Современная когнитивно-поведенческая терапия XXI века, которая разработана в Университете Манчестера (Великобритания) профессором Эдрианом Уэллсом</p>
+          </div>
+          <img src="../static/img/1a.webp" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+          <div class="content__second">
+            <h1>Самый современный метод психотерапии</h1>
+            <p>По состоянию на {{ current_year }} год Университет Манчестера проводит клинические исследования метакогнитивной терапии</p>
+          </div>
+          <img src="../static/img/2a.webp" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+          <div class="content__third">
+            <h1>Возможноти сайта МКТ-Россия.рф</h1>
+            <p>☑️ Ознакомиться с новыми исследованиями в изучении МКТ</p>
+            <p>☑️ Изучить теорию и практику метокогнитивной терапии</p>
+            <p>☑️ Самостоятельно применить полученные на сайте знания, умения, навыки</p>
+            <p>☑️ Бесплатно задать любой вопрос и получить ответ МКТ-психотерапевта</p>
+            <p>☑️ Записаться на консультацию, проработать расстройства методами МКТ</p>
+            <p>☑️ Вести дневник самочувствия, который будет анализировать лечащий психотерапевт</p>
+          </div>
+          <img src="../static/img/3a.webp" class="d-block w-100" alt="...">
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+  </div>
+</main>
 {% endblock %}
