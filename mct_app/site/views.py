@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import Blueprint, render_template
 import werkzeug.exceptions 
 
-from mct_app.site.links import SOICAL_MEDIA_LINKS
+from mct_app.settings import SOICAL_MEDIA_LINKS
 
 site = Blueprint('site', __name__)
 
