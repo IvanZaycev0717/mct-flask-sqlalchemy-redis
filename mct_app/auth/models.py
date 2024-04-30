@@ -5,7 +5,6 @@ from sqlalchemy import DateTime, Integer, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from mct_app import db
-from mct_app.site.models import Image
 
 class User(db.Model):
     __tablename__ = "user"
@@ -20,9 +19,6 @@ class User(db.Model):
     session: Mapped['Session'] = relationship()
     social_account_id: Mapped[int] = mapped_column(ForeignKey('social_account.id'))
     social_account: Mapped['SocialAccount'] = relationship(back_populates="users")
-
-    image_id: Mapped[Optional[int]] = mapped_column(ForeignKey('image.id'))
-    image: Mapped[Optional['Image']] = relationship(back_populates='users')
 
     def __repr__(self) -> str:
         return f"User(id={self.id!r}, name={self.username!r}"

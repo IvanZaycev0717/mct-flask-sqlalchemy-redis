@@ -10,5 +10,3 @@ class Image(db.Model):
     name: Mapped[str] = mapped_column(String(45))
     url: Mapped[str] = mapped_column(String(255))
     path: Mapped[str] = mapped_column(String(255))
-
-    users: Mapped[list['User']] = relationship(back_populates='image')

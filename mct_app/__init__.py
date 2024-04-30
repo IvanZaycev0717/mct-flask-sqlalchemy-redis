@@ -22,10 +22,12 @@ db.init_app(app)
 
 migrate = Migrate(app, db)
 
-from mct_app.site.views import site
-app.register_blueprint(site)
 from mct_app.auth.views import auth
 app.register_blueprint(auth)
+from mct_app.site.views import site
+app.register_blueprint(site)
+
+
 
 with app.app_context():
     db.create_all()
