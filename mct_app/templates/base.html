@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/intlTelInput.css') }}"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@21.2.8/build/css/intlTelInput.css">
     <script defer src="{{ url_for('static', filename='js/popper.min.js') }}" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script defer src="{{ url_for('static', filename='js/bootstrap.min.js') }}" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -36,47 +38,8 @@
         <img src="../static/img/youtube.svg" width="45px" class="d-inline-block align-top" alt="">
       </a>
       <div class="button-login-registratition">
-        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#login-button">
-          Войти
-        </button>
-        <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#registration-button">
-          Регистрация
-        </button>
-      </div>
-      <!-- Modal -->
-      <!-- Login Form -->
-      <div class="modal fade" id="login-button" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="login-buttonLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="login-buttonLabel">Войти</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Здесь будет форма входа, а также кнопки социальных сетей
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Registration Form -->
-      <div class="modal fade" id="registration-button" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="registration-buttonLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="registration-buttonLabel">Регистрация</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Здесь будет форма регистрации, а также форма регистрации через социальные сети
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-            </div>
-          </div>
-        </div>
+        <a class="btn btn-secondary" href="{{ url_for('auth.login') }}" role="button">Войти</a>
+        <a class="btn btn-dark" href="#" role="button">Регистрация</a>
       </div>
     </nav>
   </header>
@@ -198,6 +161,27 @@
   </footer>
   <!-- Footer -->
   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-  
+  <script src="{{ url_for('static', filename='js/intlTelInput.min.js') }}"></script>
+  <!-- <script src="{{ url_for('static', filename='js/phonenumber.js') }}"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@21.2.8/build/js/intlTelInput.min.js"></script>
+  <script>
+    var wtf_phone_field = document.getElementById('phone');
+    wtf_phone_field.style.position = 'absolute';
+    wtf_phone_field.style.top = '-9999px';
+    wtf_phone_field.style.left = '-9999px';
+    wtf_phone_field.parentElement.insertAdjacentHTML('beforeend', '<div><input type="tel" id="_phone" name="9661234567"></div>');
+    var fancy_phone_field = document.getElementById('_phone');
+    var fancy_phone_iti = window.intlTelInput(fancy_phone_field, {
+        initialCountry: "RU",
+        separateDialCode: true,
+        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@21.2.8/build/js/utils.js",
+
+    });
+    fancy_phone_iti.setNumber(wtf_phone_field.value);
+    fancy_phone_field.addEventListener('blur', function() {
+        wtf_phone_field.value = fancy_phone_iti.getNumber();
+    });
+    fancy_phone_iti.setCountry("ru");
+</script>
 </body>
 </html></html>

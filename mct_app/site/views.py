@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, session, redirect, url_for
 import werkzeug.exceptions 
 
 from mct_app.settings import SOICAL_MEDIA_LINKS
@@ -22,11 +22,11 @@ def server_error(e):
 
 @site.app_context_processor
 def base_template_data_processor() -> dict[str, str]:
-
     return {
         'links': SOICAL_MEDIA_LINKS,
         'current_year': datetime.now().year,
     }
+
 
 @site.route('/')
 @site.route('/home')

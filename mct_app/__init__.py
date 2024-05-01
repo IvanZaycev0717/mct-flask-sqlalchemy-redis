@@ -13,21 +13,24 @@ load_dotenv()
 class Base(DeclarativeBase):
     pass
 
-
-app = Flask(__name__)
-app.config.from_object(os.environ['APP_SETTINGS'])
-
 db = SQLAlchemy(model_class=Base)
-db.init_app(app)
 
-migrate = Migrate(app, db)
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(os.environ.get('APP_SETTINGS'))
+    
+    
+    db.init_app(app)
 
-from mct_app.auth.views import auth
-app.register_blueprint(auth)
-from mct_app.site.views import site
-app.register_blueprint(site)
+    migrate = Migrate(app, db)
 
+    from mct_app.auth.views import auth
+    app.register_blueprint(auth)
+    from mct_app.site.views import site
+    app.register_blueprint(site)
 
+    with app.app_context():
+        db.create_all()
+    
+    return app
 
-with app.app_context():
-    db.create_all()
