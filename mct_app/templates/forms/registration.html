@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container d-flex justify-content-center">
+  <div class="card d-flex justify-content-center" style="width: 30rem;">
+      <div class="card-header">
+        <h4>Регистрация на сайте</h4>
+      </div>
+      <div class="card-body">
+          <form action="" method="post" novalidate>
+              {{ form.hidden_tag() }}
+              <p>{{ form.username.label }}</p>
+              <p>{{ form.username(class="form-control") }}</p>
+              {% if not form.username.errors %}
+                  <span style="color: green;">Looks good!</span>
+              {% else %}
+                {% for error in form.username.errors %}
+                    <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+              {% endif %}
+              <p>{{ form.password.label }}</p>
+              <p>{{ form.password(class="form-control") }}</p>
+              <p>{{ form.email.label }}</p>
+              <p>{{ form.email(class="form-control") }}</p>
+              <p>{{ form.phone.label }} (Необязательно)</p>
+              <p>{{ form.phone(class="form-control") }}</p>
+              <p>{{ form.submit(class="btn btn-warning") }}</p>
+          </form>
+      </div>
+  </div>
+</div>
+{% endblock %}

@@ -39,7 +39,40 @@
       </a>
       <div class="button-login-registratition">
         <a class="btn btn-secondary" href="{{ url_for('auth.login') }}" role="button">Войти</a>
-        <a class="btn btn-dark" href="#" role="button">Регистрация</a>
+        <a class="btn btn-dark" href="{{ url_for('auth.registration') }}" role="button">Регистрация</a>
+      </div>
+    </nav>
+    <nav class="navbar navbar-expand-lg bg-body">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav nav-pills custom-me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('site.news') }}">Новости</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('site.articles') }}">Статьи</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('site.textbook') }}">Учебник МКТ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('site.questions') }}">Ваши вопросы</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('site.consultation') }}">Записаться на консультацию</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('site.contacts') }}">Контакты</a>
+            </li>
+          </ul>
+          <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Что вас волнует" aria-label="Search">
+            <button class="btn btn-warning" type="submit">Найти</button>
+          </form>
+        </div>
       </div>
     </nav>
   </header>
@@ -182,6 +215,5 @@
         wtf_phone_field.value = fancy_phone_iti.getNumber();
     });
     fancy_phone_iti.setCountry("ru");
-</script>
+  </script>
 </body>
-</html></html>

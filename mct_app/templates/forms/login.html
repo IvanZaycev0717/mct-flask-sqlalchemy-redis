@@ -8,14 +8,13 @@
       Войти через сайт
       </div>
       <div class="card-body">
-          <form>
+          <form action="" method="post">
+              {{ form.hidden_tag() }}
               <p>{{ form.username.label }}</p>
               <p>{{ form.username }}</p>
               <p>{{ form.password.label }}</p>
               <p>{{ form.password }}</p>
-              <p>{{ form.phone.label }}</p>
-              <p>{{ form.phone }}</p>
-              <P>{{ form.submit(class="btn btn-warning") }}</P>
+              <p>{{ form.submit(class="btn btn-warning") }}</p>
           </form>
       </div>
   </div>
