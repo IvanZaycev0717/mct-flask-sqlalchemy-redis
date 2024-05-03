@@ -1,19 +1,31 @@
+from http import HTTPStatus
+
 import pytest
+from mct_app import create_app
 
-@pytest.fixture
-def my_fixture():
-    data = "example data"
-    return data
+@pytest.fixture()
+def app():
+    app = create_app()
+    app.config.update({
+        'TESTING': True
+    })
+    yield app
 
-def test_fixture_example(my_fixture):
-    assert my_fixture == "example data"
+@pytest.fixture()
+def client(app):
+    return app.test_client()
 
-@pytest.fixture
-def another_fixture():
-    return [1, 2, 3]
+@pytest.fixture()
+def runner(app):
+    return app.test_cli_runner()
 
-def test_another_fixture_length(another_fixture):
-    assert len(another_fixture) == 3
+def test_home(client):
+    response = client.get('/')
+    assert response.status_code == HTTPStatus.OK, 'Главная страница недоступна'
+    
+    response = client.get('/home')
+    assert response.status_code == HTTPStatus.OK, 'Главная страница недоступна'
 
-def test_another_fixture_contains_element(another_fixture):
-    assert 2 in another_fixture
+def test_news(client):
+    response = client.get('/news')
+    assert response.status_code == HTTPStatus.OK, 'Страница новостей недоступна'

@@ -25,5 +25,4 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
-    print('net')
     TESTING = True
