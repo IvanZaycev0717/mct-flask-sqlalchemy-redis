@@ -5,20 +5,35 @@
 {% include 'forms/social_media_enter.html' %}
 
 <div class="container__login-registration d-flex justify-content-center">
-  <div class="card">
-      <div class="card-header">
-      Войти через сайт
-      </div>
-      <div class="card-body">
-          <form action="" method="post">
-              {{ form.hidden_tag() }}
-              <p>{{ form.username.label }}</p>
-              <p>{{ form.username }}</p>
-              <p>{{ form.password.label }}</p>
-              <p>{{ form.password }}</p>
-              <p>{{ form.submit(class="btn btn-warning") }}</p>
-          </form>
-      </div>
-  </div>
+    <div class="card d-flex justify-content-center" style="width: 30rem;">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4>Войти через сайт</h4>
+            </div>
+            <div class="card-body">
+                <form action="" method="post" novalidate>
+                    {{ form.hidden_tag() }}
+                    <p class="p-for-label"><strong>{{ form.username.label }}</strong></p>
+                    <p class="p-for-input-field">{{ form.username(class="form-control") }}
+                    {% for error in form.username.errors %}
+                        <span style="color: red;">{{ error }}</span>
+                    {% endfor %}
+                    </p>
+                    <p class="p-for-label"><strong>{{ form.password.label }}</strong></p>
+                    <p class="p-for-input-field">{{ form.password(class="form-control") }}
+                    {% for error in form.password.errors %}
+                        <span style="color: red;">{{ error }}</span>
+                    {% endfor %}
+                     </p>
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-warning", style="font-weight: bold;") }}
+                    </div>
+                    <div class="forgot-password text-center">
+                        <a class="forgot-password-link" href="ссылка_на_страницу_восстановления_пароля">Забыли пароль?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
