@@ -2,32 +2,69 @@
 
 {% block content %}
 
-<div class="container d-flex justify-content-center">
+{% include 'forms/social_media_enter.html' %}
+
+<div class="container__login-registration d-flex justify-content-center">
   <div class="card d-flex justify-content-center" style="width: 30rem;">
-      <div class="card-header">
+      <div class="card-header text-center">
         <h4>Регистрация на сайте</h4>
       </div>
       <div class="card-body">
           <form action="" method="post" novalidate>
               {{ form.hidden_tag() }}
-              <p>{{ form.username.label }}</p>
-              <p>{{ form.username(class="form-control") }}</p>
-              {% if not form.username.errors %}
-                  <span style="color: green;">Looks good!</span>
-              {% else %}
+              <p class="p-for-label"><strong>{{ form.username.label }}</strong></p>
+              <p class="p-for-input-field">{{ form.username(class="form-control") }}
                 {% for error in form.username.errors %}
-                    <span style="color: red;">{{ error }}</span>
+                  <span style="color: red;">{{ error }}</span>
                 {% endfor %}
-              {% endif %}
-              <p>{{ form.password.label }}</p>
-              <p>{{ form.password(class="form-control") }}</p>
-              <p>{{ form.email.label }}</p>
-              <p>{{ form.email(class="form-control") }}</p>
-              <p>{{ form.phone.label }} (Необязательно)</p>
-              <p>{{ form.phone(class="form-control") }}</p>
-              <p>{{ form.submit(class="btn btn-warning") }}</p>
+              </p>
+              <p class="p-for-label"><strong>{{ form.password.label }}</strong></p>
+              <p class="p-for-input-field">{{ form.password(class="form-control") }}
+                {% for error in form.password.errors %}
+                  <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+              </p>
+              <p class="p-for-label"><strong>{{ form.email.label }}</strong></p>
+              <p>{{ form.email(class="form-control") }}
+                {% for error in form.email.errors %}
+                  <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+              </p>
+              <p class="p-for-label"><strong>{{ form.phone.label }}</strong> (Необязательно)</p>
+              <p class="p-for-label phone">{{ form.phone }}</p>
+              <p class="p-phone-special">{% for error in form.phone.errors %}
+                  <span style="color: red;">{{ error }}</span>
+              {% endfor %}
+              </p>
+              <div class="d-grid gap-2">
+                {{ form.submit(class="btn btn-warning") }}
+              </div>
           </form>
       </div>
   </div>
 </div>
+{% endblock %}
+
+{% block social_media_login %}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+  var wtf_phone_field = document.getElementById('phone');
+  wtf_phone_field.style.position = 'absolute';
+  wtf_phone_field.style.top = '-9999px';
+  wtf_phone_field.style.left = '-9999px';
+  wtf_phone_field.parentElement.insertAdjacentHTML('beforeend', '<div><input type="tel" id="_phone"></div>');
+  var fancy_phone_field = document.getElementById('_phone');
+  var fancy_phone_iti = window.intlTelInput(fancy_phone_field, {
+      initialCountry: "ru",
+      separateDialCode: true,
+      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@21.2.8/build/js/utils.js",
+  });
+  fancy_phone_iti.setNumber(wtf_phone_field.value);
+  fancy_phone_field.addEventListener('blur', function() {
+      wtf_phone_field.value = fancy_phone_iti.getNumber();
+  });
+</script>
 {% endblock %}

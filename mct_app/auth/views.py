@@ -9,11 +9,7 @@ def registration():
     form = RegistrationForm()
     if form.validate_on_submit():
         flash('Вы успешно зарегистрировались на сайте')
-        print('Успешно')
         return redirect('account')
-    if form.errors:
-        print(form.username.errors)
-        flash('Вы НЕ зарегистрировались на сайте')
     return render_template('forms/registration.html', form=form)
 
 

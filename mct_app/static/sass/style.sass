@@ -1,8 +1,15 @@
+
+
+
 .navbar-expand-lg
     padding-left: 10%
     margin-right: 10%
     margin-top: 20px
 
+.container
+    &__login-registration
+        margin-top: 2%
+        margin-bottom: 2%
 
 .nav-link
     margin-right: 80px
@@ -25,7 +32,12 @@
         transition: filter 0.5s
         &:hover
             filter: grayscale(0%)
-
+    &__login-img
+        filter: grayscale(100%)
+        transition: filter 0.2s
+        &:hover
+           animation: pulse 2s infinite alternate
+           filter: grayscale(0%)
 
 .btn-articles
         margin-bottom: 20px
@@ -83,3 +95,23 @@
         bottom:  40%
         color: #ffa600
         font-size: 18px
+
+.p-for-label
+    margin-bottom: 0px
+
+.p-for-input-field
+    padding-bottom: 5%
+
+.p-phone-special
+    padding-bottom: 20px
+
+.card-header
+    background-color: #ffa600
+
+
+@keyframes pulse 
+  0%
+    transform: scale(1)
+
+  100% 
+    transform: scale(1.1)
