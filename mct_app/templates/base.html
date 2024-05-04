@@ -19,6 +19,7 @@
     <meta name="description" content="Самая полная информация о лечении психических расстройств с помощью метакогнитивной терапии">
 </head>
 <body>
+  {% include 'hints/reg_reason_toast.html' %}
   <header>
     <nav class="navbar navbar-expand-lg bg-body">
       <a class="navbar-brand" target="_parent", href="{{ url_for('site.home') }}">
@@ -77,6 +78,7 @@
   </header>
     {% block content %}
     {% endblock %}
+  <!--Toast-->
   <!-- Footer -->
   <footer class="text-center text-lg-start bg-body-tertiary text-muted">
     <!-- Section: Social media -->
@@ -195,5 +197,6 @@
   {% block scripts %}
   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@21.2.8/build/js/intlTelInput.min.js"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   {% endblock %}
 </body>
