@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional
+from typing import List, Optional
 
 from sqlalchemy import DateTime, Integer, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -37,11 +37,23 @@ class Role(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
     users: Mapped[list['UserRole']] = relationship(back_populates='role')
-    permission_id: Mapped[int] = mapped_column(ForeignKey('permission.id'))
-    permission: Mapped['Permission'] = relationship()
+    permissions: Mapped[List['RolePermission']] = relationship()
 
     def __repr__(self) -> str:
         return f"role={self.id!r}), name={self.name!r}"
+
+class RolePermission(db.Model):
+    __tablename__ = 'role_permission'
+    role_id: Mapped[int] = mapped_column(ForeignKey('role.id'), primary_key=True)
+    permission_id: Mapped[int] = mapped_column(ForeignKey('permission.id'), primary_key=True)
+    permission: Mapped['Permission'] = relationship()
+
+class Permission(db.Model):
+    __tablename__ = 'permission'
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(45))
+    description: Mapped[str] = mapped_column(String(255))
 
 class Session(db.Model):
     __tablename__ = 'session'
@@ -58,10 +70,3 @@ class SocialAccount(db.Model):
     driver_id: Mapped[str] = mapped_column(String(45))
     avatar_url: Mapped[str] = mapped_column(String(255))
     users: Mapped[list['User']] = relationship(back_populates='social_account')
-
-class Permission(db.Model):
-    __tablename__ = 'permission'
-    
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(45))
-    description: Mapped[str] = mapped_column(String(255))

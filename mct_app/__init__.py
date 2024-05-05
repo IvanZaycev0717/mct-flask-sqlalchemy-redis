@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_admin import Admin
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from sqlalchemy.orm import DeclarativeBase
 
 
@@ -21,8 +20,6 @@ def create_app():
     
     
     db.init_app(app)
-
-    migrate = Migrate(app, db)
 
     from mct_app.auth.views import auth
     app.register_blueprint(auth)
