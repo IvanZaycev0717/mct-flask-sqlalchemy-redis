@@ -15,12 +15,26 @@
                     {{ form.hidden_tag() }}
                     <p class="p-for-label"><strong>{{ form.username.label }}</strong></p>
                     <p class="p-for-input-field">{{ form.username(class="form-control") }}
+                    {% with errors = get_flashed_messages(category_filter=["name-error"]) %}
+                        {% if errors %}
+                          {% for msg in errors %}
+                                <span style="color: red;">{{ msg }}</span>
+                          {% endfor %}
+                        {% endif %}
+                    {% endwith %}
                     {% for error in form.username.errors %}
                         <span style="color: red;">{{ error }}</span>
                     {% endfor %}
                     </p>
                     <p class="p-for-label"><strong>{{ form.password.label }}</strong></p>
                     <p class="p-for-input-field">{{ form.password(class="form-control") }}
+                    {% with errors = get_flashed_messages(category_filter=["pass-error"]) %}
+                        {% if errors %}
+                          {% for msg in errors %}
+                                <span style="color: red;">{{ msg }}</span>
+                          {% endfor %}
+                        {% endif %}
+                    {% endwith %}
                     {% for error in form.password.errors %}
                         <span style="color: red;">{{ error }}</span>
                     {% endfor %}

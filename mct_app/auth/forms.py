@@ -1,7 +1,12 @@
+from collections.abc import Sequence
+from typing import Any, Mapping
 from flask_wtf import FlaskForm
 import phonenumbers
 from wtforms import StringField, PasswordField, EmailField, SubmitField
 from wtforms.validators import DataRequired, Email, ValidationError, Optional
+from mct_app import db
+from mct_app.auth.models import User
+from sqlalchemy import select
 
 class RegistrationForm(FlaskForm):
     username = StringField(
@@ -25,6 +30,16 @@ class RegistrationForm(FlaskForm):
         validators=[Optional()]
         )
     submit = SubmitField('Зарегистрироваться')
+
+    def validate_username(self, username):
+        user = db.session.scalar(select(User).where(User.username == username.data))
+        if user is not None:
+            raise ValidationError('Пользователь с таким именем уже существует')
+    
+    def validate_email(self, email):
+        user = db.session.scalar(select(User).where(User.email == email.data))
+        if user is not None:
+            raise ValidationError('Такой адрес электронной почты уже существует')
 
     def validate_phone(self, phone):
         try:

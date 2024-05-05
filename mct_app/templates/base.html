@@ -38,8 +38,13 @@
         <img class="navbar-brand__header-img" src="../static/img/social_media_ico/youtube.svg" width="45px" class="d-inline-block align-top" alt="">
       </a>
       <div class="button-login-registratition">
+        {% if current_user.is_anonymous %}
         <a class="btn btn-secondary" href="{{ url_for('auth.login') }}" role="button">Войти</a>
         <a class="btn btn-dark" href="{{ url_for('auth.registration') }}" role="button">Регистрация</a>
+        {% else %}
+        <a class="btn btn-warning" href="" role="button">Личный кабинет</a>
+        <a class="btn btn-danger" href="{{ url_for('auth.logout') }}" role="button">Выйти</a>
+        {% endif %}
       </div>
     </nav>
     <nav class="navbar navbar-expand-lg bg-body">

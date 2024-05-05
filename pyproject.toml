@@ -17,6 +17,7 @@ pytest = "^8.1.1"
 flask-wtf = "^1.2.1"
 phonenumbers = "^8.13.35"
 email-validator = "^2.1.1"
+flask-login = "^0.6.3"
 
 
 [build-system]

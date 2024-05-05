@@ -5,6 +5,7 @@ from flask import Flask
 from flask_admin import Admin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
+from flask_login import LoginManager
 
 
 load_dotenv()
@@ -12,7 +13,9 @@ load_dotenv()
 class Base(DeclarativeBase):
     pass
 
+
 db = SQLAlchemy(model_class=Base)
+login_manager = LoginManager()
 
 def create_app():
     app = Flask(__name__)
@@ -21,6 +24,7 @@ def create_app():
     
     
     db.init_app(app)
+    login_manager.init_app(app)
 
     with app.app_context():
         db.create_all()

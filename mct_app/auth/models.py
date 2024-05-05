@@ -1,28 +1,50 @@
 import csv
 import datetime
 from typing import List, Optional
+import os
 
-from sqlalchemy import DateTime, Integer, String, ForeignKey
+from sqlalchemy import DateTime, Integer, String, ForeignKey, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from werkzeug.security import check_password_hash, generate_password_hash
+from flask_login import UserMixin
 
-from mct_app import db
+from mct_app import db, login_manager
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(45), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    phone_number: Mapped[str] = mapped_column(String(12), unique=True)
-    roles: Mapped[list['UserRole']] = relationship(back_populates="user")
-    session_id: Mapped[int] = mapped_column(ForeignKey('session.id'))
+    phone: Mapped[str] = mapped_column(String(12), unique=True, nullable=True)
+    session_id: Mapped[int] = mapped_column(ForeignKey('session.id'), nullable=True)
+    social_account_id: Mapped[int] = mapped_column(ForeignKey('social_account.id'), nullable=True)
+
+    roles: Mapped[List['UserRole']] = relationship(back_populates="user")
     session: Mapped['Session'] = relationship()
-    social_account_id: Mapped[int] = mapped_column(ForeignKey('social_account.id'))
     social_account: Mapped['SocialAccount'] = relationship(back_populates="users")
 
-    def __repr__(self) -> str:
-        return f"User(id={self.id!r}, name={self.username!r}"
+    @property
+    def password(self):
+        raise AttributeError('Пароль не должен быть получен')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+    
+    def create_admin():
+        if not User.query.filter_by(username=os.environ.get('ADMIN_NAME')).first():
+            admin = User(
+                username=os.environ.get('ADMIN_NAME'),
+                password=os.environ.get('ADMIN_PASS'),
+                email=os.environ.get('ADMIN_EMAIL'))
+            db.session.add(admin)
+            db.session.commit()
+
 
 class UserRole(db.Model):
     __tablename__ = 'user_role'
@@ -32,12 +54,20 @@ class UserRole(db.Model):
     role: Mapped['Role'] = relationship(back_populates='users')
     user: Mapped['User'] = relationship(back_populates='roles')
 
+    def create_admin_role():
+        if not UserRole.query.filter_by(user_id=db.session.scalar(select(User.id).where(User.username == os.environ.get('ADMIN_NAME')))).first():
+            admin_role = UserRole(
+                user_id = db.session.scalar(select(User.id).where(User.username == os.environ.get('ADMIN_NAME'))),
+                role_id = db.session.scalar(select(Role.id).where(Role.name == 'Admin')))
+            db.session.add(admin_role)
+            db.session.commit()
+
 class Role(db.Model):
     __tablename__ = "role"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
-    users: Mapped[list['UserRole']] = relationship(back_populates='role')
+    users: Mapped[List['UserRole']] = relationship(back_populates='role')
     permissions: Mapped[List['RolePermission']] = relationship()
 
     @staticmethod
@@ -50,11 +80,7 @@ class Role(db.Model):
                     roles = Role(name=name)
                     db.session.add(roles)
             db.session.commit()
-                
 
-
-    def __repr__(self) -> str:
-        return f"role={self.id!r}), name={self.name!r}"
 
 class RolePermission(db.Model):
     __tablename__ = 'role_permission'
@@ -108,3 +134,8 @@ class SocialAccount(db.Model):
     driver_id: Mapped[str] = mapped_column(String(45))
     avatar_url: Mapped[str] = mapped_column(String(255))
     users: Mapped[list['User']] = relationship(back_populates='social_account')
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
