@@ -1,8 +1,8 @@
-1,AdminAccess,Доступ к админ панели
-2,CreateContent,Создание контента
-3,ReadContent,Чтение контента
-4,UpgradeContent,Редактирование контента
-5,DeleteContent,Удаление контента
-6,DoctorAccountAccess,Доступ к личному кабинету психотерапевта
-7,AllPatientAccountAccess, Доступ к личному кабинету пациентов
-8,MyAccountAccess, Доступ к своему личному кабинету
+AdminAccess,Доступ к админ панели
+CreateContent,Создание контента
+ReadContent,Чтение контента
+UpgradeContent,Редактирование контента
+DeleteContent,Удаление контента
+DoctorAccountAccess,Доступ к личному кабинету психотерапевта
+AllPatientAccountAccess, Доступ к личному кабинету пациентов
+MyAccountAccess, Доступ к своему личному кабинету

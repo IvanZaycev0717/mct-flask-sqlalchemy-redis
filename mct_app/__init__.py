@@ -17,17 +17,19 @@ db = SQLAlchemy(model_class=Base)
 def create_app():
     app = Flask(__name__)
     app.config.from_object(os.environ.get('APP_SETTINGS'))
+    app.app_context().push()
     
     
     db.init_app(app)
+
+    with app.app_context():
+        db.create_all()
+    
+
 
     from mct_app.auth.views import auth
     app.register_blueprint(auth)
     from mct_app.site.views import site
     app.register_blueprint(site)
-
-    with app.app_context():
-        db.create_all()
     
     return app
-
