@@ -1,6 +1,6 @@
 from datetime import datetime
-from flask import Blueprint, render_template, session, redirect, url_for
-import werkzeug.exceptions 
+from flask import Blueprint, render_template, session, redirect, url_for, flash
+import werkzeug.exceptions
 
 from config import SOICAL_MEDIA_LINKS
 
@@ -35,24 +35,30 @@ def home():
 
 @site.route('/news')
 def news():
+    flash('news', 'active_links')
     return render_template('news.html')
 
 @site.route('/articles')
 def articles():
+    flash('articles', 'active_links')
     return render_template('articles.html')
 
 @site.route('/textbook')
 def textbook():
+    flash('textbook', 'active_links')
     return render_template('textbook.html')
 
 @site.route('/questions')
 def questions():
+    flash('questions', 'active_links')
     return render_template('questions.html')
 
 @site.route('/consultation')
 def consultation():
+    flash('consultation', 'active_links')
     return render_template('consultation.html')
 
 @site.route('/contacts')
 def contacts():
+    flash('contacts', 'active_links')
     return render_template('contacts.html')

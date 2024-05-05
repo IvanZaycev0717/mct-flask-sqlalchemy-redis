@@ -1,4 +1,4 @@
-<html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -21,22 +21,24 @@
 <body>
   {% include 'hints/reg_reason_toast.html' %}
   <header>
-    <nav class="navbar navbar-expand-lg bg-body">
-      <a class="navbar-brand" target="_parent", href="{{ url_for('site.home') }}">
-        <img src="../static/img/logo.png" class="d-inline-block align-top" alt="">
-      </a>
-      <a class="navbar-brand" target="_blank", href="{{ links['GitHub'] }}">
-        <img class="navbar-brand__header-img" src="../static/img/social_media_ico/github.svg" width="45px" class="d-inline-block align-top" alt="">
-      </a>
-      <a class="navbar-brand" target="_blank", href="{{ links['Telegram'] }}">
-        <img class="navbar-brand__header-img"  src="../static/img/social_media_ico/telegram.svg" width="45px" class="d-inline-block align-top" alt="">
-      </a>
-      <a class="navbar-brand" target="_blank", href="{{ links['WhatsApp'] }}">
-        <img class="navbar-brand__header-img" src="../static/img/social_media_ico/whatsapp.svg" width="45px" class="d-inline-block align-top" alt="">
-      </a>
-      <a class="navbar-brand" target="_blank", href="{{ links['YouTube'] }}">
-        <img class="navbar-brand__header-img" src="../static/img/social_media_ico/youtube.svg" width="45px" class="d-inline-block align-top" alt="">
-      </a>
+    <nav class="navbar navbar-expand-lg bg-body d-flex justify-content-between">
+      <div class="logo-social-container">
+        <a class="navbar-brand" target="_parent", href="{{ url_for('site.home') }}">
+          <img src="../static/img/logo.png" class="d-inline-block align-top" alt="">
+        </a>
+        <a class="navbar-brand" target="_blank", href="{{ links['GitHub'] }}">
+          <img class="navbar-brand__header-img" src="../static/img/social_media_ico/github.svg" width="45px" class="d-inline-block align-top" alt="">
+        </a>
+        <a class="navbar-brand" target="_blank", href="{{ links['Telegram'] }}">
+          <img class="navbar-brand__header-img"  src="../static/img/social_media_ico/telegram.svg" width="45px" class="d-inline-block align-top" alt="">
+        </a>
+        <a class="navbar-brand" target="_blank", href="{{ links['WhatsApp'] }}">
+          <img class="navbar-brand__header-img" src="../static/img/social_media_ico/whatsapp.svg" width="45px" class="d-inline-block align-top" alt="">
+        </a>
+        <a class="navbar-brand" target="_blank", href="{{ links['YouTube'] }}">
+          <img class="navbar-brand__header-img" src="../static/img/social_media_ico/youtube.svg" width="45px" class="d-inline-block align-top" alt="">
+        </a>
+      </div>
       <div class="button-login-registratition">
         {% if current_user.is_anonymous %}
         <a class="btn btn-secondary" href="{{ url_for('auth.login') }}" role="button">Войти</a>
@@ -47,38 +49,95 @@
         {% endif %}
       </div>
     </nav>
-    <nav class="navbar navbar-expand-lg bg-body">
-      <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav nav-pills custom-me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('site.news') }}">Новости</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('site.articles') }}">Статьи</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('site.textbook') }}">Учебник МКТ</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('site.questions') }}">Ваши вопросы</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('site.consultation') }}">Записаться на консультацию</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('site.contacts') }}">Контакты</a>
-            </li>
-          </ul>
-          <form class="d-flex" role="search">
+    <nav class="navbar navbar-expand-lg bg-body d-flex justify-content-between">
+      <!-- <div class="container-fluid"> -->
+        <!-- <div class="site-links"> -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          {% with active_links = get_flashed_messages(category_filter=['active_links']) %}
+          {% if active_links %}
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav nav-pills me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                {% for link in active_links %}
+                <li class="nav-item">
+                  {% if link == 'news' %}
+                    <a class="nav-link active disabled" href="{{ url_for('site.news') }}">Новости</a>
+                  {% else %}
+                    <a class="nav-link" href="{{ url_for('site.news') }}">Новости</a>
+                  {% endif %}
+                </li>
+                <li class="nav-item">
+                  {% if link == 'articles' %}
+                    <a class="nav-link active disabled" href="{{ url_for('site.articles') }}">Статьи</a>
+                  {% else %}
+                    <a class="nav-link" href="{{ url_for('site.articles') }}">Статьи</a>
+                  {% endif %}
+                </li>
+                <li class="nav-item">
+                  {% if link == 'textbook' %}
+                    <a class="nav-link active disabled" href="{{ url_for('site.textbook') }}">Учебник МКТ</a>
+                  {% else %}
+                    <a class="nav-link" href="{{ url_for('site.textbook') }}">Учебник МКТ</a>
+                  {% endif %}
+                </li>
+                <li class="nav-item">
+                  {% if link == 'questions' %}
+                    <a class="nav-link active disabled" href="{{ url_for('site.questions') }}">Ваши вопросы</a>
+                  {% else %}
+                    <a class="nav-link" href="{{ url_for('site.questions') }}">Ваши вопросы</a>
+                  {% endif %}
+                </li>
+                <li class="nav-item">
+                  {% if link == 'consultation' %}
+                    <a class="nav-link active disabled" href="{{ url_for('site.consultation') }}">Записаться на консультацию</a>
+                  {% else %}
+                    <a class="nav-link" href="{{ url_for('site.consultation') }}">Записаться на консультацию</a>
+                  {% endif %}
+                </li>
+                <li class="nav-item">
+                  {% if link == 'contacts' %}
+                    <a class="nav-link active disabled" href="{{ url_for('site.contacts') }}">Контакты</a>
+                  {% else %}
+                    <a class="nav-link" href="{{ url_for('site.contacts') }}">Контакты</a>
+                  {% endif %}
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% else %}
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav nav-pills me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('site.news') }}">Новости</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('site.articles') }}">Статьи</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('site.textbook') }}">Учебник МКТ</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('site.questions') }}">Ваши вопросы</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('site.consultation') }}">Записаться на консультацию</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('site.contacts') }}">Контакты</a>
+                </li>
+              </ul>
+            </div>
+          {% endif %}
+          {% endwith %}
+        <!-- </div> -->
+        <div class="search-form">
+          <form class="d-flex justify-content-around" role="search">
             <input class="form-control me-2" type="search" placeholder="Что вас волнует" aria-label="Search">
             <button class="btn btn-warning" type="submit">Найти</button>
           </form>
         </div>
-      </div>
+      <!-- </div> -->
     </nav>
   </header>
     {% block content %}
@@ -91,16 +150,16 @@
       <!-- Left -->
       <div class="me-5 d-none d-lg-block">
         <span>Перейти в социальные сети проекта: </span>
-        <a class="navbar-brand" target="_blank", href="{{ links['GitHub'] }}">
+        <a class="navbar-brand" target="_blank" href="{{ links['GitHub'] }}">
           <img class="navbar-brand__footer-img" src="../static/img/social_media_ico/github.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
-        <a class="navbar-brand" target="_blank", href="{{ links['Telegram'] }}">
+        <a class="navbar-brand" target="_blank" href="{{ links['Telegram'] }}">
           <img class="navbar-brand__footer-img"  src="../static/img/social_media_ico/telegram.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
-        <a class="navbar-brand" target="_blank", href="{{ links['WhatsApp'] }}">
+        <a class="navbar-brand" target="_blank" href="{{ links['WhatsApp'] }}">
           <img class="navbar-brand__footer-img"  src="../static/img/social_media_ico/whatsapp.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
-        <a class="navbar-brand" target="_blank", href="{{ links['YouTube'] }}">
+        <a class="navbar-brand" target="_blank" href="{{ links['YouTube'] }}">
           <img class="navbar-brand__footer-img" src="../static/img/social_media_ico/youtube.svg" width="25px" class="d-inline-block align-top" alt="">
         </a>
       </div>
@@ -194,7 +253,7 @@
     <!-- Copyright -->
     <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
       © 2022-{{ current_year }} Вернуться на главную:
-      <a class="text-reset fw-bold", target="_parent", href="{{ url_for('site.home') }}">мкт-россия.рф</a>
+      <a class="text-reset fw-bold" target="_parent" href="{{ url_for('site.home') }}">мкт-россия.рф</a>
     </div>
     <!-- Copyright -->
   </footer>
