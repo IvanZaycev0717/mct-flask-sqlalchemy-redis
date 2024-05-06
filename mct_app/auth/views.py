@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, session, redirect, url_for, flash
-from mct_app.auth.models import User, db, UserRole, Role
+from datetime import datetime
+from flask import Blueprint, render_template, session, redirect, url_for, flash, request
+from mct_app.auth.models import User, UserSession, db, UserRole, Role
 from mct_app.auth.forms import RegistrationForm, LoginForm
 from flask_login import current_user, login_user, logout_user
 from sqlalchemy import select
@@ -12,7 +13,18 @@ def registration():
         return redirect('/')
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, password=form.password.data, email=form.email.data)
+        # Add current session of this user
+        user_session = UserSession(ip_address=request.remote_addr, last_activity=datetime.now())
+        db.session.add(user_session)
+        db.session.commit()
+
+        # Add current user to database
+        user = User(
+            username=form.username.data,
+            password=form.password.data,
+            email=form.email.data,
+            session_id=user_session.id
+            )
         if form.phone.data:
             user.phone = form.phone.data
         user_role = UserRole()
@@ -20,6 +32,8 @@ def registration():
         user.roles.append(user_role)
         db.session.add(user)
         db.session.commit()
+
+        # Success message
         flash('Вы успешно зарегистрировались на сайте')
         return redirect('account')
     return render_template('forms/registration.html', form=form)

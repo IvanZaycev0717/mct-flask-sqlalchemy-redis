@@ -22,7 +22,7 @@ class User(UserMixin, db.Model):
     social_account_id: Mapped[int] = mapped_column(ForeignKey('social_account.id'), nullable=True)
 
     roles: Mapped[List['UserRole']] = relationship(back_populates="user")
-    session: Mapped['Session'] = relationship()
+    user_session: Mapped['UserSession'] = relationship()
     social_account: Mapped['SocialAccount'] = relationship(back_populates="users")
 
     @property
@@ -119,12 +119,12 @@ class Permission(db.Model):
                     db.session.add(permissions)
             db.session.commit()
 
-class Session(db.Model):
+class UserSession(db.Model):
     __tablename__ = 'session'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    ip_address: Mapped[str] = mapped_column(String(45))
-    last_activity: Mapped[datetime] = mapped_column(DateTime)
+    ip_address: Mapped[str] = mapped_column(String(45), nullable=True)
+    last_activity: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
 class SocialAccount(db.Model):
     __tablename__ = 'social_account'
