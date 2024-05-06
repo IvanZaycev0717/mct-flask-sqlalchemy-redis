@@ -1,4 +1,5 @@
 import os
+from enum import IntEnum
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -14,6 +15,13 @@ SOICAL_MEDIA_LINKS = {
     'Telegram': r'https://t.me/ivanzaycev0717',
     'WhatsApp': r'https://www.whatsapp.com/?lang=ru_RU'
 }
+
+class Is(IntEnum):
+    ADMIN = 1
+    CONTENT_MANAGER = 2
+    DOCTOR = 3
+    PATIENT = 4
+
 
 class Config:
     DEBUG = False

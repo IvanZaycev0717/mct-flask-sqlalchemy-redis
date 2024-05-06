@@ -6,6 +6,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy import select, update
 from urllib.parse import urlsplit
 from flask import abort
+from config import Is
 
 auth = Blueprint('auth', __name__)
 
@@ -63,7 +64,9 @@ def login():
 @login_required
 def profile(username):
     if current_user.username != request.view_args['username']:
-        abort(403)
+        role_id = current_user.roles[0].role_id
+        if role_id not in (Is.ADMIN, Is.DOCTOR):
+            abort(403)
     user = db.first_or_404(select(User).where(User.username==username))
     return render_template('profile/profile.html', user=user)
 
@@ -84,10 +87,11 @@ def _create_user_session(user):
 
 def _update_user_session(user):
     user_session = db.session.scalar(select(UserSession).where(UserSession.user_id==user.id))
-    user_session.ip_address = request.remote_addr
-    user_session.last_activity = datetime.now()
-    if not user_session.attendance:
-        user_session.attendance = 1
-    else:
-        user_session.attendance += 1
-    db.session.commit()
+    if user_session:
+        user_session.ip_address = request.remote_addr
+        user_session.last_activity = datetime.now()
+        if not user_session.attendance:
+            user_session.attendance = 1
+        else:
+            user_session.attendance += 1
+        db.session.commit()
