@@ -6,6 +6,9 @@ from config import SOICAL_MEDIA_LINKS
 
 site = Blueprint('site', __name__)
 
+@site.app_errorhandler(werkzeug.exceptions.Unauthorized)
+def page_not_found(e):
+    return render_template('errors/401.html'), 401
 
 @site.app_errorhandler(werkzeug.exceptions.NotFound)
 def page_not_found(e):

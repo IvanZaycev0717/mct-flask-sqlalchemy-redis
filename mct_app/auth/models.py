@@ -18,11 +18,10 @@ class User(UserMixin, db.Model):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     phone: Mapped[str] = mapped_column(String(12), unique=True, nullable=True)
-    session_id: Mapped[int] = mapped_column(ForeignKey('session.id'), nullable=True)
     social_account_id: Mapped[int] = mapped_column(ForeignKey('social_account.id'), nullable=True)
 
     roles: Mapped[List['UserRole']] = relationship(back_populates="user")
-    user_session: Mapped['UserSession'] = relationship()
+    user_sessions: Mapped[List['UserSession']] = relationship(back_populates="user")
     social_account: Mapped['SocialAccount'] = relationship(back_populates="users")
 
     @property
@@ -125,6 +124,10 @@ class UserSession(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     ip_address: Mapped[str] = mapped_column(String(45), nullable=True)
     last_activity: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    attendance: Mapped[datetime] = mapped_column(Integer, nullable=False)
+
+    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey('user.id'))
+    user: Mapped[List['User']] = relationship(back_populates='user_sessions')
 
 class SocialAccount(db.Model):
     __tablename__ = 'social_account'
