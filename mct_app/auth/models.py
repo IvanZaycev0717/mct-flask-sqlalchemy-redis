@@ -3,7 +3,7 @@ import datetime
 from typing import List, Optional
 import os
 
-from sqlalchemy import DateTime, Integer, String, ForeignKey, select
+from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
@@ -16,13 +16,13 @@ class User(UserMixin, db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(45), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
-    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(120), nullable=False)
     phone: Mapped[str] = mapped_column(String(12), unique=True, nullable=True)
-    social_account_id: Mapped[int] = mapped_column(ForeignKey('social_account.id'), nullable=True)
+    has_social_account: Mapped[bool] = mapped_column(Boolean, default=False)
 
     roles: Mapped[List['UserRole']] = relationship(back_populates="user")
     user_sessions: Mapped[List['UserSession']] = relationship(back_populates="user")
-    social_account: Mapped['SocialAccount'] = relationship(back_populates="users")
+    social_account: Mapped['SocialAccount'] = relationship(back_populates="user")
 
     @property
     def password(self):
@@ -133,10 +133,9 @@ class SocialAccount(db.Model):
     __tablename__ = 'social_account'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    driver: Mapped[str] = mapped_column(String(45))
-    driver_id: Mapped[str] = mapped_column(String(45))
-    avatar_url: Mapped[str] = mapped_column(String(255))
-    users: Mapped[list['User']] = relationship(back_populates='social_account')
+    platform: Mapped[str] = mapped_column(String, nullable=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'))
+    user: Mapped['User'] = relationship(back_populates='social_account')
 
 
 @login_manager.user_loader

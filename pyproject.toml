@@ -18,6 +18,9 @@ flask-wtf = "^1.2.1"
 phonenumbers = "^8.13.35"
 email-validator = "^2.1.1"
 flask-login = "^0.6.3"
+google-auth = "^2.29.0"
+google-auth-oauthlib = "^1.2.0"
+requests = "^2.31.0"
 
 
 [build-system]
