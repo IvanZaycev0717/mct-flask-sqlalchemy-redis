@@ -2,6 +2,8 @@ from mct_app import create_app, db
 from flask_migrate import Migrate
 from config import CSV_FILE_PATHS
 from mct_app.auth.models import Role, Permission, RolePermission, User, UserRole
+from mct_app.site.models import Image
+
 
 
 app = create_app()
@@ -12,7 +14,8 @@ def make_shell_context():
     return {'app': app, 'db': db,
             'general_setup': general_setup,
             'recreate_db': recreate_db,
-            'User': User}
+            'User': User,
+            'Image': Image}
 
 def recreate_db():
     db.drop_all()
@@ -30,4 +33,4 @@ def general_setup():
 
 if __name__ == '__main__':
     general_setup()
-    app.run()
+    app.run(host='0.0.0.0', port=443, debug=True, ssl_context='adhoc')

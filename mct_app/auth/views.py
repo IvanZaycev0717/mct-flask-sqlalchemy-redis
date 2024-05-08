@@ -1,7 +1,10 @@
+import json
 import os
 import pathlib
 from datetime import datetime
-from flask import Blueprint, render_template, session, redirect, url_for, flash, request
+from pprint import pprint
+from flask import Blueprint, jsonify, render_template, session, redirect, url_for, flash, request
+import flask
 import requests
 from mct_app.auth.models import User, UserSession, db, UserRole, Role, SocialAccount
 from mct_app.auth.forms import RegistrationForm, LoginForm
@@ -15,25 +18,40 @@ from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
 from config import basedir
+from mct_app import oath
+from werkzeug.datastructures import ImmutableMultiDict
+
+
+
 
 auth = Blueprint('auth', __name__)
 
+SOCIAL_AUTH_VK_OAUTH2_KEY = '51920174'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'cqUJVoTNym6Os5pQWfDJ'
+SOCIAL_AUTH_VK_REDIRECT = 'https://localhost/vk-callback'
+
+oath.register(
+    name='vk',
+    client_id=SOCIAL_AUTH_VK_OAUTH2_KEY,
+    client_secret=SOCIAL_AUTH_VK_OAUTH2_SECRET,
+    authorize_url='https://oauth.vk.com/authorize',
+    access_token_url='https://oauth.vk.com/access_token',
+    authorize_params=None,
+    access_token_params=None,
+    refresh_token_url=None,
+    client_kwargs={'scope': 'email'}
+)
+
+GOOGLE_CLIENT_ID = '904059633989-0hasb3m586f1u6u0tcnumm249itt9a4k.apps.googleusercontent.com'
 
 client_secrets_file = os.path.join(basedir, 'client_secret.json')
 
 flow = Flow.from_client_secrets_file(
     client_secrets_file=client_secrets_file,
     scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
-    redirect_uri="http://localhost:5000/callback"
+    redirect_uri="https://localhost/callback"
 )
 
-
-def google_login_is_required(function):
-    def wrapper(*args, **kwargs):
-        if "google_id" not in session:
-            return abort(401)
-        return function()
-    return wrapper
 
 @auth.route('/registration', methods=['GET', 'POST'])
 def registration():
@@ -50,6 +68,7 @@ def registration():
             user.phone = form.phone.data
         user_role = UserRole()
         user_role.role = db.session.query(Role).filter_by(name='Patient').first()
+        
         user.roles.append(user_role)
         db.session.add(user)
         db.session.commit()
@@ -65,16 +84,57 @@ def registration():
 @auth.route("/google-login")
 def google_login():
     authorization_url, state = flow.authorization_url()
-    session.clear()
-    session["state"] = state
     return redirect(authorization_url)
+
+@auth.route('/vk-login')
+def vk_login():
+    return redirect(f'https://oauth.vk.com/authorize?client_id={SOCIAL_AUTH_VK_OAUTH2_KEY}&redirect_uri={SOCIAL_AUTH_VK_REDIRECT}&response_type=code')
+
+@auth.route('/vk-callback')
+def vk_callback():
+    code = request.args.get('code')
+    # Запрос на обмен кода авторизации на токен доступа
+    response = requests.get('https://oauth.vk.com/access_token', params={
+        'client_id': SOCIAL_AUTH_VK_OAUTH2_KEY,
+        'client_secret': SOCIAL_AUTH_VK_OAUTH2_SECRET,
+        'redirect_uri': SOCIAL_AUTH_VK_REDIRECT,
+        'code': code
+    })
+
+    if response.status_code == 200:
+        # Получение токена доступа и информации о пользователе
+        data = response.json()
+        access_token = data['access_token']
+        user_id = data['user_id']
+
+        # Запрос на получение информации о пользователе
+        user_info_response = requests.get('https://api.vk.com/method/users.get', params={
+            'access_token': access_token,
+            'user_ids': user_id,
+            'v': '5.131'  # Версия API
+        })
+
+        if user_info_response.status_code == 200:
+            # Обработка информации о пользователе
+            user_info = user_info_response.json()['response'][0]
+            user_data = {
+                'id': user_info['id'],
+                'first_name': user_info['first_name'],
+                'last_name': user_info['last_name'],
+            }
+
+            # Возвращаем информацию о пользователе в формате JSON
+            print(user_data)
+            return jsonify(user_data)
+        else:
+            return 'Failed to fetch user info from VK'
+    else:
+        return 'Failed to obtain access token from VK'
+
 
 @auth.route("/callback")
 def callback():
     flow.fetch_token(authorization_response=request.url)
-
-    # if session['state'] != request.args['state']:
-    #     abort(500)
 
     credentials = flow.credentials
     request_session = requests.session()
@@ -84,14 +144,12 @@ def callback():
     id_info = id_token.verify_oauth2_token(
         id_token=credentials._id_token,
         request=token_request,
-        audience=os.environ['GOOGLE_CLIENT_ID'],
+        audience=GOOGLE_CLIENT_ID,
         clock_skew_in_seconds=10
     )
 
     username = id_info.get("name")
     email = id_info.get("email")
-
-    print(username, email)
 
     return redirect(url_for('auth.google_registration', name=username, email=email))
 
@@ -99,43 +157,49 @@ def callback():
 def google_registration(name, email):
     if current_user.is_authenticated:
         return redirect('/')
+
+    name += '(Google)'
     user = db.session.scalar(select(User).where(User.username==name))
-    if user:
+
+    # user exists and we login him/her
+    if user and user.has_social_account:
         login_user(user)
         _update_user_session(user)
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('auth.profile', username=user.username)
-        return redirect(next_page)
-    # create a new user
-    user = User(
-        username=name,
-        password=os.environ['SOCIAL_USER_PASS'],
-        email=email,
-        has_social_account=True
-        )
-    db.session.add(user)
-    db.session.commit()
+        return redirect(url_for('auth.profile', username=user.username))
+    else:
+        user = User(
+            username=name,
+            password=os.environ['SOCIAL_USER_PASS'],
+            email=email,
+            has_social_account=True
+            )
+        db.session.add(user)
+        db.session.commit()
 
-    # generate social account information
-    platform = 'Google'
-    user_id=user.id
-    new_social_account = SocialAccount(user_id=user_id, platform=platform)
-    db.session.add(new_social_account)
-    db.session.commit()
-    
-    # generate user role
-    user_role = UserRole()
-    user_role.role = db.session.query(Role).filter_by(name='Patient').first()
-    user.roles.append(user_role)
-    db.session.add(user)
-    db.session.commit()
+        # generate social account information
+        platform = 'Google'
+        user_id=user.id
+        new_social_account = SocialAccount(user_id=user_id, platform=platform)
+        db.session.add(new_social_account)
+        db.session.commit()
+ 
+        # generate user role
+        user_role = UserRole()
+        user_role.role = db.session.query(Role).filter_by(name='Patient').first()
+        user.roles.append(user_role)
+        db.session.add(user)
+        db.session.commit()
 
-    _create_user_session(user)
-    login_user(user)
-    # Success message
-    flash('Вы успешно зарегистрировались на сайте')
-    return redirect(url_for('auth.profile', username=user.username))
+        _create_user_session(user)
+        login_user(user)
+        _update_user_session(user)
+        next_page = request.args.get('next')
+        if not next_page or urlsplit(next_page).netloc != '':
+            next_page = url_for('auth.profile', username=user.username)
+        return redirect(url_for('auth.profile', username=user.username))
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -156,7 +220,7 @@ def login():
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('auth.profile', username=user.username)
-        return redirect(next_page)
+        return redirect(url_for('auth.profile', username=user.username))
     return render_template('forms/login.html', form=form)
 
 

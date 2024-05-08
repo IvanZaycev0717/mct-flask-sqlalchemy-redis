@@ -1,9 +1,10 @@
 import csv
 import datetime
+import json
 from typing import List, Optional
 import os
 
-from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select
+from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
