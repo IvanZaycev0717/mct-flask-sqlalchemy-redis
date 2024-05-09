@@ -6,7 +6,6 @@ from flask_admin import Admin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from flask_login import LoginManager
-from authlib.integrations.flask_client import OAuth
 from flask_wtf.csrf import CSRFProtect
 
 load_dotenv()
@@ -17,7 +16,6 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 login_manager = LoginManager()
-oath = OAuth()
 
 def create_app():
     app = Flask(__name__)
@@ -29,8 +27,7 @@ def create_app():
     # init app
     db.init_app(app)
     login_manager.init_app(app)
-    oath.init_app(app)
-
+    
     with app.app_context():
         db.create_all()
 

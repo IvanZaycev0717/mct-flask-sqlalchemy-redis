@@ -1,10 +1,6 @@
-import json
 import os
-import pathlib
 from datetime import datetime
-from pprint import pprint
-from flask import Blueprint, jsonify, render_template, session, redirect, url_for, flash, request
-import flask
+from flask import Blueprint, jsonify, render_template, redirect, url_for, flash, request
 import requests
 from mct_app.auth.models import User, UserSession, db, UserRole, Role, SocialAccount
 from mct_app.auth.forms import RegistrationForm, LoginForm
@@ -18,10 +14,6 @@ from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
 from config import basedir
-from mct_app import oath
-from werkzeug.datastructures import ImmutableMultiDict
-
-
 
 
 auth = Blueprint('auth', __name__)
@@ -30,17 +22,6 @@ SOCIAL_AUTH_VK_OAUTH2_KEY = '51920174'
 SOCIAL_AUTH_VK_OAUTH2_SECRET = 'cqUJVoTNym6Os5pQWfDJ'
 SOCIAL_AUTH_VK_REDIRECT = 'https://localhost/vk-callback'
 
-oath.register(
-    name='vk',
-    client_id=SOCIAL_AUTH_VK_OAUTH2_KEY,
-    client_secret=SOCIAL_AUTH_VK_OAUTH2_SECRET,
-    authorize_url='https://oauth.vk.com/authorize',
-    access_token_url='https://oauth.vk.com/access_token',
-    authorize_params=None,
-    access_token_params=None,
-    refresh_token_url=None,
-    client_kwargs={'scope': 'email'}
-)
 
 GOOGLE_CLIENT_ID = '904059633989-0hasb3m586f1u6u0tcnumm249itt9a4k.apps.googleusercontent.com'
 
@@ -88,7 +69,7 @@ def google_login():
 
 @auth.route('/vk-login')
 def vk_login():
-    return redirect(f'https://oauth.vk.com/authorize?client_id={SOCIAL_AUTH_VK_OAUTH2_KEY}&redirect_uri={SOCIAL_AUTH_VK_REDIRECT}&response_type=code')
+    return redirect(fr'https://oauth.vk.com/authorize?client_id={SOCIAL_AUTH_VK_OAUTH2_KEY}&redirect_uri={SOCIAL_AUTH_VK_REDIRECT}&response_type=code')
 
 @auth.route('/vk-callback')
 def vk_callback():
@@ -102,7 +83,6 @@ def vk_callback():
     })
 
     if response.status_code == 200:
-        # Получение токена доступа и информации о пользователе
         data = response.json()
         access_token = data['access_token']
         user_id = data['user_id']
@@ -129,7 +109,7 @@ def vk_callback():
         else:
             return 'Failed to fetch user info from VK'
     else:
-        return 'Failed to obtain access token from VK'
+        abort(500)
 
 
 @auth.route("/callback")
@@ -147,13 +127,17 @@ def callback():
         audience=GOOGLE_CLIENT_ID,
         clock_skew_in_seconds=10
     )
-
     username = id_info.get("name")
     email = id_info.get("email")
 
-    return redirect(url_for('auth.google_registration', name=username, email=email))
+    registration_result = google_registration(username, email)
 
-@auth.route('/google-registration/<name>/<email>')
+    if registration_result:
+        return redirect(url_for('auth.profile', username=registration_result.username))
+    else:
+        return jsonify({'error': 'Registration failed'}), 500
+
+
 def google_registration(name, email):
     if current_user.is_authenticated:
         return redirect('/')
@@ -165,10 +149,9 @@ def google_registration(name, email):
     if user and user.has_social_account:
         login_user(user)
         _update_user_session(user)
-        next_page = request.args.get('next')
-        if not next_page or urlsplit(next_page).netloc != '':
-            next_page = url_for('auth.profile', username=user.username)
-        return redirect(url_for('auth.profile', username=user.username))
+        return user
+    elif user and not user.has_social_account:
+        abort(500)
     else:
         user = User(
             username=name,
@@ -196,10 +179,7 @@ def google_registration(name, email):
         _create_user_session(user)
         login_user(user)
         _update_user_session(user)
-        next_page = request.args.get('next')
-        if not next_page or urlsplit(next_page).netloc != '':
-            next_page = url_for('auth.profile', username=user.username)
-        return redirect(url_for('auth.profile', username=user.username))
+        return user
 
 
 @auth.route('/login', methods=['GET', 'POST'])
