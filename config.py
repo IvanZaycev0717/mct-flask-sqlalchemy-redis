@@ -1,5 +1,5 @@
 import os
-from enum import IntEnum
+from enum import IntEnum, StrEnum
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -21,6 +21,13 @@ class Is(IntEnum):
     CONTENT_MANAGER = 2
     DOCTOR = 3
     PATIENT = 4
+
+class SocialPlatform(StrEnum):
+    GOOGLE = '(Google)'
+    VK = '(VK)'
+    ODNOKLASSNIKI = '(Odnoklassniki)'
+    YANDEX = '(Yandex)'
+    TELEGRAM = '(Telegram)'
 
 
 class Config:

@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from flask import Blueprint, jsonify, render_template, redirect, url_for, flash, request
+from flask import Blueprint, jsonify, render_template, redirect, session, url_for, flash, request
 import requests
 from mct_app.auth.models import User, UserSession, db, UserRole, Role, SocialAccount
 from mct_app.auth.forms import RegistrationForm, LoginForm
@@ -8,7 +8,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy import select, update
 from urllib.parse import urlsplit
 from flask import abort
-from config import Is
+from config import Is, SocialPlatform
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
@@ -22,6 +22,10 @@ SOCIAL_AUTH_VK_OAUTH2_KEY = '51920174'
 SOCIAL_AUTH_VK_OAUTH2_SECRET = 'cqUJVoTNym6Os5pQWfDJ'
 SOCIAL_AUTH_VK_REDIRECT = 'https://localhost/vk-callback'
 
+OK_CLIENT_ID = '512002593594'
+OK_CLIENT_SECRET = '0AF67F589594B24F2F41BDE6'
+OK_REDIRECT_URI = 'https://localhost/ok-callback'
+
 
 GOOGLE_CLIENT_ID = '904059633989-0hasb3m586f1u6u0tcnumm249itt9a4k.apps.googleusercontent.com'
 
@@ -30,7 +34,7 @@ client_secrets_file = os.path.join(basedir, 'client_secret.json')
 flow = Flow.from_client_secrets_file(
     client_secrets_file=client_secrets_file,
     scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
-    redirect_uri="https://localhost/callback"
+    redirect_uri="https://localhost/google-callback"
 )
 
 
@@ -67,6 +71,31 @@ def google_login():
     authorization_url, state = flow.authorization_url()
     return redirect(authorization_url)
 
+@auth.route("/google-callback")
+def google_callback():
+    flow.fetch_token(authorization_response=request.url)
+
+    credentials = flow.credentials
+    request_session = requests.session()
+    cached_session = cachecontrol.CacheControl(request_session)
+    token_request = google.auth.transport.requests.Request(session=cached_session)
+
+    id_info = id_token.verify_oauth2_token(
+        id_token=credentials._id_token,
+        request=token_request,
+        audience=GOOGLE_CLIENT_ID,
+        clock_skew_in_seconds=10
+    )
+    username = id_info.get("name")
+    email = id_info.get("email")
+
+    registration_result = social_registration(username, email, SocialPlatform.GOOGLE)
+
+    if not registration_result:
+        abort(500)
+
+    return redirect(url_for('auth.profile', username=registration_result.username))
+
 @auth.route('/vk-login')
 def vk_login():
     return redirect(fr'https://oauth.vk.com/authorize?client_id={SOCIAL_AUTH_VK_OAUTH2_KEY}&redirect_uri={SOCIAL_AUTH_VK_REDIRECT}&response_type=code')
@@ -91,7 +120,8 @@ def vk_callback():
         user_info_response = requests.get('https://api.vk.com/method/users.get', params={
             'access_token': access_token,
             'user_ids': user_id,
-            'v': '5.131'  # Версия API
+            'fields': 'first_name,last_name,email',
+            'v': '5.131'
         })
 
         if user_info_response.status_code == 200:
@@ -99,50 +129,53 @@ def vk_callback():
             user_info = user_info_response.json()['response'][0]
             user_data = {
                 'id': user_info['id'],
-                'first_name': user_info['first_name'],
-                'last_name': user_info['last_name'],
+                'first_name': user_info.get('first_name'),
+                'last_name': user_info.get('last_name'),
+                'email': user_info.get('email')
             }
 
             # Возвращаем информацию о пользователе в формате JSON
-            print(user_data)
             return jsonify(user_data)
         else:
             return 'Failed to fetch user info from VK'
     else:
         abort(500)
 
+@auth.route('/ok-login')
+def ok_login():
+    return redirect(r'https://connect.ok.ru/oauth/authorize?client_id=512002593594&scope=VALUABLE_ACCESS;GET_EMAIL&response_type=token&redirect_uri=https://localhost/ok-callback')
 
-@auth.route("/callback")
-def callback():
-    flow.fetch_token(authorization_response=request.url)
+@auth.route('/ok-callback')
+def ok_callback():
+    access_token = request.args.get('access_token')
+    session_secret_key = request.args.get('session_secret_key')
+    url = 'https://api.ok.ru/fb.do'
+    params = {
+        'application_key': 'CLDEJMLGDIHBABABA',
+        'method': 'users.getCurrentUser',
+        'access_token': access_token,
+        'sig': session_secret_key,
+        'format': 'json'
+    }
 
-    credentials = flow.credentials
-    request_session = requests.session()
-    cached_session = cachecontrol.CacheControl(request_session)
-    token_request = google.auth.transport.requests.Request(session=cached_session)
-
-    id_info = id_token.verify_oauth2_token(
-        id_token=credentials._id_token,
-        request=token_request,
-        audience=GOOGLE_CLIENT_ID,
-        clock_skew_in_seconds=10
-    )
-    username = id_info.get("name")
-    email = id_info.get("email")
-
-    registration_result = google_registration(username, email)
-
-    if registration_result:
-        return redirect(url_for('auth.profile', username=registration_result.username))
-    else:
-        return jsonify({'error': 'Registration failed'}), 500
+    # Выполните запрос к API
+    response = requests.get(url, params=params)
+    print(response.status_code)
+    
+    # Проверьте успешность запроса и обработайте ответ
+    if response.status_code == 200:
+        user_info = response.json()
+        # Обработайте информацию о пользователе по вашему усмотрению
+        print(user_info)
+    return redirect(url_for('auth.login'))
 
 
-def google_registration(name, email):
+
+def social_registration(name, email, social_platform):
     if current_user.is_authenticated:
         return redirect('/')
 
-    name += '(Google)'
+    name += social_platform
     user = db.session.scalar(select(User).where(User.username==name))
 
     # user exists and we login him/her
