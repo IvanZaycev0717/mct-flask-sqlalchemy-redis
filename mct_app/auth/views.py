@@ -14,6 +14,8 @@ from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
 from config import basedir
+from http import HTTPStatus
+from werkzeug.datastructures import ImmutableMultiDict
 
 
 auth = Blueprint('auth', __name__)
@@ -24,8 +26,12 @@ SOCIAL_AUTH_VK_REDIRECT = 'https://localhost/vk-callback'
 
 OK_CLIENT_ID = '512002593594'
 OK_CLIENT_SECRET = '0AF67F589594B24F2F41BDE6'
+OK_PUBLIC_KEY = 'CLDEJMLGDIHBABABA'
 OK_REDIRECT_URI = 'https://localhost/ok-callback'
 
+YA_CLIENT_ID = '50e26776ec814fe6a520f6d98659f8f1'
+YA_CLIENT_SECRET = '2e2cfc985cbe4afe93fafcc8d8f408db'
+YA_REDIRECT_URI = 'https://localhost/yandex-callback'
 
 GOOGLE_CLIENT_ID = '904059633989-0hasb3m586f1u6u0tcnumm249itt9a4k.apps.googleusercontent.com'
 
@@ -98,76 +104,136 @@ def google_callback():
 
 @auth.route('/vk-login')
 def vk_login():
-    return redirect(fr'https://oauth.vk.com/authorize?client_id={SOCIAL_AUTH_VK_OAUTH2_KEY}&redirect_uri={SOCIAL_AUTH_VK_REDIRECT}&response_type=code')
+    return redirect(fr'https://oauth.vk.com/authorize?client_id={SOCIAL_AUTH_VK_OAUTH2_KEY}&scope=messages;email&redirect_uri={SOCIAL_AUTH_VK_REDIRECT}&response_type=code')
 
 @auth.route('/vk-callback')
 def vk_callback():
     code = request.args.get('code')
-    # Запрос на обмен кода авторизации на токен доступа
     response = requests.get('https://oauth.vk.com/access_token', params={
         'client_id': SOCIAL_AUTH_VK_OAUTH2_KEY,
         'client_secret': SOCIAL_AUTH_VK_OAUTH2_SECRET,
         'redirect_uri': SOCIAL_AUTH_VK_REDIRECT,
-        'code': code
+        'code': code,
     })
 
-    if response.status_code == 200:
+    if response.status_code == HTTPStatus.OK:
         data = response.json()
         access_token = data['access_token']
         user_id = data['user_id']
 
-        # Запрос на получение информации о пользователе
         user_info_response = requests.get('https://api.vk.com/method/users.get', params={
             'access_token': access_token,
             'user_ids': user_id,
-            'fields': 'first_name,last_name,email',
-            'v': '5.131'
+            'v': '5.199',
         })
-
-        if user_info_response.status_code == 200:
-            # Обработка информации о пользователе
+        if user_info_response.status_code == HTTPStatus.OK:
             user_info = user_info_response.json()['response'][0]
             user_data = {
                 'id': user_info['id'],
                 'first_name': user_info.get('first_name'),
                 'last_name': user_info.get('last_name'),
-                'email': user_info.get('email')
             }
+            username = f'{user_data['first_name']} {user_data['last_name']}'
+            email = os.environ['SOCIAL_EMAIL']
+            registration_result = social_registration(username, email, SocialPlatform.VK)
 
-            # Возвращаем информацию о пользователе в формате JSON
-            return jsonify(user_data)
-        else:
-            return 'Failed to fetch user info from VK'
+            if not registration_result:
+                abort(500)
+
+            return redirect(url_for('auth.profile', username=registration_result.username))
     else:
         abort(500)
 
 @auth.route('/ok-login')
 def ok_login():
-    return redirect(r'https://connect.ok.ru/oauth/authorize?client_id=512002593594&scope=VALUABLE_ACCESS;GET_EMAIL&response_type=token&redirect_uri=https://localhost/ok-callback')
+    return redirect(f'https://connect.ok.ru/oauth/authorize?client_id={OK_CLIENT_ID}&scope=VALUABLE_ACCESS;GET_EMAIL&response_type=token&redirect_uri={OK_REDIRECT_URI}')
 
 @auth.route('/ok-callback')
 def ok_callback():
     access_token = request.args.get('access_token')
     session_secret_key = request.args.get('session_secret_key')
-    url = 'https://api.ok.ru/fb.do'
-    params = {
-        'application_key': 'CLDEJMLGDIHBABABA',
-        'method': 'users.getCurrentUser',
-        'access_token': access_token,
-        'sig': session_secret_key,
-        'format': 'json'
-    }
+    if access_token and session_secret_key and 'null' not in access_token and 'null' not in session_secret_key:
+        url = 'https://api.ok.ru/fb.do'
+        params = {
+            'application_key': OK_PUBLIC_KEY,
+            'method': 'users.getCurrentUser',
+            'access_token': access_token,
+            'sig': session_secret_key,
+            'format': 'json'
+        }
 
-    # Выполните запрос к API
-    response = requests.get(url, params=params)
-    print(response.status_code)
-    
-    # Проверьте успешность запроса и обработайте ответ
-    if response.status_code == 200:
-        user_info = response.json()
-        # Обработайте информацию о пользователе по вашему усмотрению
-        print(user_info)
-    return redirect(url_for('auth.login'))
+        ok_response = requests.get(url, params=params)
+        if ok_response.status_code == HTTPStatus.OK:
+            ok_user_data = ok_response.json()
+            username = ok_user_data.get('name')
+            email = ok_user_data.get('email')
+
+            if not email:
+                email = os.environ.get('SOCIAL_EMAIL')
+
+            registration_result = social_registration(username, email, SocialPlatform.ODNOKLASSNIKI)
+
+            if not registration_result:
+                abort(500)
+
+            return redirect(url_for('auth.profile', username=registration_result.username))
+    else:
+        return redirect('/ok-redirect')
+
+@auth.route('/ok-redirect')
+def ok_redirect():
+    if current_user.is_authenticated:
+        return redirect(url_for('auth.profile', username=current_user.username))
+    return redirect('/')
+
+
+@auth.route('/yandex-login')
+def yandex_login():
+    return redirect(f'https://oauth.yandex.ru/authorize?response_type=code&client_id={YA_CLIENT_ID}&redirect_uri={YA_REDIRECT_URI}')
+
+@auth.route('/yandex-callback')
+def yandex_callback():
+    code = request.args.get('code')
+    if code:
+        token_url = f'https://oauth.yandex.ru/token'
+        token_params = {
+            'grant_type': 'authorization_code',
+            'code': code,
+            'client_id': YA_CLIENT_ID,
+            'client_secret': YA_CLIENT_SECRET
+        }
+        response = requests.post(token_url, data=token_params)
+        data = response.json()
+        if 'access_token' in data:
+            user_info_url = 'https://login.yandex.ru/info'
+            headers = {'Authorization': f'OAuth {data["access_token"]}'}
+            user_info_response = requests.get(user_info_url, headers=headers)
+            user_info = user_info_response.json()
+            username = user_info['login']
+            email = user_info['default_email']
+
+            registration_result = social_registration(username, email, SocialPlatform.YANDEX)
+
+            if not registration_result:
+                abort(500)
+
+            return redirect(url_for('auth.profile', username=registration_result.username))
+    else:
+        abort(500)
+
+@auth.route('/telegram-callback')
+def telegram_callback():
+    username = request.args.get('username')
+    if username:
+        email = os.environ['SOCIAL_EMAIL']
+
+        registration_result = social_registration(username, email, SocialPlatform.TELEGRAM)
+
+        if not registration_result:
+            abort(500)
+        return redirect(url_for('auth.profile', username=registration_result.username))
+    else:
+        abort(500)
 
 
 
@@ -178,7 +244,6 @@ def social_registration(name, email, social_platform):
     name += social_platform
     user = db.session.scalar(select(User).where(User.username==name))
 
-    # user exists and we login him/her
     if user and user.has_social_account:
         login_user(user)
         _update_user_session(user)
@@ -196,9 +261,8 @@ def social_registration(name, email, social_platform):
         db.session.commit()
 
         # generate social account information
-        platform = 'Google'
-        user_id=user.id
-        new_social_account = SocialAccount(user_id=user_id, platform=platform)
+        user_id = user.id
+        new_social_account = SocialAccount(user_id=user_id, platform=social_platform)
         db.session.add(new_social_account)
         db.session.commit()
  
@@ -245,11 +309,16 @@ def profile(username):
         if role_id not in (Is.ADMIN, Is.DOCTOR):
             abort(403)
     user = db.first_or_404(select(User).where(User.username==username))
-    return render_template('profile/profile.html', user=user)
+    correct_name: str = user.username
+    if correct_name.endswith(')'):
+        for platform in SocialPlatform:
+            correct_name = correct_name.replace(platform, '')
+    return render_template('profile/profile.html', user=user, correct_name=correct_name)
 
 @auth.route('/logout')
 def logout():
     logout_user()
+    session.clear()
     return redirect('/')
 
 def _create_user_session(user):

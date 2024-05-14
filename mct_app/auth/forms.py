@@ -7,6 +7,7 @@ from wtforms.validators import DataRequired, Email, ValidationError, Optional
 from mct_app import db
 from mct_app.auth.models import User
 from sqlalchemy import select
+from flask import request
 
 class RegistrationForm(FlaskForm):
     username = StringField(
@@ -32,6 +33,8 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Зарегистрироваться')
 
     def validate_username(self, username):
+        if '(' in request.form['username'] or ')' in request.form['username']:
+            raise ValidationError('Символы "(" или ")" недоупстимы')
         user = db.session.scalar(select(User).where(User.username == username.data))
         if user is not None:
             raise ValidationError('Пользователь с таким именем уже существует')
@@ -40,6 +43,7 @@ class RegistrationForm(FlaskForm):
         user = db.session.scalar(select(User).where(User.email == email.data))
         if user is not None:
             raise ValidationError('Такой адрес электронной почты уже существует')
+    
 
     def validate_phone(self, phone):
         try:

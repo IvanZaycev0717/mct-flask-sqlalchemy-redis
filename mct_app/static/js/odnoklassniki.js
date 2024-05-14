@@ -8,7 +8,6 @@ var xhr = new XMLHttpRequest();
 xhr.open('GET', '/ok-callback?access_token=' + token + '&session_secret_key=' + session, true);
 xhr.onreadystatechange = function() {
   if (xhr.readyState === 4 && xhr.status === 200) {
-    // Обработка ответа от сервера, если необходимо
     console.log(xhr.responseText);
   }
 };

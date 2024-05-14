@@ -4,21 +4,21 @@
             <h4>Вход через социальные сети</h4>
         </div>
         <div class="card-body d-flex justify-content-between">
-            <a class="navbar-brand" target="_parent", href="{{ url_for('auth.google_login') }}">
-                <img class="navbar-brand__login-img" src="../static/img/social_media_ico/google.svg" width="50px" class="d-inline-block align-top" alt="">
+            <a class="navbar-brand" target="_parent" href="{{ url_for('auth.google_login') }}">
+                <img class="navbar-brand__login-img d-inline-block align-top" src="../static/img/social_media_ico/google.svg" width="50px" alt="">
             </a>
-            <a class="navbar-brand" target="_parent", href="{{ url_for('auth.vk_login') }}">
-                <img class="navbar-brand__login-img"  src="../static/img/social_media_ico/vk.svg" width="50px" class="d-inline-block align-top" alt="">
+            <a class="navbar-brand" target="_parent" href="{{ url_for('auth.vk_login') }}">
+                <img class="navbar-brand__login-img d-inline-block align-top"  src="../static/img/social_media_ico/vk.svg" width="50px" alt="">
             </a>
-            <a class="navbar-brand" target="_parent", href="{{ url_for('auth.ok_login') }}">
-                <img class="navbar-brand__login-img"  src="../static/img/social_media_ico/odnoklassniki.svg" width="50px" class="d-inline-block align-top" alt="">
+            <a class="navbar-brand" target="_parent" href="{{ url_for('auth.ok_login') }}">
+                <img class="navbar-brand__login-img d-inline-block align-top" src="../static/img/social_media_ico/odnoklassniki.svg" width="50px" alt="">
             </a>
-            <a class="navbar-brand" target="_parentk", href="#">
-                <img class="navbar-brand__login-img" src="../static/img/social_media_ico/yandex.svg" width="50px" class="d-inline-block align-top" alt="">
+            <a class="navbar-brand" target="_parent" href="{{ url_for('auth.yandex_login') }}">
+                <img class="navbar-brand__login-img d-inline-block align-top" src="../static/img/social_media_ico/yandex.svg" width="50px" alt="">
             </a>
-            <a class="navbar-brand" target="_parent", href="#">
-                <img class="navbar-brand__login-img" src="../static/img/social_media_ico/telegram.svg" width="50px" class="d-inline-block align-top" alt="">
-            </a>
+        </div>
+        <div class="card-body d-flex justify-content-center">
+            <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="metacognitive_bot" data-size="large" data-auth-url="https://localhost/telegram-callback" data-request-access="write"></script>
         </div>
     </div>
 </div>

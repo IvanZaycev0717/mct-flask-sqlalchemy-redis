@@ -15,5 +15,13 @@
     </ul>
   {% endif %}
 {% endwith %}
-<h2>Приветствуем, {{ user.username }}</h2>
+<div class="container d-flex justify-content-center">
+  <h3 class="textbook-title">Приветствуем, {{ correct_name }}</h3>
+  
+  
+</div>
+{% if user.has_social_account  %}
+  <p class="text-center">Вход выполнен через {{ user.social_account.platform }}</p>
+{% endif %}
+
 {% endblock %}
