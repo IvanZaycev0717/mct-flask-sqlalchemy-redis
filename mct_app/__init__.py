@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
+from flask_mail import Mail
 
 load_dotenv()
 
@@ -15,18 +16,20 @@ class Base(DeclarativeBase):
 
 
 db = SQLAlchemy(model_class=Base)
+mail = Mail()
 login_manager = LoginManager()
+
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(os.environ.get('APP_SETTINGS'))
-    app.config['SECRET_KEY'] = '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'
     app.app_context().push()
     CSRFProtect(app)
 
     # init app
     db.init_app(app)
     login_manager.init_app(app)
+    mail.init_app(app)
     
     with app.app_context():
         db.create_all()

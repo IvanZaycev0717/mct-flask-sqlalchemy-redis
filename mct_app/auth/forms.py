@@ -3,7 +3,7 @@ from typing import Any, Mapping
 from flask_wtf import FlaskForm
 import phonenumbers
 from wtforms import StringField, PasswordField, EmailField, SubmitField
-from wtforms.validators import DataRequired, Email, ValidationError, Optional
+from wtforms.validators import DataRequired, Email, ValidationError, Optional, EqualTo
 from mct_app import db
 from mct_app.auth.models import User
 from sqlalchemy import select
@@ -65,3 +65,17 @@ class LoginForm(FlaskForm):
         validators=[DataRequired(message='Требуется ввести пароль')]
         )
     submit = SubmitField('Войти')
+
+class RequestResetPasswordForm(FlaskForm):
+    email = EmailField('Адрес электронной почты', validators=[DataRequired(message='Требуется ввести адрес электронной почты'), Email(message='Неверно введён адрес электронной почты')])
+    submit = SubmitField('Отправить письмо со сбросом пароля')
+
+class ResetPasswordForm(FlaskForm):
+    email = EmailField('Адрес электронной почты', validators=[DataRequired(message='Требуется ввести адрес электронной почты'), Email(message='Неверно введён адрес электронной почты')])
+    new_password = PasswordField('Новый пароль', validators=[DataRequired(), EqualTo('repeat_password', 'Пароли должен совпадать')])
+    repeat_password = PasswordField('Повторите пароль', validators=[DataRequired()])
+    submit = SubmitField('Сбросить пароль')
+
+    def validate_email(self, email):
+        if User.query.filter_by(email=email.data).first() is None:
+            raise ValidationError('Такого адреса электронной почты не существует')

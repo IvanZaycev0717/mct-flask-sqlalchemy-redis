@@ -4,6 +4,7 @@ import json
 from typing import List, Optional
 import os
 
+from itsdangerous.url_safe import URLSafeTimedSerializer
 from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -44,6 +45,15 @@ class User(UserMixin, db.Model):
                 email=os.environ.get('ADMIN_EMAIL'))
             db.session.add(admin)
             db.session.commit()
+    
+    def reset_password(self, new_password):
+        self.password = new_password
+        pass
+    
+    def generate_password_reset_token(self, expiration=3600):
+        s = URLSafeTimedSerializer(os.environ['SECRET_KEY'])
+        return s.dumps({'reset': self.id})
+        
 
 
 class UserRole(db.Model):

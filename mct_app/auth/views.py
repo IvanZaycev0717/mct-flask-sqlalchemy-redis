@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import Blueprint, jsonify, render_template, redirect, session, url_for, flash, request
 import requests
 from mct_app.auth.models import User, UserSession, db, UserRole, Role, SocialAccount
-from mct_app.auth.forms import RegistrationForm, LoginForm
+from mct_app.auth.forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetPasswordForm
 from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy import select, update
 from urllib.parse import urlsplit
@@ -15,7 +15,7 @@ from pip._vendor import cachecontrol
 import google.auth.transport.requests
 from config import basedir
 from http import HTTPStatus
-from werkzeug.datastructures import ImmutableMultiDict
+from mct_app.email import send_email
 
 
 auth = Blueprint('auth', __name__)
@@ -59,7 +59,7 @@ def registration():
             user.phone = form.phone.data
         user_role = UserRole()
         user_role.role = db.session.query(Role).filter_by(name='Patient').first()
-        
+
         user.roles.append(user_role)
         db.session.add(user)
         db.session.commit()
@@ -71,6 +71,78 @@ def registration():
         return redirect(url_for('auth.profile', username=user.username))
     return render_template('forms/registration.html', form=form)
 
+@auth.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect('/')
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(select(User).where(User.username == form.username.data))
+        if user is None:
+            flash('Неверное имя пользователя или такого пользователя не существует', 'name-error')
+            return redirect('login')
+        if not user.verify_password(form.password.data):
+            flash('Неверный пароль', 'pass-error')
+            return redirect('login')
+        login_user(user)
+        _update_user_session(user)
+        next_page = request.args.get('next')
+        if not next_page or urlsplit(next_page).netloc != '':
+            next_page = url_for('auth.profile', username=user.username)
+        return redirect(url_for('auth.profile', username=user.username))
+    return render_template('forms/login.html', form=form)
+
+
+@auth.route('/profile/<username>', methods=['GET', 'POST'])
+@login_required
+def profile(username):
+    if current_user.username != request.view_args['username']:
+        role_id = current_user.roles[0].role_id
+        if role_id not in (Is.ADMIN, Is.DOCTOR):
+            abort(403)
+    user = db.first_or_404(select(User).where(User.username==username))
+    correct_name: str = user.username
+    if correct_name.endswith(')'):
+        for platform in SocialPlatform:
+            correct_name = correct_name.replace(platform, '')
+    return render_template('profile/profile.html', user=user, correct_name=correct_name)
+
+@auth.route('/logout')
+def logout():
+    logout_user()
+    session.clear()
+    return redirect('/')
+
+@auth.route('/reset-password', methods=['GET', 'POST'])
+def reset_password_request():
+    if not current_user.is_anonymous:
+        return redirect('/')
+    form = RequestResetPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            if user.has_social_account:
+                flash(f'Войдите через {user.social_account.platform}', 'send-reset-password')
+                return redirect(url_for('auth.login'))
+            else:
+                token = user.generate_password_reset_token()
+                reset_link = url_for('auth.reset_password', token=token, _external=True)
+                send_email(user.email, 'Сброс пароля', user=user, reset_link=reset_link, next=request.args.get('next'))
+        flash(f'Сброс пароля был отправлен на почту {form.email.data}', 'send-reset-password')
+        return redirect(url_for('auth.login'))
+    return render_template('forms/reset_password.html', form=form)
+            
+@auth.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if not current_user.is_anonymous:
+        return redirect('/')
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is None:
+            flash('Проверьте правильность введенного адреса электронной почты', 'reset-pass-error')
+            return redirect(url_for('auth.reset_password_request'))
+        
 
 @auth.route("/google-login")
 def google_login():
@@ -277,49 +349,6 @@ def social_registration(name, email, social_platform):
         login_user(user)
         _update_user_session(user)
         return user
-
-
-@auth.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect('/')
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = db.session.scalar(select(User).where(User.username == form.username.data))
-        if user is None:
-            flash('Неверное имя пользователя или такого пользователя не существует', 'name-error')
-            return redirect('login')
-        if not user.verify_password(form.password.data):
-            flash('Неверный пароль', 'pass-error')
-            return redirect('login')
-        login_user(user)
-        _update_user_session(user)
-        next_page = request.args.get('next')
-        if not next_page or urlsplit(next_page).netloc != '':
-            next_page = url_for('auth.profile', username=user.username)
-        return redirect(url_for('auth.profile', username=user.username))
-    return render_template('forms/login.html', form=form)
-
-
-@auth.route('/profile/<username>', methods=['GET', 'POST'])
-@login_required
-def profile(username):
-    if current_user.username != request.view_args['username']:
-        role_id = current_user.roles[0].role_id
-        if role_id not in (Is.ADMIN, Is.DOCTOR):
-            abort(403)
-    user = db.first_or_404(select(User).where(User.username==username))
-    correct_name: str = user.username
-    if correct_name.endswith(')'):
-        for platform in SocialPlatform:
-            correct_name = correct_name.replace(platform, '')
-    return render_template('profile/profile.html', user=user, correct_name=correct_name)
-
-@auth.route('/logout')
-def logout():
-    logout_user()
-    session.clear()
-    return redirect('/')
 
 def _create_user_session(user):
     user_sessions = UserSession(

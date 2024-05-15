@@ -2,7 +2,32 @@
 
 {% block content %}
 
+{% with messages = get_flashed_messages(category_filter=["send-reset-password"]) %}
+{% if messages %}
+  <div class="modal" id="myModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Сообщение</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {%- for msg in messages %}
+            <p><strong>{{ msg }}</strong></p>
+            {% endfor -%}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Понятно</button>
+          </div>
+        </div>
+      </div>
+  </div>
+{% endif %}
+{% endwith %}
+
+
 {% include 'forms/social_media_enter.html' %}
+
 
 <div class="container__login-registration d-flex justify-content-center">
     <div class="card d-flex justify-content-center" style="width: 30rem;">
@@ -43,7 +68,7 @@
                         {{ form.submit(class="btn btn-warning", style="font-weight: bold;") }}
                     </div>
                     <div class="forgot-password text-center">
-                        <a class="forgot-password-link" href="ссылка_на_страницу_восстановления_пароля">Забыли пароль?</a>
+                        <a class="forgot-password-link" href="{{ url_for('auth.reset_password_request') }}">Забыли пароль?</a>
                     </div>
                 </form>
             </div>
