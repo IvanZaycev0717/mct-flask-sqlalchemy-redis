@@ -5,6 +5,7 @@ from typing import List, Optional
 import os
 
 from itsdangerous.url_safe import URLSafeTimedSerializer
+from itsdangerous import BadSignature
 from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -46,11 +47,20 @@ class User(UserMixin, db.Model):
             db.session.add(admin)
             db.session.commit()
     
-    def reset_password(self, new_password):
+    def reset_password(self, token, new_password):
+        s = URLSafeTimedSerializer(os.environ['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except BadSignature:
+            return False
+        if data.get('reset') != self.id:
+            return False
         self.password = new_password
-        pass
+        db.session.add(self)
+        db.session.commit()
+        return True
     
-    def generate_password_reset_token(self, expiration=3600):
+    def generate_password_reset_token(self):
         s = URLSafeTimedSerializer(os.environ['SECRET_KEY'])
         return s.dumps({'reset': self.id})
         

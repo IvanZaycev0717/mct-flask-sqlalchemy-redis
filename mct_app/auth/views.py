@@ -127,10 +127,16 @@ def reset_password_request():
             else:
                 token = user.generate_password_reset_token()
                 reset_link = url_for('auth.reset_password', token=token, _external=True)
-                send_email(user.email, 'Сброс пароля', user=user, reset_link=reset_link, next=request.args.get('next'))
+                send_email(
+                    user.email,
+                    'Сброс пароля',
+                    'forms/email/reset_password',
+                    user=user,
+                    reset_link=reset_link,
+                    next=request.args.get('next'))
         flash(f'Сброс пароля был отправлен на почту {form.email.data}', 'send-reset-password')
         return redirect(url_for('auth.login'))
-    return render_template('forms/reset_password.html', form=form)
+    return render_template('forms/reset_password_request.html', form=form)
             
 @auth.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
@@ -142,6 +148,14 @@ def reset_password(token):
         if user is None:
             flash('Проверьте правильность введенного адреса электронной почты', 'reset-pass-error')
             return redirect(url_for('auth.reset_password_request'))
+        if user.reset_password(token, form.new_password.data):
+            flash(f'Пароль обновлён для пользователя с email: {user.email}', 'send-reset-password')
+            return redirect(url_for('auth.login'))
+        else:
+            flash(f'Неверная ссылка на обновление пароля', 'send-reset-password')
+            return redirect(url_for('auth.login'))
+    return render_template('forms/reset_password.html', form=form)
+
         
 
 @auth.route("/google-login")
