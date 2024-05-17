@@ -24,6 +24,7 @@ requests = "^2.31.0"
 pyopenssl = "^24.1.0"
 itsdangerous = "^2.2.0"
 flask-mailman = "^1.1.0"
+setuptools = "^69.5.1"
 
 
 [build-system]

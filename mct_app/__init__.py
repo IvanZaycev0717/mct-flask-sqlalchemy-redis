@@ -9,6 +9,7 @@ from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_mailman import Mail
 
+
 load_dotenv()
 
 class Base(DeclarativeBase):
@@ -31,15 +32,17 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
-    admin.init_app(app)
+    
+    
     
     with app.app_context():
         db.create_all()
 
-    # blueprints register
     from mct_app.auth.views import auth
     app.register_blueprint(auth)
     from mct_app.site.views import site
     app.register_blueprint(site)
+    from mct_app.auth.models import MyAdminIndexView
+    admin.init_app(app, index_view=MyAdminIndexView())
 
     return app

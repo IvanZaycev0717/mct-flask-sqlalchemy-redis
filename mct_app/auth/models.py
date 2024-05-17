@@ -4,13 +4,16 @@ import json
 from typing import List, Optional
 import os
 
+from flask import abort, redirect, url_for, request
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from itsdangerous import BadSignature
 from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user, AnonymousUserMixin
 from flask_admin.contrib.sqla import ModelView
+import flask_admin
+from flask_admin import helpers, expose
 
 from mct_app import db, login_manager, admin
 
@@ -24,9 +27,12 @@ class User(UserMixin, db.Model):
     phone: Mapped[str] = mapped_column(String(12), unique=True, nullable=True)
     has_social_account: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    roles: Mapped[List['UserRole']] = relationship(back_populates="user")
+    roles: Mapped[List['UserRole']] = relationship(back_populates='user')
     user_sessions: Mapped[List['UserSession']] = relationship(back_populates="user")
     social_account: Mapped['SocialAccount'] = relationship(back_populates="user")
+
+    def is_admin(self):
+        return self.roles[0].role_id == 1
 
     @property
     def password(self):
@@ -64,6 +70,12 @@ class User(UserMixin, db.Model):
     def generate_password_reset_token(self):
         s = URLSafeTimedSerializer(os.environ['SECRET_KEY'])
         return s.dumps({'reset': self.id})
+
+    def __repr__(self) -> str:
+        return self.username
+
+    def __str__(self) -> str:
+        return self.username
         
 
 class UserRole(db.Model):
@@ -158,22 +170,44 @@ class SocialAccount(db.Model):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'))
     user: Mapped['User'] = relationship(back_populates='social_account')
 
+class AnonymousUser(AnonymousUserMixin):
+
+    def is_anonymous(self):
+        return True
+
+    def is_admin(self):
+        return False
+
+login_manager.anonymous_user = AnonymousUser
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-class UserView(ModelView):
+
+class AccessView(ModelView):
+    def is_accessible(self):
+        return current_user.is_admin()
+
+
+class MyAdminIndexView(flask_admin.AdminIndexView):
+    @expose('/')
+    def index(self):
+        if not current_user.is_admin():
+            abort(403)
+        return super(MyAdminIndexView, self).index()
+        
+
+class UserView(AccessView):
     column_list = ['id', 'username', 'email', 'phone', 'has_social_account']
 
-class UserSessionView(ModelView):
+class UserSessionView(AccessView):
     can_delete = False
     can_edit = False
     can_create = False
 
-
 admin.add_view(UserView(User, db.session))
-admin.add_view(ModelView(Role, db.session))
-admin.add_view(ModelView(Permission, db.session))
+admin.add_view(UserSessionView(Role, db.session))
+admin.add_view(UserSessionView(Permission, db.session))
 admin.add_view(UserSessionView(UserSession, db.session))
-admin.add_view(ModelView(SocialAccount, db.session))
+admin.add_view(UserSessionView(SocialAccount, db.session))

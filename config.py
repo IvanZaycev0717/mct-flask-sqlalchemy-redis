@@ -41,6 +41,7 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('PASS_2')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
+    FLASK_ADMIN_SWATCH = os.environ.get('FLASK_ADMIN_SWATCH')
 
 
 class ProductionConfig(Config):

@@ -9,6 +9,7 @@ from mct_app.site.models import Image
 app = create_app()
 migrate = Migrate(app, db)
 
+
 @app.shell_context_processor
 def make_shell_context():
     return {'app': app, 'db': db,
