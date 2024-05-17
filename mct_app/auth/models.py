@@ -10,8 +10,9 @@ from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select, J
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
+from flask_admin.contrib.sqla import ModelView
 
-from mct_app import db, login_manager
+from mct_app import db, login_manager, admin
 
 class User(UserMixin, db.Model):
     __tablename__ = "user"
@@ -64,7 +65,6 @@ class User(UserMixin, db.Model):
         s = URLSafeTimedSerializer(os.environ['SECRET_KEY'])
         return s.dumps({'reset': self.id})
         
-
 
 class UserRole(db.Model):
     __tablename__ = 'user_role'
@@ -162,3 +162,18 @@ class SocialAccount(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+class UserView(ModelView):
+    column_list = ['id', 'username', 'email', 'phone', 'has_social_account']
+
+class UserSessionView(ModelView):
+    can_delete = False
+    can_edit = False
+    can_create = False
+
+
+admin.add_view(UserView(User, db.session))
+admin.add_view(ModelView(Role, db.session))
+admin.add_view(ModelView(Permission, db.session))
+admin.add_view(UserSessionView(UserSession, db.session))
+admin.add_view(ModelView(SocialAccount, db.session))

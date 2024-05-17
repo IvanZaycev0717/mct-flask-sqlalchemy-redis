@@ -18,6 +18,7 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 mail = Mail()
 login_manager = LoginManager()
+admin = Admin()
 
 
 def create_app():
@@ -30,6 +31,7 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+    admin.init_app(app)
     
     with app.app_context():
         db.create_all()
