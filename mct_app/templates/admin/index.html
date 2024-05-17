@@ -1,5 +1,15 @@
 {% extends 'admin/master.html' %}
 
+
 {% block body %}
-<h1>Админ панель</h1>
+  <h1>Админ панель</h1>
+  <div class="container" style="text-align: center; margin-top: 5em;">
+      <img src="../../static/er/er.png" width="500" height="500" onclick="enlargeImg()" id="img1">
+      <button onclick="resetImg()">Reset</button>
+  </div>
+{% endblock %}
+
+{% block tail_js %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 {% endblock %}

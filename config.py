@@ -16,11 +16,13 @@ SOICAL_MEDIA_LINKS = {
     'WhatsApp': r'https://www.whatsapp.com/?lang=ru_RU'
 }
 
+
 class Is(IntEnum):
     ADMIN = 1
     CONTENT_MANAGER = 2
     DOCTOR = 3
     PATIENT = 4
+
 
 class SocialPlatform(StrEnum):
     GOOGLE = '(Google)'
@@ -56,7 +58,6 @@ class StagingConfig(Config):
 class DevelopmentConfig(Config):
     DEBUG = True
     ASSETS_DEBUG = True
-
 
 
 class TestingConfig(Config):

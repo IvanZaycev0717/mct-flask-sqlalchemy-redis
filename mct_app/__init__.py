@@ -1,7 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, request, session, url_for
 from flask_admin import Admin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -19,7 +19,7 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 mail = Mail()
 login_manager = LoginManager()
-admin = Admin()
+admin = Admin(template_mode='bootstrap4')
 
 
 def create_app():

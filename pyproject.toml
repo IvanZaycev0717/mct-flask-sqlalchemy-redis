@@ -10,7 +10,6 @@ readme = "README.md"
 python = "^3.12"
 flask = "^3.0.3"
 python-dotenv = "^1.0.1"
-flask-admin = "^1.6.1"
 flask-sqlalchemy = "^3.1.1"
 flask-migrate = "^4.0.7"
 pytest = "^8.1.1"
@@ -25,6 +24,7 @@ pyopenssl = "^24.1.0"
 itsdangerous = "^2.2.0"
 flask-mailman = "^1.1.0"
 setuptools = "^69.5.1"
+flask-admin = "^1.6.1"
 
 
 [build-system]

@@ -1,38 +1,47 @@
 import csv
 import datetime
-import json
 from typing import List, Optional
 import os
 
-from flask import abort, redirect, url_for, request
+from flask import abort, url_for
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from itsdangerous import BadSignature
-from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select, JSON
+from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin, current_user, AnonymousUserMixin
 from flask_admin.contrib.sqla import ModelView
 import flask_admin
-from flask_admin import helpers, expose
+from flask_admin import expose
+from config import Is
 
 from mct_app import db, login_manager, admin
+
 
 class User(UserMixin, db.Model):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    username: Mapped[str] = mapped_column(String(45), unique=True, nullable=False)
+    username: Mapped[str] = mapped_column(
+        String(45),
+        unique=True,
+        nullable=False
+        )
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     email: Mapped[str] = mapped_column(String(120), nullable=False)
     phone: Mapped[str] = mapped_column(String(12), unique=True, nullable=True)
     has_social_account: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    roles: Mapped[List['UserRole']] = relationship(back_populates='user')
-    user_sessions: Mapped[List['UserSession']] = relationship(back_populates="user")
-    social_account: Mapped['SocialAccount'] = relationship(back_populates="user")
+    roles: Mapped[List['UserRole']] = relationship(back_populates='user', cascade="all, delete-orphan")
+    user_sessions: Mapped[List['UserSession']] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+        )
+    social_account: Mapped['SocialAccount'] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+        )
 
     def is_admin(self):
-        return self.roles[0].role_id == 1
+        return self.roles[0].role_id == Is.ADMIN
 
     @property
     def password(self):
@@ -46,7 +55,8 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
     
     def create_admin():
-        if not User.query.filter_by(username=os.environ.get('ADMIN_NAME')).first():
+        if not User.query.filter_by(username=os.environ.get('ADMIN_NAME')
+                                    ).first():
             admin = User(
                 username=os.environ.get('ADMIN_NAME'),
                 password=os.environ.get('ADMIN_PASS'),
@@ -158,8 +168,8 @@ class UserSession(db.Model):
     ip_address: Mapped[str] = mapped_column(String(45), nullable=True)
     last_activity: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     attendance: Mapped[datetime] = mapped_column(Integer, nullable=False)
+    user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('user.id'))
 
-    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey('user.id'))
     user: Mapped[List['User']] = relationship(back_populates='user_sessions')
 
 class SocialAccount(db.Model):
@@ -168,6 +178,7 @@ class SocialAccount(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     platform: Mapped[str] = mapped_column(String, nullable=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'))
+
     user: Mapped['User'] = relationship(back_populates='social_account')
 
 class AnonymousUser(AnonymousUserMixin):
@@ -186,8 +197,11 @@ def load_user(user_id):
 
 
 class AccessView(ModelView):
+
     def is_accessible(self):
         return current_user.is_admin()
+    
+
 
 
 class MyAdminIndexView(flask_admin.AdminIndexView):
@@ -196,7 +210,8 @@ class MyAdminIndexView(flask_admin.AdminIndexView):
         if not current_user.is_admin():
             abort(403)
         return super(MyAdminIndexView, self).index()
-        
+    
+
 
 class UserView(AccessView):
     column_list = ['id', 'username', 'email', 'phone', 'has_social_account']
@@ -205,6 +220,7 @@ class UserSessionView(AccessView):
     can_delete = False
     can_edit = False
     can_create = False
+
 
 admin.add_view(UserView(User, db.session))
 admin.add_view(UserSessionView(Role, db.session))
