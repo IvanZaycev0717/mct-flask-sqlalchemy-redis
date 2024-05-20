@@ -223,10 +223,6 @@ class MyAdminIndexView(flask_admin.AdminIndexView):
             abort(403)
         return super(MyAdminIndexView, self).index()
 
-    def get_admin_menu(self):
-        menu = super(MyAdminIndexView, self).get_admin_menu()
-        menu.append(MenuLink(name='Go to Main Page', url='/'))
-        return menu
 
 
 class UserView(AccessView):
@@ -254,6 +250,7 @@ class UserRoleView(AccessView):
     column_sortable_list = ['user.id', 'user.username', 'role.name']
     column_searchable_list = ['user.id', 'user.username']
     form_create_rules = ('user', 'role')
+    form_edit_rules = ('user', 'role')
 
 class UserSessionView(AccessView):
     column_list = ['user.id', 'user.username', 'last_activity', 'attendance', 'ip_address']
@@ -263,7 +260,7 @@ class UserSessionView(AccessView):
     can_edit = False
     can_create = False
 
-
+admin.add_link(MenuLink(name='На сайт', url='/'))
 admin.add_view(UserView(User, db.session, 'Пользователи'))
 admin.add_view(UserSessionView(UserSession, db.session, 'Сессии'))
 admin.add_view(UserRoleView(UserRole, db.session, 'Роли пользователей'))

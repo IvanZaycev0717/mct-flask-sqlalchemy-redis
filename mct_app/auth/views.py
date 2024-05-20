@@ -384,3 +384,5 @@ def _update_user_session(user):
         else:
             user_session.attendance += 1
         db.session.commit()
+    else:
+        _create_user_session(user)
