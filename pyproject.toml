@@ -25,6 +25,7 @@ itsdangerous = "^2.2.0"
 flask-mailman = "^1.1.0"
 setuptools = "^69.5.1"
 flask-admin = "^1.6.1"
+wtforms-alchemy = "^0.18.0"
 
 
 [build-system]

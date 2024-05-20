@@ -13,7 +13,12 @@ from flask_login import UserMixin, current_user, AnonymousUserMixin
 from flask_admin.contrib.sqla import ModelView
 import flask_admin
 from flask_admin import expose
+from wtforms import SelectField, StringField
+from wtforms_alchemy import ModelForm
+from wtforms_alchemy.fields import QuerySelectMultipleField
 from config import Is
+from flask_admin.form import SecureForm
+from wtforms.validators import DataRequired
 
 from mct_app import db, login_manager, admin
 
@@ -80,12 +85,14 @@ class User(UserMixin, db.Model):
     def generate_password_reset_token(self):
         s = URLSafeTimedSerializer(os.environ['SECRET_KEY'])
         return s.dumps({'reset': self.id})
+    
+
 
     def __repr__(self) -> str:
-        return self.username
+        return f'{self.id} {self.username}'
 
     def __str__(self) -> str:
-        return self.username
+        return f'{self.id} {self.username}'
         
 
 class UserRole(db.Model):
@@ -122,6 +129,12 @@ class Role(db.Model):
                     roles = Role(name=name)
                     db.session.add(roles)
             db.session.commit()
+    
+    def __repr__(self) -> str:
+        return f'{self.id} {self.name}'
+    
+    def __str__(self) -> str:
+        return f'{self.id} {self.name}'
 
 
 class RolePermission(db.Model):
@@ -200,8 +213,6 @@ class AccessView(ModelView):
 
     def is_accessible(self):
         return current_user.is_admin()
-    
-
 
 
 class MyAdminIndexView(flask_admin.AdminIndexView):
@@ -210,20 +221,34 @@ class MyAdminIndexView(flask_admin.AdminIndexView):
         if not current_user.is_admin():
             abort(403)
         return super(MyAdminIndexView, self).index()
-    
 
 
 class UserView(AccessView):
-    column_list = ['id', 'username', 'email', 'phone', 'has_social_account']
+    column_display_pk = True
+    column_exclude_list = ['password_hash', ]
+    def scaffold_form(self):
+        form_class = super(UserView, self).scaffold_form()
+        form_class.extra = QuerySelectMultipleField(label='Roles', query_factory=lambda: Role.query.all(), validators=[DataRequired()])
+        return form_class
+
+    def on_model_change(self, form, model: User, is_created: bool) -> None:
+        user_role = UserRole()
+        user_role.role = form.extra.data[0]
+        model.roles.clear()
+        model.roles.append(user_role)
+        super(UserView, self).on_model_change(form, model, is_created)
+
+class UserRoleView(AccessView):
+    column_list = ['user.id', 'user.username', 'role.name']
+    form_create_rules = ('user', 'role')
 
 class UserSessionView(AccessView):
+    column_list = ['user.id', 'user.username', 'last_activity', 'attendance', 'ip_address']
     can_delete = False
     can_edit = False
     can_create = False
 
 
-admin.add_view(UserView(User, db.session))
-admin.add_view(UserSessionView(Role, db.session))
-admin.add_view(UserSessionView(Permission, db.session))
-admin.add_view(UserSessionView(UserSession, db.session))
-admin.add_view(UserSessionView(SocialAccount, db.session))
+admin.add_view(UserView(User, db.session, 'Пользователи'))
+admin.add_view(UserSessionView(UserSession, db.session, 'Сессии'))
+admin.add_view(UserRoleView(UserRole, db.session, 'Роли пользователей'))

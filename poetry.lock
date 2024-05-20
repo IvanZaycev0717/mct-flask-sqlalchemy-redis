@@ -578,6 +578,19 @@ files = [
 ]
 
 [[package]]
+name = "infinity"
+version = "1.5"
+description = "All-in-one infinity value for Python. Can be compared to any object."
+optional = false
+python-versions = "*"
+files = [
+    {file = "infinity-1.5.tar.gz", hash = "sha256:8daa7c15ce2100fdccfde212337e0cd5cf085869f54dc2634b6c30d61461ecda"},
+]
+
+[package.extras]
+test = ["Pygments (>=1.2)", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pytest (>=2.2.3)", "six (>=1.4.1)"]
+
+[[package]]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
@@ -587,6 +600,23 @@ files = [
     {file = "iniconfig-2.0.0-py3-none-any.whl", hash = "sha256:b6a85871a79d2e3b22d2d1b94ac2824226a63c6b741c88f7ae975f18b6778374"},
     {file = "iniconfig-2.0.0.tar.gz", hash = "sha256:2d91e135bf72d31a410b17c16da610a82cb55f6b0477d1a902134b24a455b8b3"},
 ]
+
+[[package]]
+name = "intervals"
+version = "0.9.2"
+description = "Python tools for handling intervals (ranges of comparable objects)."
+optional = false
+python-versions = "*"
+files = [
+    {file = "intervals-0.9.2-py3-none-any.whl", hash = "sha256:7c963abf7b4be2be40322b84e036af5d4ebec0945b5d29df7da1a638b3fea768"},
+    {file = "intervals-0.9.2.tar.gz", hash = "sha256:c7ee568c583ca857c0d91af6d90ee5e0e8adef3f5646d0076bfb87305ae43090"},
+]
+
+[package.dependencies]
+infinity = ">=0.1.3"
+
+[package.extras]
+test = ["Pygments (>=1.2)", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pytest (>=2.2.3)"]
 
 [[package]]
 name = "itsdangerous"
@@ -916,6 +946,17 @@ testing = ["build[virtualenv]", "filelock (>=3.4.0)", "importlib-metadata", "ini
 testing-integration = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "packaging (>=23.2)", "pytest", "pytest-enabler", "pytest-xdist", "tomli", "virtualenv (>=13.0.0)", "wheel"]
 
 [[package]]
+name = "six"
+version = "1.16.0"
+description = "Python 2 and 3 compatibility utilities"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+files = [
+    {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
+    {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
+
+[[package]]
 name = "sqlalchemy"
 version = "2.0.29"
 description = "Database Abstraction Library"
@@ -1003,6 +1044,34 @@ pymysql = ["pymysql"]
 sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
+name = "sqlalchemy-utils"
+version = "0.41.2"
+description = "Various utility functions for SQLAlchemy."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "SQLAlchemy-Utils-0.41.2.tar.gz", hash = "sha256:bc599c8c3b3319e53ce6c5c3c471120bd325d0071fb6f38a10e924e3d07b9990"},
+    {file = "SQLAlchemy_Utils-0.41.2-py3-none-any.whl", hash = "sha256:85cf3842da2bf060760f955f8467b87983fb2e30f1764fd0e24a48307dc8ec6e"},
+]
+
+[package.dependencies]
+SQLAlchemy = ">=1.3"
+
+[package.extras]
+arrow = ["arrow (>=0.3.4)"]
+babel = ["Babel (>=1.3)"]
+color = ["colour (>=0.0.4)"]
+encrypted = ["cryptography (>=0.6)"]
+intervals = ["intervals (>=0.7.1)"]
+password = ["passlib (>=1.6,<2.0)"]
+pendulum = ["pendulum (>=2.0.5)"]
+phone = ["phonenumbers (>=5.9.2)"]
+test = ["Jinja2 (>=2.3)", "Pygments (>=1.2)", "backports.zoneinfo", "docutils (>=0.10)", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "isort (>=4.2.2)", "pg8000 (>=1.12.4)", "psycopg (>=3.1.8)", "psycopg2 (>=2.5.1)", "psycopg2cffi (>=2.8.1)", "pymysql", "pyodbc", "pytest (==7.4.4)", "python-dateutil (>=2.6)", "pytz (>=2014.2)"]
+test-all = ["Babel (>=1.3)", "Jinja2 (>=2.3)", "Pygments (>=1.2)", "arrow (>=0.3.4)", "backports.zoneinfo", "colour (>=0.0.4)", "cryptography (>=0.6)", "docutils (>=0.10)", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "furl (>=0.4.1)", "intervals (>=0.7.1)", "isort (>=4.2.2)", "passlib (>=1.6,<2.0)", "pendulum (>=2.0.5)", "pg8000 (>=1.12.4)", "phonenumbers (>=5.9.2)", "psycopg (>=3.1.8)", "psycopg2 (>=2.5.1)", "psycopg2cffi (>=2.8.1)", "pymysql", "pyodbc", "pytest (==7.4.4)", "python-dateutil", "python-dateutil (>=2.6)", "pytz (>=2014.2)"]
+timezone = ["python-dateutil"]
+url = ["furl (>=0.4.1)"]
+
+[[package]]
 name = "typing-extensions"
 version = "4.11.0"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -1029,6 +1098,17 @@ brotli = ["brotli (>=1.0.9)", "brotlicffi (>=0.8.0)"]
 h2 = ["h2 (>=4,<5)"]
 socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
+
+[[package]]
+name = "validators"
+version = "0.28.1"
+description = "Python Data Validation for Humans™"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "validators-0.28.1-py3-none-any.whl", hash = "sha256:890c98789ad884037f059af6ea915ec2d667129d509180c2c590b8009a4c4219"},
+    {file = "validators-0.28.1.tar.gz", hash = "sha256:5ac88e7916c3405f0ce38ac2ac82a477fcf4d90dbbeddd04c8193171fc17f7dc"},
+]
 
 [[package]]
 name = "werkzeug"
@@ -1064,7 +1144,58 @@ markupsafe = "*"
 [package.extras]
 email = ["email-validator"]
 
+[[package]]
+name = "wtforms-alchemy"
+version = "0.18.0"
+description = "Generates WTForms forms from SQLAlchemy models."
+optional = false
+python-versions = "*"
+files = [
+    {file = "WTForms-Alchemy-0.18.0.tar.gz", hash = "sha256:7748494056bdd96a7566186b8f422180465c337b2e892ad8e82a063cd6c76ca7"},
+    {file = "WTForms_Alchemy-0.18.0-py3-none-any.whl", hash = "sha256:c14cec7f76e27351a5777182ff39fcba64b7c46a561401835426605e6c83f216"},
+]
+
+[package.dependencies]
+SQLAlchemy = ">=1.0"
+SQLAlchemy-Utils = ">=0.32.6"
+WTForms = ">=2.2"
+WTForms-Components = ">=0.9.2"
+
+[package.extras]
+arrow = ["arrow (>=0.3.4)"]
+babel = ["Babel (>=1.3)"]
+color = ["colour (>=0.0.4)"]
+i18n = ["SQLAlchemy-i18n (>=0.8.2)"]
+intervals = ["intervals (>=0.2.0)"]
+password = ["passlib (>=1.6,<2.0)"]
+phone = ["phonenumbers (>=5.9.2)"]
+test = ["Babel (>=1.3)", "Jinja2 (>=2.3)", "Pygments (>=1.2)", "SQLAlchemy-i18n (>=0.8.2)", "WTForms-Test (>=0.1.1)", "arrow (>=0.3.4)", "colour (>=0.0.4)", "docutils (>=0.10)", "enum34", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "intervals (>=0.2.0)", "isort (>=3.9.6)", "natsort (==3.5.6)", "passlib (>=1.6,<2.0)", "phonenumbers (>=5.9.2)", "pytest (>=2.3)", "python-dateutil"]
+timezone = ["python-dateutil"]
+
+[[package]]
+name = "wtforms-components"
+version = "0.10.5"
+description = "Additional fields, validators and widgets for WTForms."
+optional = false
+python-versions = "*"
+files = [
+    {file = "WTForms_Components-0.10.5-py2.py3-none-any.whl", hash = "sha256:7d0d83dec6d5352c661e522be628f49c2de3aa78cd79c9caf0c1cc3bff4e3872"},
+]
+
+[package.dependencies]
+email-validator = ">=1.0.0"
+intervals = ">=0.6.0"
+MarkupSafe = ">=1.0.0"
+six = ">=1.4.1"
+validators = ">=0.5.0"
+WTForms = ">=1.0.4"
+
+[package.extras]
+color = ["colour (>=0.0.4)"]
+test = ["WTForms-Test (>=0.1.1)", "colour (>=0.0.4)", "flake8 (==3.8.4)", "flexmock (>=0.9.7)", "isort (==4.3.21)", "pytest (>=2.2.3)", "python-dateutil"]
+timezone = ["python-dateutil"]
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "955cf919e04e1b91aac10985ebecf37b9cf9c7c1c0cc9538e9b51c55d69cf648"
+content-hash = "451fdc5c8d8e7c0cb8e7c72b06c09293d2b12a8d831e4556cc5d9cd775805f40"

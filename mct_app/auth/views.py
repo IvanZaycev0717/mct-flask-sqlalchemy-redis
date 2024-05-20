@@ -354,7 +354,7 @@ def social_registration(name, email, social_platform):
  
         # generate user role
         user_role = UserRole()
-        user_role.role = db.session.query(Role).filter_by(name='Patient').first()
+        user_role.role = Is.PATIENT
         user.roles.append(user_role)
         db.session.add(user)
         db.session.commit()
