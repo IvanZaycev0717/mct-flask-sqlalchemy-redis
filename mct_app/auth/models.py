@@ -225,6 +225,8 @@ class MyAdminIndexView(flask_admin.AdminIndexView):
 
 class UserView(AccessView):
     column_display_pk = True
+    column_sortable_list = ['id', 'username', 'has_social_account']
+    column_searchable_list = ['id', 'username', 'email', 'phone']
     column_exclude_list = ['password_hash', ]
     def scaffold_form(self):
         form_class = super(UserView, self).scaffold_form()
@@ -240,10 +242,14 @@ class UserView(AccessView):
 
 class UserRoleView(AccessView):
     column_list = ['user.id', 'user.username', 'role.name']
+    column_sortable_list = ['user.id', 'user.username', 'role.name']
+    column_searchable_list = ['user.id', 'user.username']
     form_create_rules = ('user', 'role')
 
 class UserSessionView(AccessView):
     column_list = ['user.id', 'user.username', 'last_activity', 'attendance', 'ip_address']
+    column_sortable_list = ['user.id', 'last_activity', 'attendance']
+    column_searchable_list = ['user.id', 'user.username']
     can_delete = False
     can_edit = False
     can_create = False
