@@ -19,6 +19,7 @@ from wtforms_alchemy.fields import QuerySelectMultipleField
 from config import Is
 from flask_admin.form import SecureForm
 from wtforms.validators import DataRequired
+from flask_admin.menu import MenuLink
 
 from mct_app import db, login_manager, admin
 
@@ -222,18 +223,26 @@ class MyAdminIndexView(flask_admin.AdminIndexView):
             abort(403)
         return super(MyAdminIndexView, self).index()
 
+    def get_admin_menu(self):
+        menu = super(MyAdminIndexView, self).get_admin_menu()
+        menu.append(MenuLink(name='Go to Main Page', url='/'))
+        return menu
+
 
 class UserView(AccessView):
     column_display_pk = True
     column_sortable_list = ['id', 'username', 'has_social_account']
     column_searchable_list = ['id', 'username', 'email', 'phone']
-    column_exclude_list = ['password_hash', ]
+    column_exclude_list = ['password_hash',]
+
     def scaffold_form(self):
         form_class = super(UserView, self).scaffold_form()
+        delattr(form_class, 'has_social_account')
         form_class.extra = QuerySelectMultipleField(label='Roles', query_factory=lambda: Role.query.all(), validators=[DataRequired()])
         return form_class
 
     def on_model_change(self, form, model: User, is_created: bool) -> None:
+        model.password_hash = generate_password_hash(form.password_hash.data)
         user_role = UserRole()
         user_role.role = form.extra.data[0]
         model.roles.clear()
