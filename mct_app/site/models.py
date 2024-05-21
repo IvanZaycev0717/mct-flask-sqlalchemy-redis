@@ -7,7 +7,8 @@ class Image(db.Model):
     __tablename__ = "image"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    path: Mapped[str] = mapped_column(String(255))
+    absolute_path: Mapped[str] = mapped_column(String(255))
+    relative_path: Mapped[str] = mapped_column(String(255))
 
     news: Mapped['News'] = relationship(back_populates='image')
 
@@ -22,8 +23,8 @@ class News(db.Model):
     title: Mapped[str] = mapped_column(String(255))
     content: Mapped[str] = mapped_column(String)
     last_update: Mapped[DateTime] = mapped_column(DateTime)
-    image_id: Mapped[int] = mapped_column(ForeignKey('image.id'))
+    image_id: Mapped[int] = mapped_column(ForeignKey('image.id', ondelete='CASCADE'))
 
-    image: Mapped['Image'] = relationship(back_populates='news')
+    image: Mapped['Image'] = relationship(back_populates='news', cascade="all, delete")
 
 

@@ -56,7 +56,9 @@ class Config:
     MAIL_PASSWORD = os.environ.get('PASS_2')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
     FLASK_ADMIN_SWATCH = os.environ.get('FLASK_ADMIN_SWATCH')
-    UPLOAD_FOLDER = os.path.join(basedir, 'mct_app', 'templates', 'uploads')
+    UPLOAD_FOLDER = os.path.join(basedir, 'mct_app', 'static', 'uploads', 'news')
+    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    
 
 
 class ProductionConfig(Config):

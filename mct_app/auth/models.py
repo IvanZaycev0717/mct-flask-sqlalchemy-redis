@@ -25,6 +25,7 @@ from flask_admin.form.upload import ImageUploadField
 from config import IMAGE_REL_PATHS
 from werkzeug.utils import secure_filename
 from PIL import Image as  PillowImage, ImageOps
+from sqlalchemy.event import listens_for
 
 
 
@@ -226,86 +227,37 @@ class UserView(AccessView):
         model.roles.append(user_role)
         super(UserView, self).on_model_change(form, model, is_created)
 
-class CustomImageUploadField(ImageUploadField):
 
-    def pre_validate(self, form):
-        super(ImageUploadField, self).pre_validate(form)
-
-        if self._is_uploaded_file(self.data):
-            try:
-                self.image = PillowImage.open(self.data)
-            except Exception as e:
-                raise ValidationError('Invalid image: %s' % e)
-    
-    def _save_file(self, data, filename):
-        path = self._get_path(filename)
-
-        if not op.exists(op.dirname(path)):
-            os.makedirs(os.path.dirname(path), self.permission | 0o111)
-
-        # Figure out format
-        filename, format = self._get_save_format(filename, self.image)
-
-        if self.image:
-            if self.max_size:
-                image = self._resize(self.image, self.max_size)
-            else:
-                image = self.image
-            self._save_image(image, self._get_path(filename), format)
-        else:
-            data.seek(0)
-            data.save(self._get_path(filename))
-
-        self._save_thumbnail(data, filename, format)
-
-        return filename
-
-    def _resize(self, image, size):
-        (width, height, force) = size
-
-        if image.size[0] > width or image.size[1] > height:
-            if force:
-                return ImageOps.fit(self.image, (width, height), PillowImage.LANCZOS)
-            else:
-                thumb = self.image.copy()
-                thumb.thumbnail((width, height), PillowImage.LANCZOS)
-                return thumb
-
-        return image
-
-    def _save_image(self, image, path, format='webp'):
-        image.convert('RGB')
-        with open(path, 'wb') as fp:
-            image.save(fp, format, optimize=True, quality=90)
- 
-    def _get_save_format(self, filename, image):
-        if image.format not in self.keep_image_formats:
-            name, ext = op.splitext(filename)
-            filename = '%s.webp' % name
-            return filename, 'WEBP'
-
-        return filename, image.format
+# @listens_for(News, 'before_delete')
+# def del_image(target):
+#     if target.image_id:
+#         try:
+#             os.remove(target.image.absolute_path)
+#         except OSError:
+#             pass
 
 class NewsView(AccessView):
     column_display_pk = True
     page_size = 10
     column_formatters = {
-        'image': lambda v, c, m, p: Markup(f'<img src="{m.image.path}" width="100" height="100">')
+        'image': lambda v, c, m, p: Markup(f'<img src="{m.image.relative_path}" width="100" height="100">')
     }
 
     def scaffold_form(self):
         form_class = super(NewsView, self).scaffold_form()
         delattr(form_class, 'image')
-        form_class.extra = CustomImageUploadField(
+        form_class.extra = ImageUploadField(
             'Загрузите картинку',
             validators=[DataRequired()],
-            base_path=IMAGE_BASE_PATH['news'])
+            base_path=IMAGE_BASE_PATH['news'],
+            )
         return form_class
     
     def on_model_change(self, form, model: News, is_created: bool) -> None:
         filename = secure_filename(form.extra.data.__dict__['filename'])
-        form.extra.data.save(os.path.join(IMAGE_BASE_PATH['news'], filename))
-        my_image = MyImage(path=os.path.join(IMAGE_REL_PATHS['news'], filename))
+        my_image = MyImage(
+            absolute_path=os.path.join(IMAGE_BASE_PATH['news'], filename),
+            relative_path=os.path.join(IMAGE_REL_PATHS['news'], filename))
         model.image = my_image
         super(NewsView, self).on_model_change(form, model, is_created)
 
