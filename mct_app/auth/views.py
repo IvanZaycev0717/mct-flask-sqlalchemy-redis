@@ -66,8 +66,6 @@ def registration():
 
         _create_user_session(user)
         login_user(user)
-        # Success message
-        flash('Вы успешно зарегистрировались на сайте')
         return redirect(url_for('auth.profile', username=user.username))
     return render_template('forms/registration.html', form=form)
 
@@ -354,7 +352,7 @@ def social_registration(name, email, social_platform):
  
         # generate user role
         user_role = UserRole()
-        user_role.role = Is.PATIENT
+        user_role.role_id = Is.PATIENT
         user.roles.append(user_role)
         db.session.add(user)
         db.session.commit()

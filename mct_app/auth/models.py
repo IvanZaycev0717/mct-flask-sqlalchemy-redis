@@ -2,10 +2,13 @@ import csv
 import datetime
 from typing import List, Optional
 import os
+import os.path as op
 
-from flask import abort, url_for
+
+from flask import abort
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from itsdangerous import BadSignature
+from markupsafe import Markup
 from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -13,15 +16,20 @@ from flask_login import UserMixin, current_user, AnonymousUserMixin
 from flask_admin.contrib.sqla import ModelView
 import flask_admin
 from flask_admin import expose
-from wtforms import SelectField, StringField
-from wtforms_alchemy import ModelForm
+from wtforms import ValidationError
 from wtforms_alchemy.fields import QuerySelectMultipleField
-from config import Is
-from flask_admin.form import SecureForm
+from config import IMAGE_BASE_PATH, Is
 from wtforms.validators import DataRequired
 from flask_admin.menu import MenuLink
+from flask_admin.form.upload import ImageUploadField
+from config import IMAGE_REL_PATHS
+from werkzeug.utils import secure_filename
+from PIL import Image as  PillowImage, ImageOps
+
+
 
 from mct_app import db, login_manager, admin
+from mct_app.site.models import News, Image as MyImage
 
 
 class User(UserMixin, db.Model):
@@ -48,6 +56,15 @@ class User(UserMixin, db.Model):
 
     def is_admin(self):
         return self.roles[0].role_id == Is.ADMIN
+
+    def is_content_manager(self):
+        return self.roles[0].role_id == Is.CONTENT_MANAGER
+    
+    def is_doctor(self):
+        return self.roles[0].role_id == Is.DOCTOR
+    
+    def is_patient(self):
+        return self.roles[0].role_id == Is.PATIENT
 
     @property
     def password(self):
@@ -82,12 +99,10 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         db.session.commit()
         return True
-    
+
     def generate_password_reset_token(self):
         s = URLSafeTimedSerializer(os.environ['SECRET_KEY'])
         return s.dumps({'reset': self.id})
-    
-
 
     def __repr__(self) -> str:
         return f'{self.id} {self.username}'
@@ -108,7 +123,7 @@ class UserRole(db.Model):
         if not UserRole.query.filter_by(user_id=db.session.scalar(select(User.id).where(User.username == os.environ.get('ADMIN_NAME')))).first():
             admin_role = UserRole(
                 user_id = db.session.scalar(select(User.id).where(User.username == os.environ.get('ADMIN_NAME'))),
-                role_id = db.session.scalar(select(Role.id).where(Role.name == 'Admin')))
+                role_id = db.session.scalar(select(Role.id).where(Role.id==Is.ADMIN)))
             db.session.add(admin_role)
             db.session.commit()
 
@@ -117,8 +132,9 @@ class Role(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    description: Mapped[str] = mapped_column(String, nullable=False)
+
     users: Mapped[List['UserRole']] = relationship(back_populates='role')
-    permissions: Mapped[List['RolePermission']] = relationship()
 
     @staticmethod
     def insert_roles(csv_file_path):
@@ -126,54 +142,19 @@ class Role(db.Model):
             data = csv.reader(csvfile)
             for role in data:
                 name = role[0]
+                description = role[1]
                 if not Role.query.filter_by(name=name).first():
-                    roles = Role(name=name)
+                    roles = Role(name=name, description=description)
                     db.session.add(roles)
             db.session.commit()
-    
+
     def __repr__(self) -> str:
         return f'{self.id} {self.name}'
-    
+
     def __str__(self) -> str:
         return f'{self.id} {self.name}'
 
 
-class RolePermission(db.Model):
-    __tablename__ = 'role_permission'
-    role_id: Mapped[int] = mapped_column(ForeignKey('role.id'), primary_key=True)
-    permission_id: Mapped[int] = mapped_column(ForeignKey('permission.id'), primary_key=True)
-    permission: Mapped['Permission'] = relationship()
-
-    @staticmethod
-    def insert_roles_permissions(csv_file_path):
-        if not RolePermission.query.first():
-            with open(csv_file_path, mode='r', encoding='utf-8') as csvfile:
-                data = csv.reader(csvfile)
-                for role_id, permission_id in data:
-                        roles_permissions = RolePermission()
-                        roles_permissions.role_id = role_id
-                        roles_permissions.permission_id = permission_id
-                        db.session.add(roles_permissions)
-                db.session.commit()
-
-class Permission(db.Model):
-    __tablename__ = 'permission'
-    
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(45))
-    description: Mapped[str] = mapped_column(String(255))
-
-    @staticmethod
-    def insert_permissions(csv_file_path):
-        with open(csv_file_path, mode='r', encoding='utf-8') as csvfile:
-            data = csv.reader(csvfile)
-            for name, description in data:
-                if not Permission.query.filter_by(name=name).first():
-                    permissions = Permission()
-                    permissions.name = name
-                    permissions.description = description
-                    db.session.add(permissions)
-            db.session.commit()
 
 class UserSession(db.Model):
     __tablename__ = 'session'
@@ -245,6 +226,90 @@ class UserView(AccessView):
         model.roles.append(user_role)
         super(UserView, self).on_model_change(form, model, is_created)
 
+class CustomImageUploadField(ImageUploadField):
+
+    def pre_validate(self, form):
+        super(ImageUploadField, self).pre_validate(form)
+
+        if self._is_uploaded_file(self.data):
+            try:
+                self.image = PillowImage.open(self.data)
+            except Exception as e:
+                raise ValidationError('Invalid image: %s' % e)
+    
+    def _save_file(self, data, filename):
+        path = self._get_path(filename)
+
+        if not op.exists(op.dirname(path)):
+            os.makedirs(os.path.dirname(path), self.permission | 0o111)
+
+        # Figure out format
+        filename, format = self._get_save_format(filename, self.image)
+
+        if self.image:
+            if self.max_size:
+                image = self._resize(self.image, self.max_size)
+            else:
+                image = self.image
+            self._save_image(image, self._get_path(filename), format)
+        else:
+            data.seek(0)
+            data.save(self._get_path(filename))
+
+        self._save_thumbnail(data, filename, format)
+
+        return filename
+
+    def _resize(self, image, size):
+        (width, height, force) = size
+
+        if image.size[0] > width or image.size[1] > height:
+            if force:
+                return ImageOps.fit(self.image, (width, height), PillowImage.LANCZOS)
+            else:
+                thumb = self.image.copy()
+                thumb.thumbnail((width, height), PillowImage.LANCZOS)
+                return thumb
+
+        return image
+
+    def _save_image(self, image, path, format='webp'):
+        image.convert('RGB')
+        with open(path, 'wb') as fp:
+            image.save(fp, format, optimize=True, quality=90)
+ 
+    def _get_save_format(self, filename, image):
+        if image.format not in self.keep_image_formats:
+            name, ext = op.splitext(filename)
+            filename = '%s.webp' % name
+            return filename, 'WEBP'
+
+        return filename, image.format
+
+class NewsView(AccessView):
+    column_display_pk = True
+    page_size = 10
+    column_formatters = {
+        'image': lambda v, c, m, p: Markup(f'<img src="{m.image.path}" width="100" height="100">')
+    }
+
+    def scaffold_form(self):
+        form_class = super(NewsView, self).scaffold_form()
+        delattr(form_class, 'image')
+        form_class.extra = CustomImageUploadField(
+            'Загрузите картинку',
+            validators=[DataRequired()],
+            base_path=IMAGE_BASE_PATH['news'])
+        return form_class
+    
+    def on_model_change(self, form, model: News, is_created: bool) -> None:
+        filename = secure_filename(form.extra.data.__dict__['filename'])
+        form.extra.data.save(os.path.join(IMAGE_BASE_PATH['news'], filename))
+        my_image = MyImage(path=os.path.join(IMAGE_REL_PATHS['news'], filename))
+        model.image = my_image
+        super(NewsView, self).on_model_change(form, model, is_created)
+
+
 class UserRoleView(AccessView):
     column_list = ['user.id', 'user.username', 'role.name']
     column_sortable_list = ['user.id', 'user.username', 'role.name']
@@ -264,3 +329,4 @@ admin.add_link(MenuLink(name='На сайт', url='/'))
 admin.add_view(UserView(User, db.session, 'Пользователи'))
 admin.add_view(UserSessionView(UserSession, db.session, 'Сессии'))
 admin.add_view(UserRoleView(UserRole, db.session, 'Роли пользователей'))
+admin.add_view(NewsView(News, db.session, 'Новости'))

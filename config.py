@@ -5,9 +5,21 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 CSV_FILE_PATHS = {
     'roles': os.path.join(basedir, 'csv', 'roles.csv'),
-    'roles_permissions': os.path.join(basedir, 'csv', 'roles_permissions.csv'),
-    'permissions': os.path.join(basedir, 'csv', 'permissions.csv')
 }
+
+
+IMAGE_BASE_PATH = {
+    'news': os.path.join(basedir, 'mct_app', 'static', 'uploads', 'news'),
+    'articles': os.path.join(basedir, 'mct_app', 'static', 'uploads', 'articles'),
+    'textbook': os.path.join(basedir, 'mct_app', 'static', 'uploads', 'textbook'),
+}
+
+IMAGE_REL_PATHS = {
+    'news': os.path.join('..', '..', '..', 'static', 'uploads', 'news'),
+    'articles': os.path.join('..', '..', '..', 'static', 'uploads', 'articles'),
+    'textbook': os.path.join('..', '..', '..', 'static', 'uploads', 'textbook'),
+}
+
 
 SOICAL_MEDIA_LINKS = {
     'GitHub': r'https://github.com/IvanZaycev0717/mct-flask-sqlalchemy-redis',
@@ -44,6 +56,7 @@ class Config:
     MAIL_PASSWORD = os.environ.get('PASS_2')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
     FLASK_ADMIN_SWATCH = os.environ.get('FLASK_ADMIN_SWATCH')
+    UPLOAD_FOLDER = os.path.join(basedir, 'mct_app', 'templates', 'uploads')
 
 
 class ProductionConfig(Config):

@@ -1,8 +1,8 @@
 from mct_app import create_app, db, mail
 from flask_migrate import Migrate
 from config import CSV_FILE_PATHS
-from mct_app.auth.models import Role, Permission, RolePermission, User, UserRole
-from mct_app.site.models import Image
+from mct_app.auth.models import Role, User, UserRole
+from mct_app.site.models import Image, News
 
 
 
@@ -17,7 +17,7 @@ def make_shell_context():
             'recreate_db': recreate_db,
             'User': User,
             'Image': Image,
-            'mail': mail}
+            'news': News}
 
 def recreate_db():
     db.drop_all()
@@ -27,8 +27,6 @@ def recreate_db():
 
 def general_setup():
     Role.insert_roles(CSV_FILE_PATHS.get('roles'))
-    Permission.insert_permissions(CSV_FILE_PATHS.get('permissions'))
-    RolePermission.insert_roles_permissions(CSV_FILE_PATHS.get('roles_permissions'))
     User.create_admin()
     UserRole.create_admin_role()
 
