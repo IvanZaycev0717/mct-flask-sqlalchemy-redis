@@ -231,10 +231,23 @@ class UserView(AccessView):
 
 def generate_image_name(obj, file_data):
     image_suffix = uuid.uuid4()
-    return secure_filename(f"image_{image_suffix}.png")
+    return secure_filename(f"image_{image_suffix}")
 
 
 class CustomImageUploadField(ImageUploadField):
+
+    def _resize(self, image, size):
+        (width, height, force) = size
+
+        if image.size[0] > width or image.size[1] > height:
+            if force:
+                return ImageOps.fit(self.image, (width, height), PillowImage.Resampling.LANCZOS)
+            else:
+                thumb = self.image.copy()
+                thumb.thumbnail((width, height), PillowImage.Resampling.LANCZOS)
+                return thumb
+
+        return image
 
     def _save_image(self, image, path, format='WEBP'):
         # New Pillow versions require RGB format for JPEGs
@@ -255,13 +268,14 @@ class CustomImageUploadField(ImageUploadField):
         return filename, image.format
 
 
-# @listens_for(News, 'before_delete')
-# def del_image(target):
-#     if target.image_id:
-#         try:
-#             os.remove(target.image.absolute_path)
-#         except OSError:
-#             pass
+@listens_for(News, 'after_delete')
+def receive_after_delete(mapper, connection, target):
+    "listen for the 'after_delete' event"
+    if target:
+        try:
+            os.remove(target.image.absolute_path)
+        except OSError:
+            pass
 
 class NewsView(AccessView):
     column_display_pk = True
