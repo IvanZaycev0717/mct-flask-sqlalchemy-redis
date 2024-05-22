@@ -1,4 +1,5 @@
 import csv
+import uuid
 import datetime
 from typing import List, Optional
 import os
@@ -228,6 +229,32 @@ class UserView(AccessView):
         super(UserView, self).on_model_change(form, model, is_created)
 
 
+def generate_image_name(obj, file_data):
+    image_suffix = uuid.uuid4()
+    return secure_filename(f"image_{image_suffix}.png")
+
+
+class CustomImageUploadField(ImageUploadField):
+
+    def _save_image(self, image, path, format='WEBP'):
+        # New Pillow versions require RGB format for JPEGs
+        if format == 'JPEG' and image.mode != 'RGB':
+            image = image.convert('RGB')
+        elif image.mode not in ('RGB', 'RGBA'):
+            image = image.convert('RGBA')
+
+        with open(path, 'wb') as fp:
+            image.save(fp, format, quality=10, method=0)
+
+    def _get_save_format(self, filename, image):
+        if image.format not in self.keep_image_formats:
+            name, ext = op.splitext(filename)
+            filename = '%s.webp' % name
+            return filename, 'WEBP'
+
+        return filename, image.format
+
+
 # @listens_for(News, 'before_delete')
 # def del_image(target):
 #     if target.image_id:
@@ -246,10 +273,12 @@ class NewsView(AccessView):
     def scaffold_form(self):
         form_class = super(NewsView, self).scaffold_form()
         delattr(form_class, 'image')
-        form_class.extra = ImageUploadField(
+        form_class.extra = CustomImageUploadField(
             'Загрузите картинку',
             validators=[DataRequired()],
             base_path=IMAGE_BASE_PATH['news'],
+            namegen=generate_image_name,
+            max_size=(300, 300, True)
             )
         return form_class
     
