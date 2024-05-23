@@ -1,3 +1,11 @@
+::selection
+    background-color: #ffcc00
+
+[data-bs-theme=dark] ::selection
+    color: black
+    background-color:  #ffcc00
+    
+
 
 .navbar-expand-lg
     padding-left: 10%
@@ -78,6 +86,29 @@
 .navbar-nav > .nav-item > .nav-link.active
     background-color: #ffa600
     color: rgb(0, 0, 0)
+.nav-paginate > .pagination> .page-item > .page-link
+    color: black
+    &:hover
+        background-color: #ffcc00
+
+.nav-paginate > .pagination> .page-item.active > .page-link
+    background-color: #ffcc00
+    color: black
+    font-weight: bold
+    border-color: #ffa600
+
+[data-bs-theme=dark] .nav-paginate > .pagination> .page-item > .page-link
+    color: #ffcc00
+    &:hover
+        color: black
+        background-color: #ffcc00
+
+[data-bs-theme=dark] .nav-paginate > .pagination> .page-item.active > .page-link
+    background-color: #ffcc00
+    color: black
+    font-weight: bold
+    border-color: #ffa600
+
 
 
 .carousel-item
