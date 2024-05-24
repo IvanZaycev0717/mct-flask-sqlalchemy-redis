@@ -44,6 +44,7 @@ flow = Flow.from_client_secrets_file(
 )
 
 
+
 @auth.route('/registration', methods=['GET', 'POST'])
 def registration():
     if current_user.is_authenticated:
