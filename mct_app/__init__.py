@@ -8,6 +8,7 @@ from sqlalchemy.orm import DeclarativeBase
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_mailman import Mail
+from flask_ckeditor import CKEditor
 
 
 load_dotenv()
@@ -20,6 +21,7 @@ db = SQLAlchemy(model_class=Base)
 mail = Mail()
 login_manager = LoginManager()
 admin = Admin(template_mode='bootstrap4')
+ckeditor = CKEditor()
 
 
 def create_app():
@@ -32,6 +34,7 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+    ckeditor.init_app(app)
     
     
     

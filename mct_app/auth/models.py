@@ -6,7 +6,7 @@ import os
 import os.path as op
 
 
-from flask import abort
+from flask import abort, url_for
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from itsdangerous import BadSignature
 from markupsafe import Markup
@@ -17,7 +17,6 @@ from flask_login import UserMixin, current_user, AnonymousUserMixin
 from flask_admin.contrib.sqla import ModelView
 import flask_admin
 from flask_admin import expose
-from wtforms import ValidationError
 from wtforms_alchemy.fields import QuerySelectMultipleField
 from config import IMAGE_BASE_PATH, Is
 from wtforms.validators import DataRequired
@@ -27,11 +26,12 @@ from config import IMAGE_REL_PATHS
 from werkzeug.utils import secure_filename
 from PIL import Image as  PillowImage, ImageOps
 from sqlalchemy.event import listens_for
+from flask_ckeditor import CKEditorField
 
 
 
 from mct_app import db, login_manager, admin
-from mct_app.site.models import News, Image as MyImage
+from mct_app.site.models import News, Image as MyImage, Article
 
 
 class User(UserMixin, db.Model):
@@ -194,7 +194,7 @@ def load_user(user_id):
 
 
 class AccessView(ModelView):
-
+    
     def is_accessible(self):
         return current_user.is_admin()
 
@@ -205,6 +205,7 @@ class MyAdminIndexView(flask_admin.AdminIndexView):
         if not current_user.is_admin():
             abort(403)
         return super(MyAdminIndexView, self).index()
+
 
 
 
@@ -280,6 +281,7 @@ def receive_after_delete(mapper, connection, target):
 class NewsView(AccessView):
     column_display_pk = True
     page_size = 10
+    column_default_sort = ('id', True)
     column_formatters = {
         'image': lambda v, c, m, p: Markup(f'<img src="{m.image.relative_path}" width="100" height="100">')
     }
@@ -295,7 +297,8 @@ class NewsView(AccessView):
             max_size=(300, 300, True)
             )
         return form_class
-    
+
+
     def on_model_change(self, form, model: News, is_created: bool) -> None:
         filename = secure_filename(form.extra.data.__dict__['filename'])
         my_image = MyImage(
@@ -320,8 +323,17 @@ class UserSessionView(AccessView):
     can_edit = False
     can_create = False
 
+
+class ArticlesView(AccessView):
+    form_excluded_columns = ('images', )
+    create_template = 'admin/edit.html'
+    edit_template = 'admin/edit.html'
+    form_overrides = {'body': CKEditorField}
+
+
 admin.add_link(MenuLink(name='На сайт', url='/'))
 admin.add_view(UserView(User, db.session, 'Пользователи'))
 admin.add_view(UserSessionView(UserSession, db.session, 'Сессии'))
 admin.add_view(UserRoleView(UserRole, db.session, 'Роли пользователей'))
 admin.add_view(NewsView(News, db.session, 'Новости'))
+admin.add_view(ArticlesView(Article, db.session, 'Статьи'))

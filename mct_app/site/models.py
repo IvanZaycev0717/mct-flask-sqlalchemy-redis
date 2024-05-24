@@ -1,5 +1,10 @@
-from sqlalchemy import DateTime, Integer, String, ForeignKey
+from datetime import datetime
+from typing import List, Optional
+
+
+from sqlalchemy import DateTime, Integer, String, ForeignKey, UnicodeText, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 
 from mct_app import db
 
@@ -11,18 +16,36 @@ class Image(db.Model):
     relative_path: Mapped[str] = mapped_column(String(255))
 
     news: Mapped['News'] = relationship(back_populates='image')
+    articles: Mapped[List['ArticleImage']] = relationship(back_populates='image')
 
 class Article(db.Model):
     __tablename__ = 'article'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    title: Mapped[str] = mapped_column(String(255))
+    body: Mapped[str] = mapped_column(UnicodeText)
+    last_update: Mapped[datetime] = mapped_column(DateTime)
+
+    images: Mapped[List['ArticleImage']] = relationship(back_populates='article')
+
+
+class ArticleImage(db.Model):
+    __tablename__ = 'article_image'
+
+    image_id: Mapped[int] = mapped_column(ForeignKey('image.id'), primary_key=True)
+    article_id: Mapped[int] = mapped_column(ForeignKey('article.id'), primary_key=True)
+    description: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+
+    image: Mapped['Image'] = relationship(back_populates='articles')
+    article: Mapped['Article'] = relationship(back_populates='images')
+
 
 class News(db.Model):
     __tablename__ = 'news'
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(255))
-    content: Mapped[str] = mapped_column(String)
-    last_update: Mapped[DateTime] = mapped_column(DateTime)
+    content: Mapped[str] = mapped_column(Text)
+    last_update: Mapped[datetime] = mapped_column(DateTime)
     image_id: Mapped[int] = mapped_column(ForeignKey('image.id', ondelete='CASCADE'))
 
     image: Mapped['Image'] = relationship(back_populates='news', cascade="all, delete")

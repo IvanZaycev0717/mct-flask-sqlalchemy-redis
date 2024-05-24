@@ -58,6 +58,7 @@ class Config:
     FLASK_ADMIN_SWATCH = os.environ.get('FLASK_ADMIN_SWATCH')
     UPLOAD_FOLDER = os.path.join(basedir, 'mct_app', 'static', 'uploads', 'news')
     ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    CKEDITOR_PKG_TYPE = 'standard'
     
 
 

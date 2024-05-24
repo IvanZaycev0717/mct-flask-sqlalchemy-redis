@@ -371,6 +371,20 @@ aws = ["boto"]
 azure = ["azure-storage-blob"]
 
 [[package]]
+name = "flask-ckeditor"
+version = "0.5.1"
+description = "CKEditor integration for Flask."
+optional = false
+python-versions = "*"
+files = [
+    {file = "Flask-CKEditor-0.5.1.tar.gz", hash = "sha256:15c8a54a0967cc51b6fa8191ab5fa042e7ee486d6d420c4d5f509a357557c278"},
+    {file = "Flask_CKEditor-0.5.1-py2.py3-none-any.whl", hash = "sha256:330b10f1364a5ef990fd1de72429bb03e4a1ab6ee3aec85f7b38656315dd07fd"},
+]
+
+[package.dependencies]
+Flask = "*"
+
+[[package]]
 name = "flask-login"
 version = "0.6.3"
 description = "User authentication and session management for Flask."
@@ -1284,4 +1298,4 @@ timezone = ["python-dateutil"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "8e50ee1308418784569e294e9feabd6964d20f2d2065ebee305416c5966de580"
+content-hash = "4fe98246681a6cf0f2a29ab9102c1ca280e1bcfa4a21a75687d736849ef588a2"
