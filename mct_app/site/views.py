@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, session, redirect, url_fo
 import werkzeug.exceptions
 from mct_app import db
 
-from mct_app.site.models import ArticleCard, News
+from mct_app.site.models import Article, ArticleCard, News
 from sqlalchemy import select
 
 from config import SOICAL_MEDIA_LINKS
@@ -75,7 +75,18 @@ def articles():
     next_url = url_for('site.articles', page=articles.next_num) if articles.has_next else None
     prev_url = url_for('site.articles', page=articles.prev_num) if articles.has_prev else None
     current_site = 'site.articles'
-    return render_template('articles.html', articles=articles.items, articles_by_month=articles_by_month, next_url=next_url, prev_url=prev_url, pages_amount=pages_amount, active_page=active_page, current_site=current_site)
+    return render_template(
+        'articles.html',
+        articles=articles.items,
+        articles_by_month=articles_by_month,
+        next_url=next_url, prev_url=prev_url,
+        pages_amount=pages_amount, active_page=active_page,
+        current_site=current_site)
+
+@site.route('/articles/<article_id>')
+def article(article_id):
+    article = Article.query.filter_by(id=article_id).first()
+    return render_template('article.html', article=article)
 
 @site.route('/textbook')
 def textbook():

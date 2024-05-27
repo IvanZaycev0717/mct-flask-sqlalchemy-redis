@@ -48,7 +48,7 @@ class Article(db.Model):
         return str(self.body)
 
     def __str__(self) -> str:
-        return str(self.body)
+        return f'{self.title} {self.body}'
 
 
 class ArticleImage(db.Model):
