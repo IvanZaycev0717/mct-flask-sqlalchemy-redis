@@ -4,6 +4,7 @@ import datetime
 from typing import List, Optional
 import os
 import os.path as op
+from urllib.parse import unquote
 
 
 from flask import abort, url_for
@@ -31,7 +32,7 @@ from flask_ckeditor import CKEditorField
 
 
 from mct_app import db, login_manager, admin
-from mct_app.site.models import News, Image as MyImage, Article
+from mct_app.site.models import ArticleCard, News, Image as MyImage, Article
 
 
 class User(UserMixin, db.Model):
@@ -237,6 +238,8 @@ def generate_image_name(obj, file_data):
 
 class CustomImageUploadField(ImageUploadField):
 
+    
+
     def _resize(self, image, size):
         (width, height, force) = size
 
@@ -271,6 +274,15 @@ class CustomImageUploadField(ImageUploadField):
 
 @listens_for(News, 'after_delete')
 def receive_after_delete(mapper, connection, target):
+    "listen for the 'after_delete' event"
+    if target:
+        try:
+            os.remove(target.image.absolute_path)
+        except OSError:
+            pass
+
+@listens_for(ArticleCard, 'after_delete')
+def delete_article_files(mapper, connection, target):
     "listen for the 'after_delete' event"
     if target:
         try:
@@ -324,11 +336,46 @@ class UserSessionView(AccessView):
     can_create = False
 
 
-class ArticlesView(AccessView):
-    form_excluded_columns = ('images', )
+class ArticleCardView(AccessView):
+    form_excluded_columns = ('image', 'article')
     create_template = 'admin/edit.html'
     edit_template = 'admin/edit.html'
-    form_overrides = {'body': CKEditorField}
+
+    column_formatters = {
+        'image': lambda v, c, m, p: Markup(f'<img src="{m.image.relative_path}" width="100" height="100">')
+    }
+
+    def on_form_prefill(self, form, id):
+        model = self.get_one(id)
+        if model:
+            form.body.data = model.article.body
+            print(type(form.card_image))
+            print(form.card_image.data)
+            form.card_image.data = model.image.relative_path
+
+
+    def scaffold_form(self):
+        form_class = super(ArticleCardView, self).scaffold_form()
+        form_class.card_image = CustomImageUploadField(
+            'Загрузите картинку карточки',
+            validators=[DataRequired()],
+            base_path=IMAGE_BASE_PATH['articles'],
+            namegen=generate_image_name,
+            max_size=(300, 300, True),
+            url_relative_path=IMAGE_REL_PATHS['articles']
+            )
+        form_class.body = CKEditorField()
+        return form_class
+
+    def on_model_change(self, form, model: ArticleCard, is_created: bool) -> None:
+        filename = secure_filename(form.card_image.data.__dict__['filename'])
+        my_image = MyImage(
+            absolute_path=os.path.join(IMAGE_BASE_PATH['articles'], filename),
+            relative_path=os.path.join(IMAGE_REL_PATHS['articles'], filename))
+        article = Article(title=model.title, body=form.body.data)
+        model.image = my_image
+        model.article = article
+        super(ArticleCardView, self).on_model_change(form, model, is_created)
 
 
 admin.add_link(MenuLink(name='На сайт', url='/'))
@@ -336,4 +383,4 @@ admin.add_view(UserView(User, db.session, 'Пользователи'))
 admin.add_view(UserSessionView(UserSession, db.session, 'Сессии'))
 admin.add_view(UserRoleView(UserRole, db.session, 'Роли пользователей'))
 admin.add_view(NewsView(News, db.session, 'Новости'))
-admin.add_view(ArticlesView(Article, db.session, 'Статьи'))
+admin.add_view(ArticleCardView(ArticleCard, db.session, 'Статьи'))

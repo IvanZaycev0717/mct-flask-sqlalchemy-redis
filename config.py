@@ -1,5 +1,5 @@
 import os
-from enum import IntEnum, StrEnum
+from enum import IntEnum, StrEnum, Enum
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -28,6 +28,20 @@ SOICAL_MEDIA_LINKS = {
     'WhatsApp': r'https://www.whatsapp.com/?lang=ru_RU'
 }
 
+
+class Months(Enum):
+    Январь = 1
+    Февраль = 2
+    Март = 3
+    Апрель = 4
+    Май = 5
+    Июнь = 6
+    Июль = 7
+    Август = 8
+    Сентябрь = 9
+    Октябрь = 10
+    Ноябрь = 11
+    Декабрь = 12
 
 class Is(IntEnum):
     ADMIN = 1

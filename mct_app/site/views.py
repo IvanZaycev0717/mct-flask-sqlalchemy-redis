@@ -3,13 +3,15 @@ from flask import Blueprint, render_template, request, session, redirect, url_fo
 import werkzeug.exceptions
 from mct_app import db
 
-from mct_app.site.models import News
+from mct_app.site.models import ArticleCard, News
 from sqlalchemy import select
 
 from config import SOICAL_MEDIA_LINKS
+from mct_app.site.utils import get_articles_by_months
 
 
 NEWS_PER_PAGE = 3
+ARTICLES_PER_PAGE = 2
 
 site = Blueprint('site', __name__)
 
@@ -53,12 +55,27 @@ def news():
     active_page = news.page
     next_url = url_for('site.news', page=news.next_num) if news.has_next else None
     prev_url = url_for('site.news', page=news.prev_num) if news.has_prev else None
-    return render_template('news.html', news=news.items, next_url=next_url, prev_url=prev_url, pages_amount=pages_amount, active_page=active_page)
+    current_site = 'site.news'
+    return render_template('news.html', news=news.items, next_url=next_url, prev_url=prev_url, pages_amount=pages_amount, active_page=active_page, current_site=current_site)
 
 @site.route('/articles')
 def articles():
     flash('articles', 'active_links')
-    return render_template('articles.html')
+    articles_by_month_list = db.session.query(
+        ArticleCard.last_update,
+        ArticleCard.article_id,
+        ArticleCard.title).order_by(ArticleCard.last_update.desc()).all()
+    articles_by_month = get_articles_by_months(articles_by_month_list)
+
+    query = select(ArticleCard).order_by(ArticleCard.last_update.desc())
+    page = request.args.get('page', 1, type=int)
+    articles = db.paginate(query, page=page, per_page=ARTICLES_PER_PAGE, error_out=False)
+    pages_amount = articles.pages
+    active_page = articles.page
+    next_url = url_for('site.articles', page=articles.next_num) if articles.has_next else None
+    prev_url = url_for('site.articles', page=articles.prev_num) if articles.has_prev else None
+    current_site = 'site.articles'
+    return render_template('articles.html', articles=articles.items, articles_by_month=articles_by_month, next_url=next_url, prev_url=prev_url, pages_amount=pages_amount, active_page=active_page, current_site=current_site)
 
 @site.route('/textbook')
 def textbook():

@@ -16,7 +16,23 @@ class Image(db.Model):
     relative_path: Mapped[str] = mapped_column(String(255))
 
     news: Mapped['News'] = relationship(back_populates='image')
+    article_card: Mapped['ArticleCard'] = relationship(back_populates='image')
     articles: Mapped[List['ArticleImage']] = relationship(back_populates='image')
+    
+
+class ArticleCard(db.Model):
+    __tablename__ = 'article_card'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    title: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str] = mapped_column(String(255))
+    last_update: Mapped[datetime] = mapped_column(DateTime)
+    image_id: Mapped[int] = mapped_column(ForeignKey('image.id', ondelete='CASCADE'))
+    article_id: Mapped[int] = mapped_column(ForeignKey('article.id', ondelete='CASCADE'))
+
+    image: Mapped['Image'] = relationship(back_populates='article_card', cascade="all, delete")
+    article: Mapped['Article'] = relationship(back_populates='article_card', cascade="all, delete")
+
 
 class Article(db.Model):
     __tablename__ = 'article'
@@ -24,9 +40,15 @@ class Article(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(255))
     body: Mapped[str] = mapped_column(UnicodeText)
-    last_update: Mapped[datetime] = mapped_column(DateTime)
 
+    article_card: Mapped['ArticleCard'] = relationship(back_populates='article')
     images: Mapped[List['ArticleImage']] = relationship(back_populates='article')
+
+    def __repr__(self) -> str:
+        return str(self.body)
+
+    def __str__(self) -> str:
+        return str(self.body)
 
 
 class ArticleImage(db.Model):
@@ -38,6 +60,8 @@ class ArticleImage(db.Model):
 
     image: Mapped['Image'] = relationship(back_populates='articles')
     article: Mapped['Article'] = relationship(back_populates='images')
+
+
 
 
 class News(db.Model):
