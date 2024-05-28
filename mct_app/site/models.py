@@ -12,12 +12,19 @@ class Image(db.Model):
     __tablename__ = "image"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    filename: Mapped[str] = mapped_column(String)
     absolute_path: Mapped[str] = mapped_column(String(255))
     relative_path: Mapped[str] = mapped_column(String(255))
 
     news: Mapped['News'] = relationship(back_populates='image')
     article_card: Mapped['ArticleCard'] = relationship(back_populates='image')
-    articles: Mapped[List['ArticleImage']] = relationship(back_populates='image')
+
+
+    def __repr__(self) -> str:
+        return str(self.filename)
+
+    def __str__(self) -> str:
+        return f'{self.filename}'
     
 
 class ArticleCard(db.Model):
@@ -42,7 +49,6 @@ class Article(db.Model):
     body: Mapped[str] = mapped_column(UnicodeText)
 
     article_card: Mapped['ArticleCard'] = relationship(back_populates='article')
-    images: Mapped[List['ArticleImage']] = relationship(back_populates='article')
 
     def __repr__(self) -> str:
         return str(self.body)
@@ -51,15 +57,6 @@ class Article(db.Model):
         return f'{self.title} {self.body}'
 
 
-class ArticleImage(db.Model):
-    __tablename__ = 'article_image'
-
-    image_id: Mapped[int] = mapped_column(ForeignKey('image.id'), primary_key=True)
-    article_id: Mapped[int] = mapped_column(ForeignKey('article.id'), primary_key=True)
-    description: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-
-    image: Mapped['Image'] = relationship(back_populates='articles')
-    article: Mapped['Article'] = relationship(back_populates='images')
 
 
 

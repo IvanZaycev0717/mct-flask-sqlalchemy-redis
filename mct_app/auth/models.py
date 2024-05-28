@@ -28,6 +28,7 @@ from werkzeug.utils import secure_filename
 from PIL import Image as  PillowImage, ImageOps
 from sqlalchemy.event import listens_for
 from flask_ckeditor import CKEditorField
+from werkzeug.datastructures import FileStorage
 
 
 
@@ -290,6 +291,14 @@ def delete_article_files(mapper, connection, target):
         except OSError:
             pass
 
+@listens_for(ArticleCard, 'before_update')
+def update_image_event(mapper, connection, target):
+    if target:
+        try:
+            os.remove(target.image.absolute_path)
+        except OSError:
+            pass
+
 class NewsView(AccessView):
     column_display_pk = True
     page_size = 10
@@ -314,6 +323,7 @@ class NewsView(AccessView):
     def on_model_change(self, form, model: News, is_created: bool) -> None:
         filename = secure_filename(form.extra.data.__dict__['filename'])
         my_image = MyImage(
+            filename=filename,
             absolute_path=os.path.join(IMAGE_BASE_PATH['news'], filename),
             relative_path=os.path.join(IMAGE_REL_PATHS['news'], filename))
         model.image = my_image
@@ -365,19 +375,26 @@ class ArticleCardView(AccessView):
         return form_class
 
     def on_model_change(self, form, model: ArticleCard, is_created: bool) -> None:
-        print(is_created)
         filename = secure_filename(form.card_image.data.__dict__['filename'])
-        my_image = MyImage(
-            absolute_path=os.path.join(IMAGE_BASE_PATH['articles'], filename),
-            relative_path=os.path.join(IMAGE_REL_PATHS['articles'], filename))
         if is_created:
+            my_image = MyImage(
+                filename=filename,
+                absolute_path=os.path.join(IMAGE_BASE_PATH['articles'], filename),
+                relative_path=os.path.join(IMAGE_REL_PATHS['articles'], filename))
             article = Article(title=model.title, body=form.body.data)
             model.article = article
+            model.image = my_image
         else:
-            update_query = update(Article).where(Article.id == model.article_id).values(title=form.title.data, body=form.body.data)
-            db.session.execute(update_query)
-            db.session.commit()
-        model.image = my_image
+            model.image.filename = filename
+            model.image.absolute_path = os.path.join(IMAGE_BASE_PATH['articles'], filename)
+            model.image.relative_path = os.path.join(IMAGE_REL_PATHS['articles'], filename)
+
+
+            # update_query = update(Article).where(Article.id == model.article_id).values(
+            #     title=form.title.data,
+            #     body=form.body.data)
+            # db.session.execute(update_query)
+            # db.session.commit()
         super(ArticleCardView, self).on_model_change(form, model, is_created)
 
 
