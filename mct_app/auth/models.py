@@ -11,7 +11,7 @@ from flask import abort, url_for
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from itsdangerous import BadSignature
 from markupsafe import Markup
-from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select
+from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select, update
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin, current_user, AnonymousUserMixin
@@ -365,13 +365,19 @@ class ArticleCardView(AccessView):
         return form_class
 
     def on_model_change(self, form, model: ArticleCard, is_created: bool) -> None:
+        print(is_created)
         filename = secure_filename(form.card_image.data.__dict__['filename'])
         my_image = MyImage(
             absolute_path=os.path.join(IMAGE_BASE_PATH['articles'], filename),
             relative_path=os.path.join(IMAGE_REL_PATHS['articles'], filename))
-        article = Article(title=model.title, body=form.body.data)
+        if is_created:
+            article = Article(title=model.title, body=form.body.data)
+            model.article = article
+        else:
+            update_query = update(Article).where(Article.id == model.article_id).values(title=form.title.data, body=form.body.data)
+            db.session.execute(update_query)
+            db.session.commit()
         model.image = my_image
-        model.article = article
         super(ArticleCardView, self).on_model_change(form, model, is_created)
 
 
