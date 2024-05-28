@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
-from flask import Blueprint, jsonify, render_template, redirect, session, url_for, flash, request
+import random
+from flask import Blueprint, jsonify, make_response, render_template, redirect, session, url_for, flash, request
 import requests
 from mct_app.auth.models import User, UserSession, db, UserRole, Role, SocialAccount
 from mct_app.auth.forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetPasswordForm
@@ -8,7 +9,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy import select, update
 from urllib.parse import urlsplit
 from flask import abort
-from config import Is, SocialPlatform
+from config import IMAGE_BASE_PATH, Is, SocialPlatform
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol

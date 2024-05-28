@@ -34,9 +34,16 @@ def server_error(e):
 
 @site.app_context_processor
 def base_template_data_processor() -> dict[str, str]:
+    articles_by_month_list = db.session.query(
+        ArticleCard.last_update,
+        ArticleCard.article_id,
+        ArticleCard.title).order_by(ArticleCard.last_update.desc()).all()
+    articles_by_month = get_articles_by_months(articles_by_month_list)
+
     return {
         'links': SOICAL_MEDIA_LINKS,
         'current_year': datetime.now().year,
+        'articles_by_month': articles_by_month
     }
 
 
@@ -61,11 +68,6 @@ def news():
 @site.route('/articles')
 def articles():
     flash('articles', 'active_links')
-    articles_by_month_list = db.session.query(
-        ArticleCard.last_update,
-        ArticleCard.article_id,
-        ArticleCard.title).order_by(ArticleCard.last_update.desc()).all()
-    articles_by_month = get_articles_by_months(articles_by_month_list)
 
     query = select(ArticleCard).order_by(ArticleCard.last_update.desc())
     page = request.args.get('page', 1, type=int)
@@ -78,7 +80,6 @@ def articles():
     return render_template(
         'articles.html',
         articles=articles.items,
-        articles_by_month=articles_by_month,
         next_url=next_url, prev_url=prev_url,
         pages_amount=pages_amount, active_page=active_page,
         current_site=current_site)

@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container-fluid">
+    {% include 'articles_list.html' %}
+    <div class="container-fluid d-flex justify-content-center">
         <h2>{{ article.title }}</h2>
-        {{ article.body|safe }}
+        <p>{{ article.body|safe }}</p>
     </div>
 {% endblock %}

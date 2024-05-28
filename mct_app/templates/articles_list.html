@@ -1,0 +1,24 @@
+<div class="navbar navbar-expand-lg d-flex justify-content-end">
+    <button class="btn btn-warning btn-articles" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Открыть список статей</button>
+</div>
+<!-- OFFCANVAS SECTION -->
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+    <div class="offcanvas-header">
+      <h4 class="offcanvas-title" id="offcanvasScrollingLabel">Стисок статей</h4>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      {% for month_year, article_list in articles_by_month.items() %}
+        <div class="card-body">
+          <h5 class="card-title">{{ month_year }}</h5>
+          <div class="list-group">
+            {% for article_title, article_link in article_list.items() %}
+              <a href="{{ url_for('site.article', article_id=article_link) }}" class="list-group-item list-group-item-action" aria-current="true">
+                {{ article_title }}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+</div>
