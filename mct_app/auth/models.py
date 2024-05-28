@@ -1,4 +1,5 @@
 import csv
+import tempfile
 import uuid
 import datetime
 from typing import List, Optional
@@ -22,13 +23,14 @@ from wtforms_alchemy.fields import QuerySelectMultipleField
 from config import IMAGE_BASE_PATH, Is
 from wtforms.validators import DataRequired
 from flask_admin.menu import MenuLink
-from flask_admin.form.upload import ImageUploadField
+from flask_admin.form.upload import ImageUploadField, ImageUploadInput
 from config import IMAGE_REL_PATHS
 from werkzeug.utils import secure_filename
 from PIL import Image as  PillowImage, ImageOps
 from sqlalchemy.event import listens_for
 from flask_ckeditor import CKEditorField
 from werkzeug.datastructures import FileStorage
+from werkzeug.datastructures.headers import Headers
 
 
 
@@ -239,8 +241,6 @@ def generate_image_name(obj, file_data):
 
 class CustomImageUploadField(ImageUploadField):
 
-    
-
     def _resize(self, image, size):
         (width, height, force) = size
 
@@ -346,6 +346,8 @@ class UserSessionView(AccessView):
     can_create = False
 
 
+            
+
 class ArticleCardView(AccessView):
     form_excluded_columns = ('image', 'article')
     create_template = 'admin/edit.html'
@@ -359,6 +361,8 @@ class ArticleCardView(AccessView):
         model = self.get_one(id)
         if model:
             form.body.data = model.article.body
+            form.card_image.data = model.image.relative_path
+
 
 
     def scaffold_form(self):
@@ -369,7 +373,7 @@ class ArticleCardView(AccessView):
             base_path=IMAGE_BASE_PATH['articles'],
             namegen=generate_image_name,
             max_size=(300, 300, True),
-            url_relative_path=IMAGE_REL_PATHS['articles']
+            allow_overwrite=False,
             )
         form_class.body = CKEditorField()
         return form_class
@@ -388,13 +392,8 @@ class ArticleCardView(AccessView):
             model.image.filename = filename
             model.image.absolute_path = os.path.join(IMAGE_BASE_PATH['articles'], filename)
             model.image.relative_path = os.path.join(IMAGE_REL_PATHS['articles'], filename)
-
-
-            # update_query = update(Article).where(Article.id == model.article_id).values(
-            #     title=form.title.data,
-            #     body=form.body.data)
-            # db.session.execute(update_query)
-            # db.session.commit()
+            model.article.title = model.title
+            model.article.body = form.body.data
         super(ArticleCardView, self).on_model_change(form, model, is_created)
 
 
