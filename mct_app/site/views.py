@@ -1,13 +1,18 @@
 from datetime import datetime
-from flask import Blueprint, render_template, request, session, redirect, url_for, flash
+import os
+import uuid
+from flask import Blueprint, render_template, request, send_from_directory, session, redirect, url_for, flash
 import werkzeug.exceptions
 from mct_app import db
 
 from mct_app.site.models import Article, ArticleCard, News
 from sqlalchemy import select
+from flask_ckeditor import upload_success, upload_fail
+from flask_ckeditor import CKEditor
 
-from config import SOICAL_MEDIA_LINKS
+from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, SOICAL_MEDIA_LINKS, basedir
 from mct_app.site.utils import get_articles_by_months
+from mct_app import csrf
 
 
 NEWS_PER_PAGE = 3
@@ -108,3 +113,22 @@ def consultation():
 def contacts():
     flash('contacts', 'active_links')
     return render_template('contacts.html')
+
+@site.route('/files/<filename>')
+@csrf.exempt
+def uploaded_files(filename):
+    path = os.path.join(basedir, 'mct_app', 'files')
+    return send_from_directory(path, filename)
+
+@site.route('/upload', methods=['POST'])
+@csrf.exempt
+def upload():
+    f = request.files.get('upload')
+    extension = f.filename.split('.')[-1].lower()
+    if extension not in ['jpg', 'gif', 'png', 'jpeg', 'webp']:
+        return upload_fail(message='Это не изображение')
+    unique_filename = str(uuid.uuid4())
+    f.filename = unique_filename + '.' + extension
+    f.save(os.path.join(basedir, 'mct_app', 'files', f.filename))
+    url = url_for('site.uploaded_files', filename=f.filename)
+    return upload_success(url, filename=f.filename)

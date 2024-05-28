@@ -349,9 +349,6 @@ class ArticleCardView(AccessView):
         model = self.get_one(id)
         if model:
             form.body.data = model.article.body
-            print(type(form.card_image))
-            print(form.card_image.data)
-            form.card_image.data = model.image.relative_path
 
 
     def scaffold_form(self):

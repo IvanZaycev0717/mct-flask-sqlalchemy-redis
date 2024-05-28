@@ -73,6 +73,8 @@ class Config:
     UPLOAD_FOLDER = os.path.join(basedir, 'mct_app', 'static', 'uploads', 'news')
     ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'webp'}
     CKEDITOR_SERVE_LOCAL = True
+    CKEDITOR_FILE_UPLOADER = 'site.upload'
+    CKEDITOR_ENABLE_CSRF = True
     
 
 
