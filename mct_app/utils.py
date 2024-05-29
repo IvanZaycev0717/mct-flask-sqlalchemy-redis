@@ -2,6 +2,8 @@ from typing import List
 from mct_app.site.models import ArticleCard
 from config import Months
 from PIL import Image
+from werkzeug.datastructures import FileStorage
+
 
 def get_articles_by_months(article_cards: List[ArticleCard]) -> dict:
     acticles_by_month = {}
@@ -12,6 +14,7 @@ def get_articles_by_months(article_cards: List[ArticleCard]) -> dict:
         else:
             acticles_by_month[head].update({title: article_id})
     return acticles_by_month
+
 
 def resize_image(
         image: Image,
@@ -32,7 +35,10 @@ def resize_image(
     return image
 
 
-def save_image_as_webp(image, path: str, format: str = 'WEBP') -> None:
+def save_image_as_webp(
+        image: FileStorage,
+        path: str,
+        format: str = 'WEBP') -> None:
     image = Image.open(image)
     if format == 'JPEG' and image.mode != 'RGB':
         image = image.convert('RGB')

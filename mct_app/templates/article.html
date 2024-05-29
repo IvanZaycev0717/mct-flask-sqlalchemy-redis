@@ -2,8 +2,30 @@
 
 {% block content %}
     {% include 'articles_list.html' %}
-    <div class="container-fluid">
+    <div class="container-fluid article-card">
         <h2>{{ article.title }}</h2>
         {{ article.body|safe }}
     </div>
+    <div class="popup-image">
+        <span>&times;</span>
+        <img src=" " alt="">
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.querySelectorAll('.article-card img').forEach(image =>{
+        image.onclick = () => {
+            document.querySelector('.popup-image').style.display = 'block';
+            document.querySelector('.popup-image img').src = image.getAttribute('src');
+        }
+    });
+    document.querySelector('.popup-image span').onclick = () => {
+        document.querySelector('.popup-image').style.display = 'none';
+    };
+    document.querySelector('.popup-image').onclick = () => {
+        document.querySelector('.popup-image').style.display = 'none';
+    };
+    
+</script>
 {% endblock %}

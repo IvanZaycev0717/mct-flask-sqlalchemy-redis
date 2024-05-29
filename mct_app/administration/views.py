@@ -46,7 +46,6 @@ def uploaded_files(filename):
 @csrf.exempt
 def upload(format='webp'):
     image = request.files.get('upload')
-    print(type(image))
     extension = image.filename.split('.')[-1].lower()
     if extension not in ALLOWED_EXTENSIONS:
         return upload_fail(message='Это не изображение')
@@ -56,6 +55,12 @@ def upload(format='webp'):
     save_image_as_webp(image, path)
     url = url_for('administration.uploaded_files', filename=image.filename)
     return upload_success(url, filename=image.filename)
+
+@administration.route('/delete-image', methods=['POST'])
+@csrf.exempt
+def delete_image():
+    image_src = request.form.get('image_src')
+    print(image_src)
 
 class AccessView(ModelView):
     
@@ -120,7 +125,7 @@ class CustomImageUploadField(ImageUploadField):
             image = image.convert('RGBA')
 
         with open(path, 'wb') as fp:
-            image.save(fp, format, quality=10, method=0)
+            image.save(fp, format, quality=90, method=0)
 
     def _get_save_format(self, filename, image):
         if image.format not in self.keep_image_formats:
