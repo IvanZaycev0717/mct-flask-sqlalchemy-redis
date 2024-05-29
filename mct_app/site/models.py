@@ -57,10 +57,6 @@ class Article(db.Model):
         return f'{self.title} {self.body}'
 
 
-
-
-
-
 class News(db.Model):
     __tablename__ = 'news'
     id: Mapped[int] = mapped_column(Integer, primary_key=True)

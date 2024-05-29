@@ -45,7 +45,9 @@ def create_app():
     app.register_blueprint(auth)
     from mct_app.site.views import site
     app.register_blueprint(site)
-    from mct_app.auth.models import MyAdminIndexView
+    from mct_app.administration.views import administration
+    app.register_blueprint(administration)
+    from mct_app.administration.views import MyAdminIndexView
     admin.init_app(app, index_view=MyAdminIndexView())
 
     return app

@@ -3,6 +3,9 @@ from enum import IntEnum, StrEnum, Enum
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
 CSV_FILE_PATHS = {
     'roles': os.path.join(basedir, 'csv', 'roles.csv'),
 }
@@ -71,9 +74,9 @@ class Config:
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
     FLASK_ADMIN_SWATCH = os.environ.get('FLASK_ADMIN_SWATCH')
     UPLOAD_FOLDER = os.path.join(basedir, 'mct_app', 'static', 'uploads', 'news')
-    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    ALLOWED_EXTENSIONS = ALLOWED_EXTENSIONS
     CKEDITOR_SERVE_LOCAL = True
-    CKEDITOR_FILE_UPLOADER = 'site.upload'
+    CKEDITOR_FILE_UPLOADER = 'administration.upload'
     CKEDITOR_ENABLE_CSRF = True
     
 
