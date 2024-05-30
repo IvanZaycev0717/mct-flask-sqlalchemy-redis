@@ -23,20 +23,20 @@
   <header>
     <nav class="navbar navbar-expand-lg bg-body d-flex justify-content-between">
       <div class="logo-social-container">
-        <a class="navbar-brand" target="_parent", href="{{ url_for('site.home') }}">
+        <a class="navbar-brand" target="_parent" href="{{ url_for('site.home') }}" data-toggle="popover" title="На главную">
           <img src="../static/img/logo.png" class="d-inline-block align-top" alt="">
         </a>
-        <a class="navbar-brand" target="_blank", href="{{ links['GitHub'] }}">
-          <img class="navbar-brand__header-img" src="../static/img/social_media_ico/github.svg" width="45px" class="d-inline-block align-top" alt="">
+        <a class="navbar-brand" target="_blank" href="{{ links['GitHub'] }}"  data-toggle="popover" title="На сайт разработчика">
+          <img class="navbar-brand__header-img d-inline-block align-top" src="../static/img/social_media_ico/github.svg" width="45px" alt="">
         </a>
-        <a class="navbar-brand" target="_blank", href="{{ links['Telegram'] }}">
-          <img class="navbar-brand__header-img"  src="../static/img/social_media_ico/telegram.svg" width="45px" class="d-inline-block align-top" alt="">
+        <a class="navbar-brand" target="_blank" href="{{ links['Telegram'] }}"   data-toggle="popover" title="В Telegram сайта">
+          <img class="navbar-brand__header-img d-inline-block align-top"  src="../static/img/social_media_ico/telegram.svg" width="45px" alt="">
         </a>
-        <a class="navbar-brand" target="_blank", href="{{ links['WhatsApp'] }}">
-          <img class="navbar-brand__header-img" src="../static/img/social_media_ico/whatsapp.svg" width="45px" class="d-inline-block align-top" alt="">
+        <a class="navbar-brand" target="_blank" href="{{ links['WhatsApp'] }}"  data-toggle="popover" title="На WhatsUp сайта">
+          <img class="navbar-brand__header-img d-inline-block align-top" src="../static/img/social_media_ico/whatsapp.svg" width="45px">
         </a>
-        <a class="navbar-brand" target="_blank", href="{{ links['YouTube'] }}">
-          <img class="navbar-brand__header-img" src="../static/img/social_media_ico/youtube.svg" width="45px" class="d-inline-block align-top" alt="">
+        <a class="navbar-brand" target="_blank" href="{{ links['YouTube'] }}"  data-toggle="popover" title="На Youtube-канал">
+          <img class="navbar-brand__header-img d-inline-block align-top" src="../static/img/social_media_ico/youtube.svg" width="45px" alt="">
         </a>
       </div>
       <div class="button-login-registratition">
@@ -264,10 +264,12 @@
   <!-- Footer -->
   {% block scripts %}
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@21.2.8/build/js/intlTelInput.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/odnoklassniki.js') }}"></script>
     <script src="{{ url_for('static', filename='js/switchThemeFunction.js') }}"></script>
     <script src="{{ url_for('static', filename='js/responsive.popup.image.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popover.scr.js') }}"></script>
   {% endblock %}
 </body>

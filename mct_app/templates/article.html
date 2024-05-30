@@ -5,6 +5,12 @@
     <div class="container-fluid article-card">
         <h2>{{ article.title }}</h2>
         {{ article.body|safe }}
+        <div class="article-buttons text-center">
+            <hr>
+            <a class="btn btn-primary btn-lg" href="#" role="button">⬆️ Вверх</a>
+            <a class="btn btn-warning btn-lg" href="{{ url_for('site.articles') }}" role="button">📒 К статьям</a>
+            <a class="btn btn-dark btn-lg" href="{{ url_for('site.home') }}" role="button">🛖 На главную</a>
+        </div>
     </div>
     <div class="popup-image">
         <span>&times;</span>
