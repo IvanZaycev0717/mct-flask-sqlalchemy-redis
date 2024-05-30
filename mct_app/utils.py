@@ -1,6 +1,5 @@
 from typing import List
 from mct_app.site.models import ArticleCard
-from config import Months
 from PIL import Image
 from werkzeug.datastructures import FileStorage
 
@@ -8,7 +7,7 @@ from werkzeug.datastructures import FileStorage
 def get_articles_by_months(article_cards: List[ArticleCard]) -> dict:
     acticles_by_month = {}
     for time, article_id, title in article_cards:
-        head = f'{Months(time.month).name} {time.year}'
+        head = f'{time.strftime('%B')} {time.year}'
         if head not in acticles_by_month:
             acticles_by_month[head] = {title: article_id}
         else:

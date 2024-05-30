@@ -113,22 +113,3 @@ def consultation():
 def contacts():
     flash('contacts', 'active_links')
     return render_template('contacts.html')
-
-# @site.route('/files/<filename>')
-# @csrf.exempt
-# def uploaded_files(filename):
-#     path = os.path.join(basedir, 'mct_app', 'files')
-#     return send_from_directory(path, filename)
-
-# @site.route('/upload', methods=['POST'])
-# @csrf.exempt
-# def upload():
-#     f = request.files.get('upload')
-#     extension = f.filename.split('.')[-1].lower()
-#     if extension not in ['jpg', 'gif', 'png', 'jpeg', 'webp']:
-#         return upload_fail(message='Это не изображение')
-#     unique_filename = str(uuid.uuid4())
-#     f.filename = unique_filename + '.' + extension
-#     f.save(os.path.join(basedir, 'mct_app', 'files', f.filename))
-#     url = url_for('site.uploaded_files', filename=f.filename)
-#     return upload_success(url, filename=f.filename)

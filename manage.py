@@ -3,9 +3,10 @@ from flask_migrate import Migrate
 from config import CSV_FILE_PATHS
 from mct_app.auth.models import Role, User, UserRole
 from mct_app.site.models import Image, News
+import locale
 
 
-
+locale.setlocale(locale.LC_ALL, ('ru_RU', 'UTF-8'))
 app = create_app()
 migrate = Migrate(app, db)
 

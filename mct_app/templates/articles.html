@@ -14,7 +14,7 @@
             <div class="card-body">
               <h5 class="card-title">{{ article.title }}</h5>
               <p class="card-text">{{ article.description }}</p>
-              <p class="card-text"><small class="text-body-secondary">{{ article.last_update }}</small></p>
+              <p class="card-text"><small class="text-body-secondary">{{ article.last_update.strftime('%d.%m.%Y') }}</small></p>
               <a href="{{ url_for('site.article', article_id=article.article_id) }}" class="btn btn-warning">Читать далее...</a>
               <p></p>
             </div>

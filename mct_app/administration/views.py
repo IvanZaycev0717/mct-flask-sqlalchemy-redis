@@ -209,9 +209,9 @@ class UserSessionView(AccessView):
     can_create = False
 
 
-            
 
 class ArticleCardView(AccessView):
+    column_default_sort = ('id', True)
     form_excluded_columns = ('image', 'article')
     create_template = 'admin/edit.html'
     edit_template = 'admin/edit.html'
