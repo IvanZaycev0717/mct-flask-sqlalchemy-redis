@@ -11,6 +11,8 @@ CSV_FILE_PATHS = {
     'roles': os.path.join(basedir, 'csv', 'roles.csv'),
 }
 
+FILE_BASE_PATH = os.path.join(basedir, 'mct_app', 'files')
+FILE_REL_PATH = os.path.join('..', '..', '..', 'files')
 
 IMAGE_BASE_PATH = {
     'news': os.path.join(basedir, 'mct_app', 'static', 'uploads', 'news'),

@@ -1,9 +1,11 @@
 import uuid
 import os
 import os.path as op
+import re
+from typing import List
 
 
-from flask import Blueprint, request, send_from_directory, url_for
+from flask import Blueprint, request, send_from_directory, url_for, g
 from flask_ckeditor import upload_success, upload_fail
 from flask import abort, url_for
 from markupsafe import Markup
@@ -13,7 +15,7 @@ from flask_admin.contrib.sqla import ModelView
 import flask_admin
 from flask_admin import expose
 from wtforms_alchemy.fields import QuerySelectMultipleField
-from config import ALLOWED_EXTENSIONS, IMAGE_BASE_PATH
+from config import ALLOWED_EXTENSIONS, FILE_BASE_PATH, FILE_REL_PATH, IMAGE_BASE_PATH
 from wtforms.validators import DataRequired
 from flask_admin.menu import MenuLink
 from flask_admin.form.upload import ImageUploadField
@@ -26,7 +28,7 @@ from flask_ckeditor import CKEditorField
 
 from mct_app.auth.models import *
 from mct_app import db, admin
-from mct_app.site.models import ArticleCard, News, Image as MyImage, Article
+from mct_app.site.models import ArticleCard, ArticleImage, News, Image as MyImage, Article
 from mct_app import db
 from mct_app.site.models import Article, ArticleCard, News
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, basedir
@@ -56,11 +58,6 @@ def upload(format='webp'):
     url = url_for('administration.uploaded_files', filename=image.filename)
     return upload_success(url, filename=image.filename)
 
-@administration.route('/delete-image', methods=['POST'])
-@csrf.exempt
-def delete_image():
-    image_src = request.form.get('image_src')
-    print(image_src)
 
 class AccessView(ModelView):
     
@@ -146,11 +143,14 @@ def receive_after_delete(mapper, connection, target):
             pass
 
 @listens_for(ArticleCard, 'after_delete')
-def delete_article_files(mapper, connection, target):
+def delete_article_files(mapper, connection, target: ArticleCard):
     "listen for the 'after_delete' event"
     if target:
         try:
             os.remove(target.image.absolute_path)
+            if target.article.images:
+                for article_image in target.article.images:
+                    os.remove(article_image.image.absolute_path)
         except OSError:
             pass
 
@@ -161,6 +161,33 @@ def update_image_event(mapper, connection, target):
             os.remove(target.image.absolute_path)
         except OSError:
             pass
+
+
+def add_article_image(article_id, article_body):
+    images_names = get_images_names(text=article_body)
+    article = db.session.query(Article).filter_by(id=article_id).first()
+    if images_names:
+        for image_name in images_names:
+            article_image = ArticleImage()
+            image = MyImage(
+                filename=image_name,
+                absolute_path=os.path.join(FILE_BASE_PATH, image_name),
+                relative_path=os.path.join(FILE_REL_PATH, image_name),
+            )
+            article_image.article = article
+            image.articles.append(article_image)
+
+
+@listens_for(Article, 'after_update')
+def update_article_body_images(mapper, connection, target):
+    print("Произошло ОБНОВЛЕНИЕ статьи")
+
+
+def get_images_names(text: str) -> List[str]:
+    pattern = r'<img[^>]*src="/files/([^"]+)"[^>]*>'
+    return re.findall(pattern, text)
+
+
 
 class NewsView(AccessView):
     column_display_pk = True
@@ -248,6 +275,17 @@ class ArticleCardView(AccessView):
             article = Article(title=model.title, body=form.body.data)
             model.article = article
             model.image = my_image
+            image_names = get_images_names(model.article.body)
+            if image_names:
+                for image_name in image_names:
+                    article_image = ArticleImage()
+                    image = MyImage(
+                        filename=image_name,
+                        absolute_path=os.path.join(FILE_BASE_PATH, image_name),
+                        relative_path=os.path.join(FILE_REL_PATH, image_name),
+                    )
+                    article_image.image = image
+                    model.article.images.append(article_image)
         else:
             model.image.filename = filename
             model.image.absolute_path = os.path.join(IMAGE_BASE_PATH['articles'], filename)

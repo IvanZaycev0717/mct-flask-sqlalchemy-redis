@@ -34,4 +34,4 @@ def general_setup():
 
 if __name__ == '__main__':
     general_setup()
-    app.run(host='0.0.0.0', port=443, debug=True, ssl_context='adhoc')
+    app.run(host='0.0.0.0', port=443, ssl_context='adhoc')

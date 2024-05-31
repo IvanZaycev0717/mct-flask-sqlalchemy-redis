@@ -18,6 +18,7 @@ class Image(db.Model):
 
     news: Mapped['News'] = relationship(back_populates='image')
     article_card: Mapped['ArticleCard'] = relationship(back_populates='image')
+    articles: Mapped[List['ArticleImage']] = relationship(back_populates='image')
 
 
     def __repr__(self) -> str:
@@ -49,12 +50,22 @@ class Article(db.Model):
     body: Mapped[str] = mapped_column(UnicodeText)
 
     article_card: Mapped['ArticleCard'] = relationship(back_populates='article')
+    images: Mapped[List['ArticleImage']] = relationship(back_populates='article', cascade='all, delete')
 
     def __repr__(self) -> str:
         return str(self.body)
 
     def __str__(self) -> str:
         return f'{self.title} {self.body}'
+
+class ArticleImage(db.Model):
+    __tablename__ = 'article_image'
+
+    article_id: Mapped[int] = mapped_column(ForeignKey('article.id', ondelete='CASCADE'), primary_key=True)
+    image_id: Mapped[int] = mapped_column(ForeignKey('image.id', ondelete='CASCADE'), primary_key=True)
+
+    article: Mapped['Article'] = relationship(back_populates='images')
+    image: Mapped['Image'] = relationship(back_populates='articles', cascade='all, delete')
 
 
 class News(db.Model):
