@@ -1,7 +1,6 @@
 import uuid
 import os
 import os.path as op
-import re
 from typing import List
 
 
@@ -33,7 +32,7 @@ from mct_app import db
 from mct_app.site.models import Article, ArticleCard, News
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, basedir
 from mct_app import csrf
-from mct_app.utils import save_image_as_webp
+from mct_app.utils import get_images_names, save_image_as_webp, generate_image_name
 
 administration = Blueprint('administration', __name__)
 
@@ -82,7 +81,11 @@ class UserView(AccessView):
     def scaffold_form(self):
         form_class = super(UserView, self).scaffold_form()
         delattr(form_class, 'has_social_account')
-        form_class.extra = QuerySelectMultipleField(label='Roles', query_factory=lambda: Role.query.all(), validators=[DataRequired()])
+        form_class.extra = QuerySelectMultipleField(
+            label='Roles',
+            query_factory=lambda: Role.query.all(),
+            validators=[DataRequired()]
+            )
         return form_class
 
     def on_model_change(self, form, model: User, is_created: bool) -> None:
@@ -93,10 +96,6 @@ class UserView(AccessView):
         model.roles.append(user_role)
         super(UserView, self).on_model_change(form, model, is_created)
 
-
-def generate_image_name(obj, file_data):
-    image_suffix = uuid.uuid4()
-    return secure_filename(f"image_{image_suffix}")
 
 
 class CustomImageUploadField(ImageUploadField):
@@ -133,36 +132,6 @@ class CustomImageUploadField(ImageUploadField):
         return filename, image.format
 
 
-@listens_for(News, 'after_delete')
-def receive_after_delete(mapper, connection, target):
-    "listen for the 'after_delete' event"
-    if target:
-        try:
-            os.remove(target.image.absolute_path)
-        except OSError:
-            pass
-
-@listens_for(ArticleCard, 'after_delete')
-def delete_article_files(mapper, connection, target: ArticleCard):
-    "listen for the 'after_delete' event"
-    if target:
-        try:
-            os.remove(target.image.absolute_path)
-            if target.article.images:
-                for article_image in target.article.images:
-                    os.remove(article_image.image.absolute_path)
-        except OSError:
-            pass
-
-@listens_for(ArticleCard, 'before_update')
-def update_image_event(mapper, connection, target):
-    if target:
-        try:
-            os.remove(target.image.absolute_path)
-        except OSError:
-            pass
-
-
 def add_article_image(article_id, article_body):
     images_names = get_images_names(text=article_body)
     article = db.session.query(Article).filter_by(id=article_id).first()
@@ -176,16 +145,6 @@ def add_article_image(article_id, article_body):
             )
             article_image.article = article
             image.articles.append(article_image)
-
-
-@listens_for(Article, 'after_update')
-def update_article_body_images(mapper, connection, target):
-    print("Произошло ОБНОВЛЕНИЕ статьи")
-
-
-def get_images_names(text: str) -> List[str]:
-    pattern = r'<img[^>]*src="/files/([^"]+)"[^>]*>'
-    return re.findall(pattern, text)
 
 
 
@@ -268,6 +227,7 @@ class ArticleCardView(AccessView):
     def on_model_change(self, form, model: ArticleCard, is_created: bool) -> None:
         filename = secure_filename(form.card_image.data.__dict__['filename'])
         if is_created:
+            # We are CREATING an articlecard and aricle
             my_image = MyImage(
                 filename=filename,
                 absolute_path=os.path.join(IMAGE_BASE_PATH['articles'], filename),
@@ -287,15 +247,84 @@ class ArticleCardView(AccessView):
                     article_image.image = image
                     model.article.images.append(article_image)
         else:
+            # We are EDITING an articlecard and aricle
             model.image.filename = filename
             model.image.absolute_path = os.path.join(IMAGE_BASE_PATH['articles'], filename)
             model.image.relative_path = os.path.join(IMAGE_REL_PATHS['articles'], filename)
             model.article.title = model.title
             model.article.body = form.body.data
+
+            # Get images before editing
+            if model.article.images:
+                prev_images = {image.image.filename for image in model.article.images}
+            
+            # Get images after editing
+            image_names = get_images_names(model.article.body)
+            if image_names:
+                # Remove deleted images in the article from DB
+                image_on_delete = tuple(prev_images - set(image_names))
+                deleted_images = db.session.query(MyImage).filter(MyImage.filename.in_(image_on_delete)).all()
+                for image_obj in deleted_images:
+                    obj_to_delete = db.session.query(ArticleImage).get({'image_id': image_obj.id, 'article_id': model.article.id})
+                    if obj_to_delete:
+                        db.session.delete(obj_to_delete)
+                        db.session.commit()
+                
+                # Add new images in the article to DB
+                images_on_add = tuple(set(image_names) - prev_images)
+                for image_name in images_on_add:
+                    article_image = ArticleImage()
+                    image = MyImage(
+                         filename=image_name,
+                         absolute_path=os.path.join(FILE_BASE_PATH, image_name),
+                         relative_path=os.path.join(FILE_REL_PATH, image_name),
+                     )
+                    article_image.image = image
+                    model.article.images.append(article_image)
         super(ArticleCardView, self).on_model_change(form, model, is_created)
 
 
+# SQLAlchemy Events
+@listens_for(News, 'after_delete')
+def receive_after_delete(mapper, connection, target):
+    "listen for the 'after_delete' event"
+    if target:
+        try:
+            os.remove(target.image.absolute_path)
+        except OSError:
+            pass
 
+@listens_for(ArticleCard, 'after_delete')
+def delete_article_files(mapper, connection, target: ArticleCard):
+    "listen for the 'after_delete' event"
+    if target:
+        try:
+            os.remove(target.image.absolute_path)
+            if target.article.images:
+                for article_image in target.article.images:
+                    os.remove(article_image.image.absolute_path)
+        except OSError:
+            pass
+
+@listens_for(ArticleCard, 'before_update')
+def update_image_event(mapper, connection, target: ArticleCard):
+    if target:
+        try:
+            os.remove(target.image.absolute_path)
+        except OSError:
+            pass
+
+@listens_for(db.session, 'after_flush')
+def delete_removed_images(session, flush_content):
+    if session.deleted:
+        try:
+            for item in session.deleted:
+                if isinstance(item, ArticleImage):
+                    os.remove(item.image.absolute_path)
+        except OSError:
+            pass
+
+# Admin view fill
 admin.add_link(MenuLink(name='На сайт', url='/'))
 admin.add_view(UserView(User, db.session, 'Пользователи'))
 admin.add_view(UserSessionView(UserSession, db.session, 'Сессии'))

@@ -1,8 +1,18 @@
+import uuid
+import re
 from typing import List
 from mct_app.site.models import ArticleCard
 from PIL import Image
 from werkzeug.datastructures import FileStorage
+from werkzeug.utils import secure_filename
 
+def get_images_names(text: str) -> List[str]:
+    pattern = r'<img[^>]*src="/files/([^"]+)"[^>]*>'
+    return re.findall(pattern, text)
+
+def generate_image_name(obj, file_data):
+    image_suffix = uuid.uuid4()
+    return secure_filename(f"image_{image_suffix}")
 
 def get_articles_by_months(article_cards: List[ArticleCard]) -> dict:
     acticles_by_month = {}
