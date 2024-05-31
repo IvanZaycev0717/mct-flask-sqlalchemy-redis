@@ -21,21 +21,6 @@ from mct_app.email import send_email
 
 auth = Blueprint('auth', __name__)
 
-SOCIAL_AUTH_VK_OAUTH2_KEY = '51920174'
-SOCIAL_AUTH_VK_OAUTH2_SECRET = 'cqUJVoTNym6Os5pQWfDJ'
-SOCIAL_AUTH_VK_REDIRECT = 'https://localhost/vk-callback'
-
-OK_CLIENT_ID = '512002593594'
-OK_CLIENT_SECRET = '0AF67F589594B24F2F41BDE6'
-OK_PUBLIC_KEY = 'CLDEJMLGDIHBABABA'
-OK_REDIRECT_URI = 'https://localhost/ok-callback'
-
-YA_CLIENT_ID = '50e26776ec814fe6a520f6d98659f8f1'
-YA_CLIENT_SECRET = '2e2cfc985cbe4afe93fafcc8d8f408db'
-YA_REDIRECT_URI = 'https://localhost/yandex-callback'
-
-GOOGLE_CLIENT_ID = '904059633989-0hasb3m586f1u6u0tcnumm249itt9a4k.apps.googleusercontent.com'
-
 client_secrets_file = os.path.join(basedir, 'client_secret.json')
 
 flow = Flow.from_client_secrets_file(
@@ -43,7 +28,6 @@ flow = Flow.from_client_secrets_file(
     scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
     redirect_uri="https://localhost/google-callback"
 )
-
 
 
 @auth.route('/registration', methods=['GET', 'POST'])
@@ -175,7 +159,7 @@ def google_callback():
     id_info = id_token.verify_oauth2_token(
         id_token=credentials._id_token,
         request=token_request,
-        audience=GOOGLE_CLIENT_ID,
+        audience=os.environ.get('GOOGLE_CLIENT_ID'),
         clock_skew_in_seconds=10
     )
     username = id_info.get("name")
@@ -190,15 +174,17 @@ def google_callback():
 
 @auth.route('/vk-login')
 def vk_login():
-    return redirect(fr'https://oauth.vk.com/authorize?client_id={SOCIAL_AUTH_VK_OAUTH2_KEY}&scope=messages;email&redirect_uri={SOCIAL_AUTH_VK_REDIRECT}&response_type=code')
+    redirect_url = os.environ.get('VK_API_REQUEST')
+    print(redirect_url)
+    return redirect(redirect_url)
 
 @auth.route('/vk-callback')
 def vk_callback():
     code = request.args.get('code')
     response = requests.get('https://oauth.vk.com/access_token', params={
-        'client_id': SOCIAL_AUTH_VK_OAUTH2_KEY,
-        'client_secret': SOCIAL_AUTH_VK_OAUTH2_SECRET,
-        'redirect_uri': SOCIAL_AUTH_VK_REDIRECT,
+        'client_id': os.environ.get('SOCIAL_AUTH_VK_OAUTH2_KEY'),
+        'client_secret': os.environ.get('SOCIAL_AUTH_VK_OAUTH2_SECRET'),
+        'redirect_uri': os.environ.get('SOCIAL_AUTH_VK_REDIRECT'),
         'code': code,
     })
 
@@ -232,7 +218,8 @@ def vk_callback():
 
 @auth.route('/ok-login')
 def ok_login():
-    return redirect(f'https://connect.ok.ru/oauth/authorize?client_id={OK_CLIENT_ID}&scope=VALUABLE_ACCESS;GET_EMAIL&response_type=token&redirect_uri={OK_REDIRECT_URI}')
+    redicrect_url = os.environ.get('OK_API_REQUEST')
+    return redirect(redicrect_url)
 
 @auth.route('/ok-callback')
 def ok_callback():
@@ -241,7 +228,7 @@ def ok_callback():
     if access_token and session_secret_key and 'null' not in access_token and 'null' not in session_secret_key:
         url = 'https://api.ok.ru/fb.do'
         params = {
-            'application_key': OK_PUBLIC_KEY,
+            'application_key': os.environ.get('OK_PUBLIC_KEY'),
             'method': 'users.getCurrentUser',
             'access_token': access_token,
             'sig': session_secret_key,
@@ -275,7 +262,8 @@ def ok_redirect():
 
 @auth.route('/yandex-login')
 def yandex_login():
-    return redirect(f'https://oauth.yandex.ru/authorize?response_type=code&client_id={YA_CLIENT_ID}&redirect_uri={YA_REDIRECT_URI}')
+    redirect_url = os.environ.get('YANDEX_API_REQUEST')
+    return redirect(redirect_url)
 
 @auth.route('/yandex-callback')
 def yandex_callback():
@@ -285,8 +273,8 @@ def yandex_callback():
         token_params = {
             'grant_type': 'authorization_code',
             'code': code,
-            'client_id': YA_CLIENT_ID,
-            'client_secret': YA_CLIENT_SECRET
+            'client_id': os.environ.get('YA_CLIENT_ID'),
+            'client_secret': os.environ.get('YA_CLIENT_SECRET')
         }
         response = requests.post(token_url, data=token_params)
         data = response.json()
