@@ -258,18 +258,18 @@ class ArticleCardView(AccessView):
             if model.article.images:
                 prev_images = {image.image.filename for image in model.article.images}
             
-            # Get images after editing
+            # Remove deleted images in the article from DB
             image_names = get_images_names(model.article.body)
+            image_on_delete = tuple(prev_images - set(image_names))
+            deleted_images = db.session.query(MyImage).filter(MyImage.filename.in_(image_on_delete)).all()
+            for image_obj in deleted_images:
+                obj_to_delete = db.session.query(ArticleImage).get({'image_id': image_obj.id, 'article_id': model.article.id})
+                if obj_to_delete:
+                    db.session.delete(obj_to_delete)
+                    db.session.commit()
+            
+            # Get images after editing
             if image_names:
-                # Remove deleted images in the article from DB
-                image_on_delete = tuple(prev_images - set(image_names))
-                deleted_images = db.session.query(MyImage).filter(MyImage.filename.in_(image_on_delete)).all()
-                for image_obj in deleted_images:
-                    obj_to_delete = db.session.query(ArticleImage).get({'image_id': image_obj.id, 'article_id': model.article.id})
-                    if obj_to_delete:
-                        db.session.delete(obj_to_delete)
-                        db.session.commit()
-                
                 # Add new images in the article to DB
                 images_on_add = tuple(set(image_names) - prev_images)
                 for image_name in images_on_add:
