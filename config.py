@@ -67,6 +67,7 @@ class Config:
     CKEDITOR_SERVE_LOCAL = True
     CKEDITOR_FILE_UPLOADER = 'administration.upload'
     CKEDITOR_ENABLE_CSRF = True
+    CKEDITOR_HEIGHT = 720
     
 
 

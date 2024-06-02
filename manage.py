@@ -1,4 +1,4 @@
-from mct_app import create_app, db, mail
+from mct_app import create_app, db
 from flask_migrate import Migrate
 from config import CSV_FILE_PATHS
 from mct_app.auth.models import Role, User, UserRole

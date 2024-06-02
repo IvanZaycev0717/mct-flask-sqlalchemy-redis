@@ -1,41 +1,19 @@
 import csv
-import tempfile
-import uuid
 import datetime
 from typing import List, Optional
 import os
-import os.path as op
-from urllib.parse import unquote
 
 
-from flask import abort, url_for
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from itsdangerous import BadSignature
-from markupsafe import Markup
-from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select, update
+from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import UserMixin, current_user, AnonymousUserMixin
-from flask_admin.contrib.sqla import ModelView
-import flask_admin
-from flask_admin import expose
-from wtforms_alchemy.fields import QuerySelectMultipleField
-from config import IMAGE_BASE_PATH, Is
-from wtforms.validators import DataRequired
-from flask_admin.menu import MenuLink
-from flask_admin.form.upload import ImageUploadField, ImageUploadInput
-from config import IMAGE_REL_PATHS
-from werkzeug.utils import secure_filename
-from PIL import Image as  PillowImage, ImageOps
-from sqlalchemy.event import listens_for
-from flask_ckeditor import CKEditorField
-from werkzeug.datastructures import FileStorage
-from werkzeug.datastructures.headers import Headers
+from flask_login import UserMixin, AnonymousUserMixin
 
 
-
-from mct_app import db, login_manager, admin
-from mct_app.site.models import ArticleCard, News, Image as MyImage, Article
+from config import Is
+from mct_app import db, login_manager
 
 
 class User(UserMixin, db.Model):
@@ -83,6 +61,7 @@ class User(UserMixin, db.Model):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
     
+    @staticmethod
     def create_admin():
         if not User.query.filter_by(username=os.environ.get('ADMIN_NAME')
                                     ).first():
@@ -125,6 +104,7 @@ class UserRole(db.Model):
     role: Mapped['Role'] = relationship(back_populates='users')
     user: Mapped['User'] = relationship(back_populates='roles')
 
+    @staticmethod
     def create_admin_role():
         if not UserRole.query.filter_by(user_id=db.session.scalar(select(User.id).where(User.username == os.environ.get('ADMIN_NAME')))).first():
             admin_role = UserRole(

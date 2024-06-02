@@ -23,6 +23,10 @@ from werkzeug.utils import secure_filename
 from PIL import Image as  PillowImage, ImageOps
 from sqlalchemy.event import listens_for
 from flask_ckeditor import CKEditorField
+from werkzeug.datastructures import FileStorage
+import tempfile
+from werkzeug.datastructures.headers import Headers
+
 
 
 from mct_app.auth.models import *
@@ -151,10 +155,17 @@ def add_article_image(article_id, article_body):
 class NewsView(AccessView):
     column_display_pk = True
     page_size = 10
+    edit_template = 'admin/edit.html'
     column_default_sort = ('id', True)
     column_formatters = {
         'image': lambda v, c, m, p: Markup(f'<img src="{m.image.relative_path}" width="100" height="100">')
     }
+
+    def on_form_prefill(self, form, id):
+        model = self.get_one(id)
+        if model:
+            form.extra.data = model.image.relative_path
+
 
     def scaffold_form(self):
         form_class = super(NewsView, self).scaffold_form()
@@ -164,18 +175,24 @@ class NewsView(AccessView):
             validators=[DataRequired()],
             base_path=IMAGE_BASE_PATH['news'],
             namegen=generate_image_name,
-            max_size=(300, 300, True)
+            max_size=(300, 300, True),
+            allow_overwrite=False,
             )
         return form_class
 
 
     def on_model_change(self, form, model: News, is_created: bool) -> None:
         filename = secure_filename(form.extra.data.__dict__['filename'])
-        my_image = MyImage(
-            filename=filename,
-            absolute_path=os.path.join(IMAGE_BASE_PATH['news'], filename),
-            relative_path=os.path.join(IMAGE_REL_PATHS['news'], filename))
-        model.image = my_image
+        if is_created:
+            my_image = MyImage(
+                filename=filename,
+                absolute_path=os.path.join(IMAGE_BASE_PATH['news'], filename),
+                relative_path=os.path.join(IMAGE_REL_PATHS['news'], filename))
+            model.image = my_image
+        else:
+            model.image.filename = filename
+            model.image.absolute_path = os.path.join(IMAGE_BASE_PATH['news'], filename)
+            model.image.relative_path = os.path.join(IMAGE_REL_PATHS['news'], filename)
         super(NewsView, self).on_model_change(form, model, is_created)
 
 
@@ -194,6 +211,12 @@ class UserSessionView(AccessView):
     can_edit = False
     can_create = False
 
+def create_temp_file(absolute_path: str) -> tempfile.SpooledTemporaryFile:
+    with open(absolute_path, 'rb') as file:
+        with tempfile.SpooledTemporaryFile() as spooled_file:
+            spooled_file.write(file.read())
+            spooled_file.seek(0)
+        return spooled_file
 
 
 class ArticleCardView(AccessView):
@@ -210,6 +233,7 @@ class ArticleCardView(AccessView):
         model = self.get_one(id)
         if model:
             form.body.data = model.article.body
+            form.card_image.data = model.image.relative_path
 
     def scaffold_form(self):
         form_class = super(ArticleCardView, self).scaffold_form()
@@ -254,19 +278,21 @@ class ArticleCardView(AccessView):
             model.article.title = model.title
             model.article.body = form.body.data
 
+            image_names = get_images_names(model.article.body)
+            prev_images = set()
+
             # Get images before editing
             if model.article.images:
                 prev_images = {image.image.filename for image in model.article.images}
             
             # Remove deleted images in the article from DB
-            image_names = get_images_names(model.article.body)
             image_on_delete = tuple(prev_images - set(image_names))
             deleted_images = db.session.query(MyImage).filter(
                 MyImage.filename.in_(image_on_delete)).all()
             for image_obj in deleted_images:
                 obj_to_delete = db.session.query(ArticleImage).get(
                     {'image_id': image_obj.id,
-                     'article_id': model.article.id})
+                    'article_id': model.article.id})
                 if obj_to_delete:
                     db.session.delete(obj_to_delete)
                     db.session.commit()
@@ -296,6 +322,15 @@ def receive_after_delete(mapper, connection, target):
             os.remove(target.image.absolute_path)
         except OSError:
             pass
+
+@listens_for(News, 'before_update')
+def update_image_event(mapper, connection, target: News):
+    if target:
+        try:
+            os.remove(target.image.absolute_path)
+        except OSError:
+            pass
+
 
 @listens_for(ArticleCard, 'after_delete')
 def delete_article_files(mapper, connection, target: ArticleCard):
