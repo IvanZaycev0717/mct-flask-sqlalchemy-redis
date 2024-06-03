@@ -19,7 +19,7 @@ class Image(db.Model):
     news: Mapped['News'] = relationship(back_populates='image')
     article_card: Mapped['ArticleCard'] = relationship(back_populates='image')
     articles: Mapped[List['ArticleImage']] = relationship(back_populates='image')
-
+    textbook_paragraphs: Mapped[List['TextbookParagraphImage']] = relationship(back_populates='image')
 
     def __repr__(self) -> str:
         return str(self.filename)
@@ -79,3 +79,38 @@ class News(db.Model):
     image: Mapped['Image'] = relationship(back_populates='news', cascade="all, delete")
 
 
+
+class TextbookChapter(db.Model):
+    __tablename__ = 'textbook_chapter'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[str] = mapped_column(String(255), nullable=True)
+
+    textbook_paragraphs: Mapped[List['TextbookParagraph']] = relationship(back_populates='textbook_chapter', passive_deletes=True)
+
+    def __repr__(self) -> str:
+        return str(self.name)
+
+    def __str__(self) -> str:
+        return str(self.name)
+
+class TextbookParagraph(db.Model):
+    __tablename__ = 'textbook_paragraph'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    content: Mapped[str] = mapped_column(UnicodeText)
+    textbook_chapter_id: Mapped[int] = mapped_column(ForeignKey('textbook_chapter.id', ondelete='SET NULL'), nullable=True)
+
+    images: Mapped[List['TextbookParagraphImage']] = relationship(back_populates='textbook_paragraph')
+    textbook_chapter: Mapped['TextbookChapter'] = relationship(back_populates='textbook_paragraphs')
+
+class TextbookParagraphImage(db.Model):
+    __tablename__ = 'textbook_paragraph_image'
+
+    image_id: Mapped[int] = mapped_column(ForeignKey('image.id'), primary_key=True)
+    textbook_paragraph_id: Mapped[int] = mapped_column(ForeignKey('textbook_paragraph.id'), primary_key=True)
+
+    image: Mapped['Image'] = relationship(back_populates='textbook_paragraphs')
+    textbook_paragraph: Mapped['TextbookParagraph'] = relationship(back_populates='images')

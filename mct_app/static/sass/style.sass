@@ -66,6 +66,11 @@
     margin-right: 10px
     margin-bottom: 20px
 
+.list-group-item
+    &:hover
+        font-weight: bold
+
+
 .textbook-title
     margin-bottom: 20px
 
@@ -254,9 +259,33 @@
         border-radius: 5px
         border-radius: 5px
         object-fit: cover
+
 .article-buttons
     padding-top: 20px
     margin-bottom: 20px
+
+.tooltip-text 
+  visibility: hidden
+  position: absolute
+  z-index: 1
+  width: 100px
+  color: white
+  font-size: 12px
+  background-color: #192733
+  border-radius: 10px
+  padding: 10px 15px 10px 15px
+
+.accordion
+    padding-top: 3%
+    margin-bottom: 3%
+
+.accordion>.accordion-item>.accordion-header>.accordion-button
+    background-image: linear-gradient(45deg, #FAD961 0%, #ffa600 100%)
+
+[data-bs-theme=dark] .accordion>.accordion-item>.accordion-header>.accordion-button
+    background-image: linear-gradient(-45deg, #241034 0%, #0e0515 100%)
+    color: white
+
 
 @media (max-width:768px)
     .popup-image

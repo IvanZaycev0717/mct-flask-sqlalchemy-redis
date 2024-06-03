@@ -1,6 +1,6 @@
 import uuid
 import re
-from typing import List
+from typing import Dict, List, Tuple
 from mct_app.site.models import ArticleCard
 from PIL import Image
 from werkzeug.datastructures import FileStorage
@@ -9,6 +9,17 @@ from werkzeug.utils import secure_filename
 def get_images_names(text: str) -> List[str]:
     pattern = r'<img[^>]*src="/files/([^"]+)"[^>]*>'
     return re.findall(pattern, text)
+
+def get_textbook_chapters_paragraphs(chapters_paragraphs: List[Tuple[str]]) -> Dict[str, List[str]]:
+    textbook_data = {}
+    for item in chapters_paragraphs:
+        chapter = item[0]
+        paragraph = item[1]
+        if chapter not in textbook_data:
+            textbook_data[chapter] = [paragraph]
+        else:
+            textbook_data[chapter].append(paragraph)
+    return textbook_data
 
 def generate_image_name(obj, file_data):
     image_suffix = uuid.uuid4()

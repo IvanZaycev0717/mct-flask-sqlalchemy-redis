@@ -5,13 +5,13 @@ from flask import Blueprint, render_template, request, send_from_directory, sess
 import werkzeug.exceptions
 from mct_app import db
 
-from mct_app.site.models import Article, ArticleCard, News
+from mct_app.site.models import Article, ArticleCard, News, TextbookChapter, TextbookParagraph
 from sqlalchemy import select
 from flask_ckeditor import upload_success, upload_fail
 from flask_ckeditor import CKEditor
 
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, SOICAL_MEDIA_LINKS, basedir
-from mct_app.utils import get_articles_by_months
+from mct_app.utils import get_articles_by_months, get_textbook_chapters_paragraphs
 from mct_app import csrf
 
 
@@ -97,7 +97,16 @@ def article(article_id):
 @site.route('/textbook')
 def textbook():
     flash('textbook', 'active_links')
-    return render_template('textbook.html')
+    query = select(TextbookChapter.name, TextbookParagraph.name).join_from(TextbookParagraph, TextbookChapter)
+    textbook_data = db.session.execute(query).all()
+    textbook_items = get_textbook_chapters_paragraphs(textbook_data)
+    print(textbook_items)
+    return render_template('textbook.html', textbook_items=textbook_items)
+
+@site.route('/textbook/<paragraph>')
+def textbook_paragraph(paragraph):
+    paragraph = TextbookParagraph.query.filter_by(name=paragraph).first_or_404()
+    return render_template('paragraph.html', paragraph=paragraph)
 
 @site.route('/questions')
 def questions():

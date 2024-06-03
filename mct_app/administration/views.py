@@ -31,7 +31,7 @@ from werkzeug.datastructures.headers import Headers
 
 from mct_app.auth.models import *
 from mct_app import db, admin
-from mct_app.site.models import ArticleCard, ArticleImage, News, Image as MyImage, Article
+from mct_app.site.models import ArticleCard, ArticleImage, News, Image as MyImage, Article, TextbookChapter, TextbookParagraph
 from mct_app import db
 from mct_app.site.models import Article, ArticleCard, News
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, basedir
@@ -211,14 +211,6 @@ class UserSessionView(AccessView):
     can_edit = False
     can_create = False
 
-def create_temp_file(absolute_path: str) -> tempfile.SpooledTemporaryFile:
-    with open(absolute_path, 'rb') as file:
-        with tempfile.SpooledTemporaryFile() as spooled_file:
-            spooled_file.write(file.read())
-            spooled_file.seek(0)
-        return spooled_file
-
-
 class ArticleCardView(AccessView):
     column_default_sort = ('id', True)
     form_excluded_columns = ('image', 'article')
@@ -313,6 +305,7 @@ class ArticleCardView(AccessView):
         super(ArticleCardView, self).on_model_change(form, model, is_created)
 
 
+
 # SQLAlchemy Events
 @listens_for(News, 'after_delete')
 def receive_after_delete(mapper, connection, target):
@@ -369,3 +362,5 @@ admin.add_view(UserSessionView(UserSession, db.session, 'Сессии'))
 admin.add_view(UserRoleView(UserRole, db.session, 'Роли пользователей'))
 admin.add_view(NewsView(News, db.session, 'Новости'))
 admin.add_view(ArticleCardView(ArticleCard, db.session, 'Статьи'))
+admin.add_view(AccessView(TextbookChapter, db.session, 'Разделы учебника'))
+admin.add_view(AccessView(TextbookParagraph, db.session, 'Главы учебника'))

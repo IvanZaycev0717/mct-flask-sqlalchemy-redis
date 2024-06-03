@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container-fluid article-card">
+        <h2>{{ paragraph.name }}</h2>
+        {{ paragraph.content|safe }}
+        <hr>
+        <div class="article-buttons text-center d-flex justify-content-between">
+            <div>
+                <a class="btn btn-warning btn-lg" href="" role="button">⬅️ К прошлому параграфу</a>
+                <a class="btn btn-primary btn-lg" href="#" role="button">⬆️ Вверх</a>
+                <a class="btn btn-warning btn-lg" href="" role="button">➡️ К следующему параграфу</a>
+            </div>
+            <div>
+                <a class="btn btn-warning btn-lg" href="{{ url_for('site.textbook') }}" role="button">📘 К учебнику</a>
+                <a class="btn btn-dark btn-lg" href="{{ url_for('site.home') }}" role="button">🛖 На главную</a>
+            </div>
+        </div>
+    </div>
+    <div class="popup-image">
+        <span>&times;</span>
+        <img src=" " alt="">
+    </div>
+{% endblock %}
