@@ -31,7 +31,7 @@ from werkzeug.datastructures.headers import Headers
 
 from mct_app.auth.models import *
 from mct_app import db, admin
-from mct_app.site.models import ArticleCard, ArticleImage, News, Image as MyImage, Article, TextbookChapter, TextbookParagraph
+from mct_app.site.models import ArticleCard, ArticleImage, News, Image as MyImage, Article, TextbookChapter, TextbookParagraph, TextbookParagraphImage
 from mct_app import db
 from mct_app.site.models import Article, ArticleCard, News
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, basedir
@@ -244,13 +244,18 @@ class ArticleCardView(AccessView):
         filename = secure_filename(form.card_image.data.__dict__['filename'])
         if is_created:
             # We are CREATING an articlecard and aricle
+            # image of current card
             my_image = MyImage(
                 filename=filename,
                 absolute_path=os.path.join(IMAGE_BASE_PATH['articles'], filename),
                 relative_path=os.path.join(IMAGE_REL_PATHS['articles'], filename))
+            model.image = my_image
+
+            # a new article inside the card
             article = Article(title=model.title, body=form.body.data)
             model.article = article
-            model.image = my_image
+            
+            # fetch images inside article content
             image_names = get_images_names(model.article.body)
             if image_names:
                 for image_name in image_names:
@@ -264,16 +269,22 @@ class ArticleCardView(AccessView):
                     model.article.images.append(article_image)
         else:
             # We are EDITING an articlecard and aricle
+            # change image of the current card
             model.image.filename = filename
             model.image.absolute_path = os.path.join(IMAGE_BASE_PATH['articles'], filename)
             model.image.relative_path = os.path.join(IMAGE_REL_PATHS['articles'], filename)
+            
+            # take articlecard title to current article
             model.article.title = model.title
+
+            # change content of the article body
             model.article.body = form.body.data
 
+            # get all images in article
             image_names = get_images_names(model.article.body)
-            prev_images = set()
 
             # Get images before editing
+            prev_images = set()
             if model.article.images:
                 prev_images = {image.image.filename for image in model.article.images}
             
@@ -304,12 +315,86 @@ class ArticleCardView(AccessView):
                     model.article.images.append(article_image)
         super(ArticleCardView, self).on_model_change(form, model, is_created)
 
+class TextbookChapterView(AccessView):
+    form_excluded_columns = ('textbook_paragraphs', )
+
+class TextbookParagraphView(AccessView):
+    form_excluded_columns = ('images', 'content')
+    create_template = 'admin/edit-paragraph.html'
+    edit_template = 'admin/edit-paragraph.html'
+
+    def on_form_prefill(self, form, id):
+        model = self.get_one(id)
+        if model:
+            form.paragraph_content.data = model.content
+
+    def scaffold_form(self):
+        form_class = super(TextbookParagraphView, self).scaffold_form()
+        form_class.paragraph_content = CKEditorField()
+        return form_class
+    
+    def on_model_change(self, form, model: TextbookParagraph, is_created: bool) -> None:
+        if is_created:
+            # We are CREATING a new paragraph in the textbook
+            model.content = form.paragraph_content.data
+
+            # get new images in the current paragraph
+            image_names = get_images_names(model.content)
+            if image_names:
+                for image_name in image_names:
+                    paragraph_image = TextbookParagraphImage()
+                    image = MyImage(
+                        filename=image_name,
+                        absolute_path=os.path.join(FILE_BASE_PATH, image_name),
+                        relative_path=os.path.join(FILE_REL_PATH, image_name),
+                    )
+                    paragraph_image.image = image
+                    model.images.append(paragraph_image)
+        else:
+            # We are EDITING a paragraph in the textbook
+            # write paragraph content to model content
+            model.content = form.paragraph_content.data
+
+            # get all images in the content
+            image_names = get_images_names(model.content)
+
+            # Get images before editing
+            prev_images = set()
+            if model.images:
+                prev_images = {image.image.filename for image in model.images}
+            
+
+            # Remove deleted images in the paragraph from DB
+            image_on_delete = tuple(prev_images - set(image_names))
+            deleted_images = db.session.query(MyImage).filter(
+                MyImage.filename.in_(image_on_delete)).all()
+            for image_obj in deleted_images:
+                obj_to_delete = db.session.query(TextbookParagraphImage).get(
+                    {'image_id': image_obj.id,
+                    'textbook_paragraph_id': model.id})
+                if obj_to_delete:
+                    db.session.delete(obj_to_delete)
+                    db.session.commit()
+
+            # Get images after editing
+            if image_names:
+                # Add new images in the article to DB
+                images_on_add = tuple(set(image_names) - prev_images)
+                for image_name in images_on_add:
+                    paragraph_image = TextbookParagraphImage()
+                    image = MyImage(
+                        filename=image_name,
+                        absolute_path=os.path.join(FILE_BASE_PATH, image_name),
+                        relative_path=os.path.join(FILE_REL_PATH, image_name),
+                    )
+                    paragraph_image.image = image
+                    model.images.append(paragraph_image)
+        super(TextbookParagraphView, self).on_model_change(form, model, is_created)
 
 
 # SQLAlchemy Events
 @listens_for(News, 'after_delete')
-def receive_after_delete(mapper, connection, target):
-    "listen for the 'after_delete' event"
+def delete_unused_news_images(mapper, connection, target: News):
     if target:
         try:
             os.remove(target.image.absolute_path)
@@ -317,7 +402,7 @@ def receive_after_delete(mapper, connection, target):
             pass
 
 @listens_for(News, 'before_update')
-def update_image_event(mapper, connection, target: News):
+def delete_unused_news_images_before_update(mapper, connection, target: News):
     if target:
         try:
             os.remove(target.image.absolute_path)
@@ -326,8 +411,7 @@ def update_image_event(mapper, connection, target: News):
 
 
 @listens_for(ArticleCard, 'after_delete')
-def delete_article_files(mapper, connection, target: ArticleCard):
-    "listen for the 'after_delete' event"
+def delete_unused_articlecard_images(mapper, connection, target: ArticleCard):
     if target:
         try:
             os.remove(target.image.absolute_path)
@@ -338,19 +422,31 @@ def delete_article_files(mapper, connection, target: ArticleCard):
             pass
 
 @listens_for(ArticleCard, 'before_update')
-def update_image_event(mapper, connection, target: ArticleCard):
+def delete_unused_articlecard_images_before_update(mapper, connection, target: ArticleCard):
     if target:
         try:
             os.remove(target.image.absolute_path)
         except OSError:
             pass
 
+@listens_for(TextbookParagraph, 'after_delete')
+def delete_unused_articlecard_images(mapper, connection, target: TextbookParagraph):
+    if target:
+        try:
+            if target.images:
+                for image in target.images:
+                    os.remove(image.image.absolute_path)
+        except OSError:
+            pass
+
 @listens_for(db.session, 'after_flush')
-def delete_removed_images(session, flush_content):
+def delete_images_from_content(session, flush_content):
     if session.deleted:
         try:
             for item in session.deleted:
                 if isinstance(item, ArticleImage):
+                    os.remove(item.image.absolute_path)
+                if isinstance(item, TextbookParagraphImage):
                     os.remove(item.image.absolute_path)
         except OSError:
             pass
@@ -362,5 +458,5 @@ admin.add_view(UserSessionView(UserSession, db.session, 'Сессии'))
 admin.add_view(UserRoleView(UserRole, db.session, 'Роли пользователей'))
 admin.add_view(NewsView(News, db.session, 'Новости'))
 admin.add_view(ArticleCardView(ArticleCard, db.session, 'Статьи'))
-admin.add_view(AccessView(TextbookChapter, db.session, 'Разделы учебника'))
-admin.add_view(AccessView(TextbookParagraph, db.session, 'Главы учебника'))
+admin.add_view(TextbookChapterView(TextbookChapter, db.session, 'Разделы учебника'))
+admin.add_view(TextbookParagraphView(TextbookParagraph, db.session, 'Главы учебника'))

@@ -1,0 +1,10 @@
+{% extends 'admin/model/edit.html' %}
+
+
+
+{% block tail %}
+    {{ super() }}
+    {{ ckeditor.load(custom_url=url_for('static', filename='ckeditor/ckeditor.js')) }}
+    {{ ckeditor.config(name='paragraph_content') }}
+    <script src="{{ url_for('static', filename='js/replace.5c.backslash.js') }}"></script>
+{% endblock %}

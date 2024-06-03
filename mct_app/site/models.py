@@ -103,14 +103,14 @@ class TextbookParagraph(db.Model):
     content: Mapped[str] = mapped_column(UnicodeText)
     textbook_chapter_id: Mapped[int] = mapped_column(ForeignKey('textbook_chapter.id', ondelete='SET NULL'), nullable=True)
 
-    images: Mapped[List['TextbookParagraphImage']] = relationship(back_populates='textbook_paragraph')
+    images: Mapped[List['TextbookParagraphImage']] = relationship(back_populates='textbook_paragraph', cascade='all, delete')
     textbook_chapter: Mapped['TextbookChapter'] = relationship(back_populates='textbook_paragraphs')
 
 class TextbookParagraphImage(db.Model):
     __tablename__ = 'textbook_paragraph_image'
 
-    image_id: Mapped[int] = mapped_column(ForeignKey('image.id'), primary_key=True)
-    textbook_paragraph_id: Mapped[int] = mapped_column(ForeignKey('textbook_paragraph.id'), primary_key=True)
+    image_id: Mapped[int] = mapped_column(ForeignKey('image.id', ondelete='CASCADE'), primary_key=True)
+    textbook_paragraph_id: Mapped[int] = mapped_column(ForeignKey('textbook_paragraph.id', ondelete='CASCADE'), primary_key=True)
 
-    image: Mapped['Image'] = relationship(back_populates='textbook_paragraphs')
+    image: Mapped['Image'] = relationship(back_populates='textbook_paragraphs', cascade='all, delete')
     textbook_paragraph: Mapped['TextbookParagraph'] = relationship(back_populates='images')
