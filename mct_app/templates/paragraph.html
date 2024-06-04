@@ -7,9 +7,17 @@
         <hr>
         <div class="article-buttons text-center d-flex justify-content-between">
             <div>
-                <a class="btn btn-warning btn-lg" href="" role="button">⬅️ К прошлому параграфу</a>
+                {% if prev_index is not none %}
+                    <a class="btn btn-warning btn-lg" href="{{ url_for('site.textbook_paragraph', paragraph=paragraphs[prev_index].name) }}" role="button">⬅️ К прошлому параграфу</a>
+                {% else %}
+                    <a class="btn btn-secondary btn-lg disabled" href="" role="button">К прошлому параграфу</a>
+                {% endif %}
                 <a class="btn btn-primary btn-lg" href="#" role="button">⬆️ Вверх</a>
-                <a class="btn btn-warning btn-lg" href="" role="button">➡️ К следующему параграфу</a>
+                {% if next_index is not none %}
+                    <a class="btn btn-warning btn-lg" href="{{ url_for('site.textbook_paragraph', paragraph=paragraphs[next_index].name) }}" role="button">➡️ К следующему параграфу</a>
+                {% else %}
+                    <a class="btn btn-secondary btn-lg disabled" href="" role="button">К следующему параграфу</a>
+                {% endif %}
             </div>
             <div>
                 <a class="btn btn-warning btn-lg" href="{{ url_for('site.textbook') }}" role="button">📘 К учебнику</a>

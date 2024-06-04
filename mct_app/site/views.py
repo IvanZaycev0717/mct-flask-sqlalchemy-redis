@@ -97,16 +97,19 @@ def article(article_id):
 @site.route('/textbook')
 def textbook():
     flash('textbook', 'active_links')
-    query = select(TextbookChapter.name, TextbookParagraph.name).join_from(TextbookParagraph, TextbookChapter)
+    query = select(TextbookChapter.name, TextbookParagraph.name).join_from(TextbookParagraph, TextbookChapter).order_by(TextbookChapter.name, TextbookParagraph.name)
     textbook_data = db.session.execute(query).all()
     textbook_items = get_textbook_chapters_paragraphs(textbook_data)
-    print(textbook_items)
     return render_template('textbook.html', textbook_items=textbook_items)
 
 @site.route('/textbook/<paragraph>')
 def textbook_paragraph(paragraph):
     paragraph = TextbookParagraph.query.filter_by(name=paragraph).first_or_404()
-    return render_template('paragraph.html', paragraph=paragraph)
+    paragraphs = TextbookParagraph.query.order_by(TextbookParagraph.name).all()
+    current_index = next((index for index, par in enumerate(paragraphs) if par == paragraph), None)
+    prev_index = current_index - 1 if current_index > 0 else None
+    next_index = current_index + 1 if current_index < len(paragraphs) - 1 else None
+    return render_template('paragraph.html', paragraph=paragraph,  paragraphs=paragraphs, prev_index=prev_index, next_index=next_index)
 
 @site.route('/questions')
 def questions():
