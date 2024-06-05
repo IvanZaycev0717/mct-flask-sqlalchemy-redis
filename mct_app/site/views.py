@@ -1,20 +1,25 @@
 from datetime import datetime
 import os
 import uuid
-from flask import Blueprint, render_template, request, send_from_directory, session, redirect, url_for, flash
+from flask import Blueprint, abort, jsonify, render_template, request, send_from_directory, session, redirect, url_for, flash
 import werkzeug.exceptions
 from mct_app import db
 
+from mct_app.site.forms import QuestionForm
 from mct_app.site.models import Article, ArticleCard, News, TextbookChapter, TextbookParagraph
 from sqlalchemy import select
 from flask_ckeditor import upload_success, upload_fail
 from flask_ckeditor import CKEditor
+import requests
+from flask_login import current_user
 
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, SOICAL_MEDIA_LINKS, basedir
 from mct_app.utils import get_articles_by_months, get_textbook_chapters_paragraphs
 from mct_app import csrf
 
 
+
+GOOGLE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
 NEWS_PER_PAGE = 3
 ARTICLES_PER_PAGE = 2
 
@@ -111,10 +116,21 @@ def textbook_paragraph(paragraph):
     next_index = current_index + 1 if current_index < len(paragraphs) - 1 else None
     return render_template('paragraph.html', paragraph=paragraph,  paragraphs=paragraphs, prev_index=prev_index, next_index=next_index)
 
-@site.route('/questions')
+@site.route('/questions', methods=['GET', 'POST'])
 def questions():
     flash('questions', 'active_links')
-    return render_template('questions.html')
+    site_key = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY')
+    secret_key = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY')
+    form = QuestionForm()
+    if form.validate_on_submit():
+        secret_response = request.form['g-recaptcha-response']
+        verify_response = requests.post(url=f'{GOOGLE_VERIFY_URL}?secret={secret_key}&response={secret_response}').json()
+        if not verify_response['success'] or verify_response['score'] < 0.5:
+            abort(401)
+        print('Success')
+    if form.errors:
+        flash(form.errors)
+    return render_template('questions.html', form=form, site_key=site_key)
 
 @site.route('/consultation')
 def consultation():

@@ -1,38 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- Button trigger modal -->
-<div class="container d-flex justify-content-center">
-    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      Задать вопрос
-    </button>
-  </div>
+{% include 'forms/ask_question.html' %}
+{% endblock %}
 
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Задать вопрс</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <div class="mb-3">
-              <label for="exampleFormControlInput1" class="form-label">Ваше имя:</label>
-              <input type="email" class="form-control" id="exampleFormControlInput1">
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Ваш вопрос:</label>
-              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-          <button type="button" class="btn btn-warning">Задать вопрос</button>
-        </div>
-      </div>
-    </div>
-  </div>
+{% block scripts %}
+{{ super() }}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var questionModal = new bootstrap.Modal('#questionModal');
+    var form = document.getElementById('question-form');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      questionModal.show();
+    });
+  });
+  
+</script>
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script>
+  function onSubmit(token) {
+    document.getElementById("question-form").submit();
+  }
+</script>
 {% endblock %}

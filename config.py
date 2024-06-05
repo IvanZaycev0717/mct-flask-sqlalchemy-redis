@@ -68,6 +68,9 @@ class Config:
     CKEDITOR_FILE_UPLOADER = 'administration.upload'
     CKEDITOR_ENABLE_CSRF = True
     CKEDITOR_HEIGHT = 720
+    GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY')
+    GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY')
+    
     
 
 
