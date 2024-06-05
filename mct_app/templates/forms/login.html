@@ -2,32 +2,8 @@
 
 {% block content %}
 
-{% with messages = get_flashed_messages(category_filter=["send-reset-password"]) %}
-{% if messages %}
-  <div class="modal" id="myModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Сообщение</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            {%- for msg in messages %}
-            <p><strong>{{ msg }}</strong></p>
-            {% endfor -%}
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Понятно</button>
-          </div>
-        </div>
-      </div>
-  </div>
-{% endif %}
-{% endwith %}
-
-
+{% include 'hints/reset_password_modal.html' %}
 {% include 'forms/social_media_enter.html' %}
-
 
 <div class="container__login-registration d-flex justify-content-center">
     <div class="card d-flex justify-content-center" style="width: 30rem;">

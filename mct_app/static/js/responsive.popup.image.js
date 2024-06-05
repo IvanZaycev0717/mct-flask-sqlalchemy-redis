@@ -4,6 +4,9 @@ document.querySelectorAll('.article-card img').forEach(image =>{
         document.querySelector('.popup-image img').src = image.getAttribute('src');
     }
 });
-document.querySelector('.popup-image').onclick = () => {
-    document.querySelector('.popup-image').style.display = 'none';
+const popupImage = document.querySelector('.popup-image');
+if (popupImage) {
+    popupImage.onclick = () => {
+        popupImage.style.display = 'none';
+    };
 };

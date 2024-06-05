@@ -6,18 +6,6 @@
 
 {% block scripts %}
 {{ super() }}
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var questionModal = new bootstrap.Modal('#questionModal');
-    var form = document.getElementById('question-form');
-
-    form.addEventListener('submit', function(event) {
-      event.preventDefault();
-      questionModal.show();
-    });
-  });
-  
-</script>
 <script src="https://www.google.com/recaptcha/api.js"></script>
 <script>
   function onSubmit(token) {
