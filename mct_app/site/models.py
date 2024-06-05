@@ -114,3 +114,5 @@ class TextbookParagraphImage(db.Model):
 
     image: Mapped['Image'] = relationship(back_populates='textbook_paragraphs', cascade='all, delete')
     textbook_paragraph: Mapped['TextbookParagraph'] = relationship(back_populates='images')
+
+

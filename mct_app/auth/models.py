@@ -1,12 +1,12 @@
 import csv
-import datetime
+from datetime import datetime
 from typing import List, Optional
 import os
 
 
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from itsdangerous import BadSignature
-from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, select
+from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, UnicodeText, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
@@ -37,6 +37,8 @@ class User(UserMixin, db.Model):
     social_account: Mapped['SocialAccount'] = relationship(
         back_populates="user", cascade="all, delete-orphan"
         )
+    question: Mapped['Question'] = relationship(back_populates='user')
+    answers: Mapped[List['Answer']] = relationship(back_populates='user')
 
     def is_admin(self):
         return self.roles[0].role_id == Is.ADMIN
@@ -161,6 +163,31 @@ class SocialAccount(db.Model):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'))
 
     user: Mapped['User'] = relationship(back_populates='social_account')
+
+class Question(db.Model):
+    __tablename__ = 'question'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    anon_name: Mapped[str] = mapped_column(String(45), nullable=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=True)
+    body: Mapped[str] = mapped_column(UnicodeText)
+    date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    ip_address: Mapped[str] = mapped_column(String(45))
+
+    answers: Mapped[List['Answer']] = relationship(back_populates='question')
+    user: Mapped['User'] = relationship(back_populates='question')
+
+class Answer(db.Model):
+    __tablename__ = 'answer'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    body: Mapped[str] = mapped_column(UnicodeText)
+    question_id: Mapped[Optional[int]] = mapped_column(ForeignKey('question.id'))
+    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey('user.id'))
+
+    user: Mapped[Optional['User']] = relationship(back_populates='answers')
+    question: Mapped[Optional['Question']] = relationship(back_populates='answers')
+
 
 class AnonymousUser(AnonymousUserMixin):
 
