@@ -7,7 +7,8 @@ from mct_app import db
 
 from mct_app.site.forms import QuestionForm
 from mct_app.site.models import Article, ArticleCard, News, TextbookChapter, TextbookParagraph
-from sqlalchemy import select
+from sqlalchemy import select, func
+from sqlalchemy.orm import aliased
 from flask_ckeditor import upload_success, upload_fail
 from flask_ckeditor import CKEditor
 import requests
@@ -16,6 +17,7 @@ from flask_login import current_user
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, SOICAL_MEDIA_LINKS, basedir
 from mct_app.utils import get_articles_by_months, get_textbook_chapters_paragraphs
 from mct_app import csrf
+from mct_app.auth.models import Question, Answer, User
 
 
 
@@ -127,10 +129,31 @@ def questions():
         verify_response = requests.post(url=f'{GOOGLE_VERIFY_URL}?secret={secret_key}&response={secret_response}').json()
         if not verify_response['success'] or verify_response['score'] < 0.5:
             abort(401)
-        print('Success')
-    if form.errors:
-        flash(form.errors)
-    return render_template('questions.html', form=form, site_key=site_key)
+        question = Question(
+            anon_name=form.anon_name.data,
+            user_id=None if current_user.is_anonymous else current_user.id,
+            body=form.body.data,
+            date=datetime.now(),
+            ip_address=request.remote_addr
+        )
+        db.session.add(question)
+        db.session.commit()
+        return redirect(url_for('site.question', question_id=question.id))
+    page = request.args.get('page', 1, type=int)
+    query = Question.query.outerjoin(Answer, Question.id == Answer.question_id).outerjoin(User, Question.user_id == User.id).group_by(Question.id).order_by(Question.date.desc())
+    questions = db.paginate(query, page=page, per_page=5)
+    pages_amount = questions.pages
+    active_page = questions.page
+    current_site = 'site.questions'
+    next_url = url_for('site.questions', page=questions.next_num) if questions.has_next else None
+    prev_url = url_for('site.questions', page=questions.prev_num) if questions.has_prev else None
+    return render_template('questions.html', form=form, site_key=site_key, current_site=current_site, questions=questions.items, next_url=next_url, prev_url=prev_url, pages_amount=pages_amount, active_page=active_page)
+
+@site.route('/questions/<question_id>', methods=['GET', 'POST'])
+def question(question_id):
+    question = Question.query.filter_by(id=question_id).first()
+    answers = Answer.query.filter_by(question_id=question.id).all()
+    return render_template('question.html', question=question, answers=answers)
 
 @site.route('/consultation')
 def consultation():

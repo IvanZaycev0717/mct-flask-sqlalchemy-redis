@@ -14,7 +14,6 @@ class QuestionForm(FlaskForm):
         validators=[DataRequired(message='Требуется ввести текст вопроса')])
     
     def validate_anon_name(self, anon_name):
-        print('Валидация сработала')
         if not current_user.is_authenticated:
             if not self.anon_name.data:
                 raise ValidationError('Требуется ввести имя')

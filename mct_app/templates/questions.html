@@ -2,6 +2,32 @@
 
 {% block content %}
 {% include 'forms/ask_question.html' %}
+
+{% for question in questions %}
+  <br>
+  <div class="container d-flex justify-content-center">
+    <div class="card" style="width: 70%;">
+      <div class="card-header d-flex justify-content-between">
+          {% if question.anon_name %}
+              <h5>Автор вопроса: {{ question.anon_name }}</h5>
+          {% else %}
+              <h5>Автор вопроса: {{ question.user.username }}</h5>
+          {% endif %}
+          <h5>Вопрос задан {{ question.date.strftime('%d.%m.%Y')}} в {{ question.date.strftime('%H:%M') }}</h5>
+      </div>
+      <div class="card-body">
+        <p class="card-text"><strong>Вопрос: </strong>{{ question.body|truncate(50) }}</p>
+        <div class="text-center">
+          <a href="{{ url_for('site.question', question_id=question.id) }}" class="btn btn-secondary">Посмотреть ответы ({{ question.answers|length }} ответов)</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+{% endfor %}
+{% include 'paginator.html' %}
+
+
 {% endblock %}
 
 {% block scripts %}

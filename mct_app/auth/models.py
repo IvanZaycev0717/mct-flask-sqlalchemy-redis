@@ -193,6 +193,9 @@ class AnonymousUser(AnonymousUserMixin):
 
     def is_anonymous(self):
         return True
+    
+    def is_doctor(self):
+        return False
 
     def is_admin(self):
         return False
