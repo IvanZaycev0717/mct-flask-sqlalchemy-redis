@@ -24,6 +24,8 @@ from mct_app.auth.models import Question, Answer, User
 GOOGLE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
 NEWS_PER_PAGE = 3
 ARTICLES_PER_PAGE = 2
+QUESTIONS_PER_PAGE = 6
+
 
 site = Blueprint('site', __name__)
 
@@ -46,17 +48,19 @@ def server_error(e):
 
 @site.app_context_processor
 def base_template_data_processor() -> dict[str, str]:
+    return {
+        'links': SOICAL_MEDIA_LINKS,
+        'current_year': datetime.now().year,
+    }
+
+
+def create_articles_list():
     articles_by_month_list = db.session.query(
         ArticleCard.last_update,
         ArticleCard.article_id,
         ArticleCard.title).order_by(ArticleCard.last_update.desc()).all()
     articles_by_month = get_articles_by_months(articles_by_month_list)
-
-    return {
-        'links': SOICAL_MEDIA_LINKS,
-        'current_year': datetime.now().year,
-        'articles_by_month': articles_by_month
-    }
+    return articles_by_month
 
 
 @site.route('/')
@@ -89,17 +93,20 @@ def articles():
     next_url = url_for('site.articles', page=articles.next_num) if articles.has_next else None
     prev_url = url_for('site.articles', page=articles.prev_num) if articles.has_prev else None
     current_site = 'site.articles'
+    articles_by_month = create_articles_list()
     return render_template(
         'articles.html',
         articles=articles.items,
         next_url=next_url, prev_url=prev_url,
         pages_amount=pages_amount, active_page=active_page,
-        current_site=current_site)
+        current_site=current_site,
+        articles_by_month=articles_by_month)
 
 @site.route('/articles/<article_id>')
 def article(article_id):
+    articles_by_month = create_articles_list()
     article = Article.query.filter_by(id=article_id).first()
-    return render_template('article.html', article=article)
+    return render_template('article.html', article=article, articles_by_month=articles_by_month)
 
 @site.route('/textbook')
 def textbook():
@@ -141,19 +148,27 @@ def questions():
         return redirect(url_for('site.question', question_id=question.id))
     page = request.args.get('page', 1, type=int)
     query = select(Question).order_by(Question.date.desc())
-    questions = db.paginate(query, page=page, per_page=5)
+    questions = db.paginate(query, page=page, per_page=QUESTIONS_PER_PAGE)
     pages_amount = questions.pages
     active_page = questions.page
     current_site = 'site.questions'
     next_url = url_for('site.questions', page=questions.next_num) if questions.has_next else None
     prev_url = url_for('site.questions', page=questions.prev_num) if questions.has_prev else None
-    return render_template('questions.html', form=form, site_key=site_key, current_site=current_site, questions=questions.items, next_url=next_url, prev_url=prev_url, pages_amount=pages_amount, active_page=active_page)
+    return render_template(
+        'questions.html',
+        form=form,
+        site_key=site_key,
+        current_site=current_site,
+        questions=questions.items,
+        next_url=next_url,
+        prev_url=prev_url,
+        pages_amount=pages_amount,
+        active_page=active_page)
 
 @site.route('/questions/<question_id>', methods=['GET', 'POST'])
 def question(question_id):
     question = Question.query.filter_by(id=question_id).first()
-    answers = Answer.query.filter_by(question_id=question.id).all()
-    return render_template('question.html', question=question, answers=answers)
+    return render_template('question.html', question=question)
 
 @site.route('/consultation')
 def consultation():
