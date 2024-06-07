@@ -140,7 +140,7 @@ def questions():
         db.session.commit()
         return redirect(url_for('site.question', question_id=question.id))
     page = request.args.get('page', 1, type=int)
-    query = Question.query.outerjoin(Answer, Question.id == Answer.question_id).outerjoin(User, Question.user_id == User.id).group_by(Question.id).order_by(Question.date.desc())
+    query = select(Question).order_by(Question.date.desc())
     questions = db.paginate(query, page=page, per_page=5)
     pages_amount = questions.pages
     active_page = questions.page
