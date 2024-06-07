@@ -1,6 +1,7 @@
 import uuid
 import re
 from typing import Dict, List, Tuple
+from config import ALLOWED_RUS_SYMBOLS
 from mct_app.site.models import ArticleCard
 from PIL import Image
 from werkzeug.datastructures import FileStorage
@@ -69,3 +70,11 @@ def save_image_as_webp(
 
     with open(path, 'wb') as fp:
         image.save(fp, format, quality=100, method=3)
+
+
+def is_russian_name_correct(name: str) -> bool:
+    name = name.lower()
+    for letter in name:
+        if letter not in ALLOWED_RUS_SYMBOLS:
+            return False
+    return True

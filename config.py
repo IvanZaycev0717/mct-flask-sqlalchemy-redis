@@ -2,8 +2,10 @@ import os
 from enum import IntEnum, StrEnum, Enum
 
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+ALLOWED_RUS_SYMBOLS = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя -'
 
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 

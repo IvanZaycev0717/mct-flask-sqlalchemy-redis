@@ -1,10 +1,39 @@
 {% extends "base.html" %}
 
+
 {% block content %}
 <div class="container d-flex justify-content-center">
-    <div class="container-lg">
-        <h2>Записаться на консультацию</h2>
-        Здесь будет форма записи на консультацию
-    </div>
+    <br>
+    <h2>Записаться на консультацию</h2>
+    <br>
 </div>
+<br>
+{% include 'forms/get_consultation.html' %}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script>
+  function onSubmit(token) {
+    document.getElementById("consultation-form").submit();
+  }
+</script>
+<script>
+  var wtf_phone_field = document.getElementById('phone');
+  wtf_phone_field.style.position = 'absolute';
+  wtf_phone_field.style.top = '-9999px';
+  wtf_phone_field.style.left = '-9999px';
+  wtf_phone_field.parentElement.insertAdjacentHTML('beforeend', '<div><input type="tel" id="_phone"></div>');
+  var fancy_phone_field = document.getElementById('_phone');
+  var fancy_phone_iti = window.intlTelInput(fancy_phone_field, {
+      initialCountry: "ru",
+      separateDialCode: true,
+      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@21.2.8/build/js/utils.js",
+  });
+  fancy_phone_iti.setNumber(wtf_phone_field.value);
+  fancy_phone_field.addEventListener('blur', function() {
+      wtf_phone_field.value = fancy_phone_iti.getNumber();
+  });
+</script>
 {% endblock %}

@@ -5,7 +5,7 @@ from flask import Blueprint, abort, jsonify, render_template, request, send_from
 import werkzeug.exceptions
 from mct_app import db
 
-from mct_app.site.forms import QuestionForm, AnswerForm
+from mct_app.site.forms import ConsultationForm, QuestionForm, AnswerForm
 from mct_app.site.models import Article, ArticleCard, News, TextbookChapter, TextbookParagraph
 from sqlalchemy import select, func
 from sqlalchemy.orm import aliased
@@ -13,11 +13,12 @@ from flask_ckeditor import upload_success, upload_fail
 from flask_ckeditor import CKEditor
 import requests
 from flask_login import current_user
+from mct_app.email import send_email
 
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, SOICAL_MEDIA_LINKS, basedir
 from mct_app.utils import get_articles_by_months, get_textbook_chapters_paragraphs
 from mct_app import csrf
-from mct_app.auth.models import Question, Answer, User
+from mct_app.auth.models import Question, Answer, User, Consultation
 
 
 
@@ -178,10 +179,39 @@ def question(question_id):
         return redirect(url_for('site.question', question_id=question_id))
     return render_template('question.html', form=form, question=question)
 
-@site.route('/consultation')
+@site.route('/consultation', methods=['GET', 'POST'])
 def consultation():
     flash('consultation', 'active_links')
-    return render_template('consultation.html')
+    site_key = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY')
+    secret_key = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY')
+    form = ConsultationForm()
+    if form.validate_on_submit():
+        date=datetime.now()
+        secret_response = request.form['g-recaptcha-response']
+        verify_response = requests.post(url=f'{GOOGLE_VERIFY_URL}?secret={secret_key}&response={secret_response}').json()
+        if not verify_response['success'] or verify_response['score'] < 0.5:
+            abort(401)
+        consultation = Consultation(
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            phone=form.phone.data,
+            user_id=current_user.id if current_user.is_authenticated else None,
+            date=date
+        )
+        db.session.add(consultation)
+        db.session.commit()
+        send_email(
+            'dawkinsforest5@gmail.com',
+            'Запись на консультацию',
+            'forms/email/consultation',
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            phone=form.phone.data,
+            date=date,
+            next=request.args.get('next'))
+        flash(f'Уважаемый {form.first_name.data} {form.last_name.data}! Вы успешно записались на консультацию. С Вами свяжутся в ближайшее время!', 'send-consultation-message')
+        return redirect(url_for('site.home'), code=302)
+    return render_template('consultation.html', form=form, site_key=site_key)
 
 @site.route('/contacts')
 def contacts():

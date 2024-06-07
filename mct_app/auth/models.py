@@ -39,6 +39,7 @@ class User(UserMixin, db.Model):
         )
     question: Mapped['Question'] = relationship(back_populates='user')
     answers: Mapped[List['Answer']] = relationship(back_populates='user', passive_deletes=True)
+    consultation: Mapped['Consultation'] = relationship(back_populates='user')
 
     def is_admin(self):
         return self.roles[0].role_id == Is.ADMIN
@@ -200,6 +201,19 @@ class Answer(db.Model):
 
     def __str__(self) -> str:
         return f'{self.id} {self.body}'
+
+class Consultation(db.Model):
+    __tablename__ = 'consultation'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    first_name: Mapped[str] = mapped_column(String(25))
+    last_name: Mapped[str] = mapped_column(String(25))
+    phone: Mapped[str] = mapped_column(String(12))
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=True)
+    date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+
+    user: Mapped['User'] = relationship(back_populates='consultation')
+
+
 
 class AnonymousUser(AnonymousUserMixin):
 

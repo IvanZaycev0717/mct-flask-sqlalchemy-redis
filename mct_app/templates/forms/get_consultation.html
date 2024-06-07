@@ -1,0 +1,33 @@
+<div class="container__login-registration d-flex justify-content-center">
+    <div class="card d-flex justify-content-center" style="width: 30rem;">
+        <div class="card-body">
+            <form action="" method="post" id="consultation-form" novalidate>
+                {{ form.hidden_tag() }}
+                <p class="p-for-label"><strong>{{ form.first_name.label }}</strong></p>
+                <p class="p-for-input-field">{{ form.first_name(class="form-control") }}
+                  {% for error in form.first_name.errors %}
+                    <span style="color: red;">{{ error }}</span>
+                  {% endfor %}
+                </p>
+                <p class="p-for-label"><strong>{{ form.last_name.label }}</strong></p>
+                <p class="p-for-input-field">{{ form.last_name(class="form-control") }}
+                  {% for error in form.last_name.errors %}
+                    <span style="color: red;">{{ error }}</span>
+                  {% endfor %}
+                </p>
+                <p class="p-for-label"><strong>{{ form.phone.label }}</strong></p>
+                <p class="p-for-label phone">{{ form.phone }}</p>
+                <p class="p-phone-special">{% for error in form.phone.errors %}
+                    <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+                </p>
+                <div class="d-grid gap-2">
+                  <button class="g-recaptcha btn btn-warning"
+                    data-sitekey={{ site_key }}
+                    data-callback='onSubmit' 
+                    data-action='submit'>Задать вопрос</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
