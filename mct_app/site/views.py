@@ -5,7 +5,7 @@ from flask import Blueprint, abort, jsonify, render_template, request, send_from
 import werkzeug.exceptions
 from mct_app import db
 
-from mct_app.site.forms import QuestionForm
+from mct_app.site.forms import QuestionForm, AnswerForm
 from mct_app.site.models import Article, ArticleCard, News, TextbookChapter, TextbookParagraph
 from sqlalchemy import select, func
 from sqlalchemy.orm import aliased
@@ -59,9 +59,7 @@ def create_articles_list():
         ArticleCard.last_update,
         ArticleCard.article_id,
         ArticleCard.title).order_by(ArticleCard.last_update.desc()).all()
-    articles_by_month = get_articles_by_months(articles_by_month_list)
-    return articles_by_month
-
+    return get_articles_by_months(articles_by_month_list)
 
 @site.route('/')
 @site.route('/home')
@@ -168,7 +166,17 @@ def questions():
 @site.route('/questions/<question_id>', methods=['GET', 'POST'])
 def question(question_id):
     question = Question.query.filter_by(id=question_id).first()
-    return render_template('question.html', question=question)
+    form = AnswerForm()
+    if form.validate_on_submit():
+        answer = Answer(
+            user_id=current_user.id,
+            question_id=question_id,
+            body=form.body.data
+        )
+        db.session.add(answer)
+        db.session.commit()
+        return redirect(url_for('site.question', question_id=question_id))
+    return render_template('question.html', form=form, question=question)
 
 @site.route('/consultation')
 def consultation():

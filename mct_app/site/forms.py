@@ -19,5 +19,10 @@ class QuestionForm(FlaskForm):
                 raise ValidationError('Требуется ввести имя')
         return True
 
+
 class AnswerForm(FlaskForm):
-    pass
+    body = TextAreaField(
+        'Ваш ответ',
+        render_kw={"placeholder": "Введите текст ответа"},
+        validators=[DataRequired(message='Требуется ввести текст ответа')])
+    submit = SubmitField('Ответить')

@@ -15,7 +15,7 @@
     <div class="card-body">
       <p class="card-text"><strong>Вопрос: </strong>{{ question.body }}</p>
       {% if current_user.is_admin() or current_user.is_doctor() %}
-        <a href="#" class="btn btn-primary">Go somewhere</a>
+        {% include 'forms/give_answer.html' %}
       {% endif%}
     </div>
   </div>
@@ -36,4 +36,5 @@
     </div>
   </div>
 {% endfor %}
+<br>
 {% endblock %}

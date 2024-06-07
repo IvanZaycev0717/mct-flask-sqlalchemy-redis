@@ -38,7 +38,7 @@ class User(UserMixin, db.Model):
         back_populates="user", cascade="all, delete-orphan"
         )
     question: Mapped['Question'] = relationship(back_populates='user')
-    answers: Mapped[List['Answer']] = relationship(back_populates='user')
+    answers: Mapped[List['Answer']] = relationship(back_populates='user', passive_deletes=True)
 
     def is_admin(self):
         return self.roles[0].role_id == Is.ADMIN
@@ -174,8 +174,15 @@ class Question(db.Model):
     date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     ip_address: Mapped[str] = mapped_column(String(45))
 
-    answers: Mapped[List['Answer']] = relationship(back_populates='question')
+    answers: Mapped[List['Answer']] = relationship(back_populates='question', cascade='all, delete')
     user: Mapped['User'] = relationship(back_populates='question')
+
+    def __repr__(self) -> str:
+        return f'{self.id} {self.body}'
+
+    def __str__(self) -> str:
+        return f'{self.id} {self.body}'
+    
 
 class Answer(db.Model):
     __tablename__ = 'answer'
@@ -183,11 +190,16 @@ class Answer(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     body: Mapped[str] = mapped_column(UnicodeText)
     question_id: Mapped[Optional[int]] = mapped_column(ForeignKey('question.id'))
-    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey('user.id'))
+    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey('user.id', ondelete='SET NULL'), nullable=True)
 
     user: Mapped[Optional['User']] = relationship(back_populates='answers')
     question: Mapped[Optional['Question']] = relationship(back_populates='answers')
 
+    def __repr__(self) -> str:
+        return f'{self.id} {self.body}'
+
+    def __str__(self) -> str:
+        return f'{self.id} {self.body}'
 
 class AnonymousUser(AnonymousUserMixin):
 

@@ -31,7 +31,12 @@ from werkzeug.datastructures.headers import Headers
 
 from mct_app.auth.models import *
 from mct_app import db, admin
-from mct_app.site.models import ArticleCard, ArticleImage, News, Image as MyImage, Article, TextbookChapter, TextbookParagraph, TextbookParagraphImage
+from mct_app.site.models import (ArticleCard, ArticleImage, 
+                                 News, Image as MyImage,
+                                 Article, TextbookChapter,
+                                 TextbookParagraph, TextbookParagraphImage,
+                                 )
+
 from mct_app import db
 from mct_app.site.models import Article, ArticleCard, News
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, basedir
@@ -81,6 +86,7 @@ class UserView(AccessView):
     column_sortable_list = ['id', 'username', 'has_social_account']
     column_searchable_list = ['id', 'username', 'email', 'phone']
     column_exclude_list = ['password_hash',]
+    form_excluded_columns = ['password_hash',]
 
     def scaffold_form(self):
         form_class = super(UserView, self).scaffold_form()
@@ -93,7 +99,6 @@ class UserView(AccessView):
         return form_class
 
     def on_model_change(self, form, model: User, is_created: bool) -> None:
-        model.password_hash = generate_password_hash(form.password_hash.data)
         user_role = UserRole()
         user_role.role = form.extra.data[0]
         model.roles.clear()
@@ -392,6 +397,7 @@ class TextbookParagraphView(AccessView):
         super(TextbookParagraphView, self).on_model_change(form, model, is_created)
 
 
+
 # SQLAlchemy Events
 @listens_for(News, 'after_delete')
 def delete_unused_news_images(mapper, connection, target: News):
@@ -460,3 +466,5 @@ admin.add_view(NewsView(News, db.session, 'Новости'))
 admin.add_view(ArticleCardView(ArticleCard, db.session, 'Статьи'))
 admin.add_view(TextbookChapterView(TextbookChapter, db.session, 'Разделы учебника'))
 admin.add_view(TextbookParagraphView(TextbookParagraph, db.session, 'Главы учебника'))
+admin.add_view(AccessView(Question, db.session, 'Вопросы'))
+admin.add_views(AccessView(Answer, db.session, 'Ответы'))
