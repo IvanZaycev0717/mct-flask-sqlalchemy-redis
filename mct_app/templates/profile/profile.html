@@ -5,6 +5,7 @@
 <div class="container d-flex justify-content-center">
     <h2 class="textbook-title">Личный кабинет</h2>
 </div>
+<br>
 
 {% with messages = get_flashed_messages() %}
   {% if messages %}
@@ -16,12 +17,45 @@
   {% endif %}
 {% endwith %}
 <div class="container d-flex justify-content-center">
-  <h3 class="textbook-title">Приветствуем, {{ correct_name }}</h3>
+  <h3>Приветствуем, {{ correct_name }}</h3>
   
   
 </div>
 {% if user.has_social_account  %}
   <p class="text-center">Вход выполнен через {{ user.social_account.platform }}</p>
 {% endif %}
-
+<div class="container d-flex justify-content-center">
+  <div class="card text-bg-warning mb-3" style="width: 50%;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="../../static/img/analysis.webp" class="img-fluid rounded-start text-center" alt="..." width="50%" height="50%" style="margin-left: 20px; margin-top: 15px;">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">Моя статистика</h5>
+          <p class="card-text">Нажмите, чтобы посмотреть свой прогресс в изучении учебника и научных статей, посвященных метакогнитивной терапии.</p>
+        </div>
+      </div>
+    </div>
+    <a href="{{ url_for('site.home' )}}" class="stretched-link"></a>
+  </div>
+</div>
+<br>
+<div class="container d-flex justify-content-center">
+  <div class="card text-bg-success mb-3" style="width: 50%;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="../../static/img/writing.webp" class="img-fluid rounded-start text-center" alt="..." width="50%" height="50%" style="margin-left: 20px; margin-top: 15px;">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">Мой дневник</h5>
+          <p class="card-text">Дневник доступен только Вам и Вашему психотерапевту. Напишите о своем состоянии и получите рекомендации от Вашего психотерапевта.</p>
+        </div>
+      </div>
+    </div>
+    <a href="{{ url_for('site.home' )}}" class="stretched-link"></a>
+  </div>
+</div>
+<br>
 {% endblock %}
