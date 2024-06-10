@@ -1,12 +1,13 @@
 import csv
 from datetime import datetime
+import json
 from typing import List, Optional
 import os
 
 
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from itsdangerous import BadSignature
-from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey, UnicodeText, select
+from sqlalchemy import JSON, Boolean, DateTime, Integer, String, ForeignKey, UnicodeText, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
@@ -40,7 +41,8 @@ class User(UserMixin, db.Model):
     question: Mapped['Question'] = relationship(back_populates='user')
     answers: Mapped[List['Answer']] = relationship(back_populates='user', passive_deletes=True)
     consultation: Mapped['Consultation'] = relationship(back_populates='user')
-
+    user_statistics: Mapped['UserStatistics'] = relationship(back_populates='user')
+    
     def is_admin(self):
         return self.roles[0].role_id == Is.ADMIN
 
@@ -212,6 +214,18 @@ class Consultation(db.Model):
     date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
     user: Mapped['User'] = relationship(back_populates='consultation')
+
+class UserStatistics(db.Model):
+    __tablename__ = 'user_statistics'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    articles_statistics: Mapped[dict[str]] = mapped_column(JSON)
+    textbook_statistics: Mapped[dict[str]] = mapped_column(JSON)
+
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
+    user: Mapped['User'] = relationship(back_populates='user_statistics')
+    
+    
 
 
 

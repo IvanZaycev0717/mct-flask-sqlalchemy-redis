@@ -223,7 +223,8 @@ class ArticleCardView(AccessView):
     edit_template = 'admin/edit.html'
 
     column_formatters = {
-        'image': lambda v, c, m, p: Markup(f'<img src="{m.image.relative_path}" width="100" height="100">')
+        'image': lambda v, c, m, p: Markup(f'<img src="{m.image.relative_path}" width="100" height="100">'),
+        'article': lambda v, c, m, p: m.article.body[:150] if m.article.body else None
     }
 
     def on_form_prefill(self, form, id):
@@ -327,6 +328,10 @@ class TextbookParagraphView(AccessView):
     form_excluded_columns = ('images', 'content')
     create_template = 'admin/edit-paragraph.html'
     edit_template = 'admin/edit-paragraph.html'
+
+    column_formatters = {
+        'content': lambda v, c, m, p: m.content[:150] if m.content else None
+    }
 
     def on_form_prefill(self, form, id):
         model = self.get_one(id)
