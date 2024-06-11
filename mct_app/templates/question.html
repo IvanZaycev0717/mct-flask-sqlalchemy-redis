@@ -38,3 +38,18 @@
 {% endfor %}
 <br>
 {% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    const answerModal = bootstrap.Modal.getOrCreateInstance('#answerModal');
+    document.addEventListener('DOMContentLoaded', function() {
+      var validationErrorElement = document.querySelector('.validation-error');
+      
+      if (validationErrorElement) {
+          answerModal.show();
+          console.log('Форма не прошла валидацию при предыдущем запросе.');
+      }
+  });
+</script>
+{% endblock %}

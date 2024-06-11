@@ -20,7 +20,7 @@
               <p class="p-for-label"><strong>{{ form.body.label }}</strong></p>
                 <p class="p-for-input-field">{{ form.body(class="form-control") }}
                   {% for error in form.body.errors %}
-                    <span style="color: red;">{{ error }}</span>
+                    <span class="validation-error" style="color: red;">{{ error }}</span>
                   {% endfor %}
                 </p>
             </div>

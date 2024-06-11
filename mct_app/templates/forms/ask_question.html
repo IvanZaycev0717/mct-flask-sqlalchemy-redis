@@ -23,7 +23,7 @@
                 <p class="p-for-label"><strong>{{ form.anon_name.label }}</strong></p>
                 <p class="p-for-input-field">{{ form.anon_name(class="form-control") }}
                   {% for error in form.anon_name.errors %}
-                    <span style="color: red;">{{ error }}</span>
+                    <span class="validation-error" style="color: red;">{{ error }}</span>
                   {% endfor %}
                 </p>
               {% endif %}
@@ -32,7 +32,7 @@
               <p class="p-for-label"><strong>{{ form.body.label }}</strong></p>
                 <p class="p-for-input-field">{{ form.body(class="form-control") }}
                   {% for error in form.body.errors %}
-                    <span style="color: red;">{{ error }}</span>
+                    <span class="validation-error" style="color: red;">{{ error }}</span>
                   {% endfor %}
                 </p>
             </div>

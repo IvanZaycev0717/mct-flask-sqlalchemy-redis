@@ -32,10 +32,22 @@
 
 {% block scripts %}
 {{ super() }}
+
 <script src="https://www.google.com/recaptcha/api.js"></script>
 <script>
   function onSubmit(token) {
     document.getElementById("question-form").submit();
-  }
+    }
+</script>
+<script>
+  const questionModal = bootstrap.Modal.getOrCreateInstance('#questionModal');
+  document.addEventListener('DOMContentLoaded', function() {
+    var validationErrorElement = document.querySelector('.validation-error');
+    
+    if (validationErrorElement) {
+        questionModal.show();
+        console.log('Форма не прошла валидацию при предыдущем запросе.');
+    }
+});
 </script>
 {% endblock %}

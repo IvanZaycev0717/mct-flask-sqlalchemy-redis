@@ -145,6 +145,7 @@ def questions():
         db.session.add(question)
         db.session.commit()
         return redirect(url_for('site.question', question_id=question.id))
+
     page = request.args.get('page', 1, type=int)
     query = select(Question).order_by(Question.date.desc())
     questions = db.paginate(query, page=page, per_page=QUESTIONS_PER_PAGE)
