@@ -91,6 +91,12 @@ def profile(username):
             correct_name = correct_name.replace(platform, '')
     return render_template('profile/profile.html', user=user, correct_name=correct_name)
 
+@auth.route('/profile/<username>/statistics')
+@login_required
+def user_statistics(username):
+    return render_template('profile/statistics.html')
+
+
 @auth.route('/logout')
 def logout():
     logout_user()
