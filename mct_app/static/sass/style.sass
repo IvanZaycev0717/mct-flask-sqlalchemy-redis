@@ -76,6 +76,23 @@
     padding: 20px
     border-radius: 10px
     margin-bottom: 20px
+    color: black
+
+.profile-card
+    transition: transform 0.5s
+    transition: box-shadow 0.5s
+    &__yellow
+        &:hover
+            transform: scale(1.01)
+            box-shadow: 0 0 10px #ff8a01
+    &__green
+        &:hover
+            transform: scale(1.01)
+            box-shadow: 0 0 10px #23ff01
+
+.progress-bar
+    color: black
+
 
 .accordion
     padding-left: 20%
@@ -314,6 +331,23 @@
 .button-pos
     margin-top: 5%
     margin-bottom: 10%
+
+.pulse
+    animation: pulse 2s infinite
+
+@keyframes pulse
+    0%
+	    transform: scale(1)
+    50%
+        transform: scale(1.1)
+    100%
+        transform: scale(1)
+
+.progress
+    height: 50px
+    font-size: 18px
+    font-weight: bold
+
 
 
 @media (max-width:768px)
