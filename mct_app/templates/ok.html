@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container d-flex justify-content-center">
+        {% if current_user.is_anonymous %}
+            <a class="btn btn-danger btn-lg button-pos" href="{{ url_for('auth.ok_callback') }}" role="button">Войти через Одноклассники</a>
+        {% else %}
+            <a class="btn btn-success btn-lg button-pos" href="{{ url_for('auth.profile', username=current_user.username) }}" role="button">Перейти в личный кабинет</a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/odnoklassniki.js') }}"></script>
+{% endblock %}

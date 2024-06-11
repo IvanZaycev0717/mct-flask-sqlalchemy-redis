@@ -99,7 +99,7 @@ def logout():
 
 @auth.route('/reset-password', methods=['GET', 'POST'])
 def reset_password_request():
-    if not current_user.is_anonymous:
+    if not current_user.is_anonymous():
         return redirect('/')
     form = RequestResetPasswordForm()
     if form.validate_on_submit():
@@ -124,7 +124,7 @@ def reset_password_request():
             
 @auth.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
-    if not current_user.is_anonymous:
+    if not current_user.is_anonymous():
         return redirect('/')
     form = ResetPasswordForm()
     if form.validate_on_submit():
@@ -250,14 +250,12 @@ def ok_callback():
                 abort(500)
 
             return redirect(url_for('auth.profile', username=registration_result.username))
-    else:
-        return redirect('/ok-redirect')
+    return render_template('ok.html')
+
 
 @auth.route('/ok-redirect')
 def ok_redirect():
-    if current_user.is_authenticated:
-        return redirect(url_for('auth.profile', username=current_user.username))
-    return redirect('/')
+    return render_template('ok.html')
 
 
 @auth.route('/yandex-login')
