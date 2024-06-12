@@ -238,6 +238,12 @@ class UserDiary(db.Model):
     user: Mapped['User'] = relationship(back_populates='user_diaries')
     diary_recommendations: Mapped[List['DiaryRecommendation']] = relationship(back_populates='user_diary', cascade="all, delete")
 
+    def __repr__(self) -> str:
+        return f'{self.user.username} Запись {self.id}'
+
+    def __str__(self) -> str:
+        return f'{self.user.username} Запись {self.id}'
+
 
 class DiaryRecommendation(db.Model):
     __tablename__ = 'diary_recommendation'
