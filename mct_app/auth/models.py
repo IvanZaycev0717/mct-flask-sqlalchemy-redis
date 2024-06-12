@@ -7,13 +7,13 @@ import os
 
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from itsdangerous import BadSignature
-from sqlalchemy import JSON, Boolean, DateTime, Integer, String, ForeignKey, UnicodeText, select
+from sqlalchemy import JSON, Boolean, DateTime, Integer, String, ForeignKey, UnicodeText, select, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 
 
-from config import Is
+from config import Is, Mood
 from mct_app import db, login_manager
 
 
@@ -42,6 +42,8 @@ class User(UserMixin, db.Model):
     answers: Mapped[List['Answer']] = relationship(back_populates='user', passive_deletes=True)
     consultation: Mapped['Consultation'] = relationship(back_populates='user')
     user_statistics: Mapped['UserStatistics'] = relationship(back_populates='user')
+    user_diaries: Mapped[List['UserDiary']] = relationship(back_populates='user', cascade="all, delete")
+    diary_recommendations: Mapped[List['DiaryRecommendation']] = relationship(back_populates='user', cascade="all, delete")
     
     def is_admin(self):
         return self.roles[0].role_id == Is.ADMIN
@@ -222,11 +224,31 @@ class UserStatistics(db.Model):
     articles_statistics: Mapped[dict[str]] = mapped_column(JSON)
     textbook_statistics: Mapped[dict[str]] = mapped_column(JSON)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id', ondelete='CASCADE'))
     user: Mapped['User'] = relationship(back_populates='user_statistics')
-    
-    
 
+class UserDiary(db.Model):
+    __tablename__ = 'user_diary'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    date: Mapped[datetime] = mapped_column(DateTime)
+    mood: Mapped[List[str]] = mapped_column(Enum(Mood))
+    record: Mapped[str] = mapped_column(UnicodeText)
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id', ondelete='CASCADE'))
+    user: Mapped['User'] = relationship(back_populates='user_diaries')
+    diary_recommendations: Mapped[List['DiaryRecommendation']] = relationship(back_populates='user_diary', cascade="all, delete")
+
+
+class DiaryRecommendation(db.Model):
+    __tablename__ = 'diary_recommendation'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    recommendation: Mapped[str] = mapped_column(UnicodeText)
+    user_diary_id: Mapped[int] = mapped_column(ForeignKey('user_diary.id', ondelete='CASCADE'))
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id', ondelete='CASCADE'))
+    
+    user_diary: Mapped['UserDiary'] = relationship(back_populates='diary_recommendations')
+    user: Mapped['User'] = relationship(back_populates='diary_recommendations')
 
 
 class AnonymousUser(AnonymousUserMixin):
@@ -245,4 +267,3 @@ login_manager.anonymous_user = AnonymousUser
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-

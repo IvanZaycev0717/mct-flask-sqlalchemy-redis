@@ -473,3 +473,5 @@ admin.add_view(TextbookChapterView(TextbookChapter, db.session, 'Разделы 
 admin.add_view(TextbookParagraphView(TextbookParagraph, db.session, 'Главы учебника'))
 admin.add_view(AccessView(Question, db.session, 'Вопросы'))
 admin.add_views(AccessView(Answer, db.session, 'Ответы'))
+admin.add_views(AccessView(UserDiary, db.session, 'Дневник пользователя'))
+admin.add_views(AccessView(DiaryRecommendation, db.session, 'Рекомендации'))

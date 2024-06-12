@@ -96,6 +96,11 @@ def profile(username):
 def user_statistics(username):
     return render_template('profile/statistics.html')
 
+@auth.route('/profile/<username>/diary', methods=['GET', 'POST'])
+@login_required
+def user_diary(username):
+    return render_template('profile/diary.html')
+
 
 @auth.route('/logout')
 def logout():

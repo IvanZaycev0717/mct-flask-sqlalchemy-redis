@@ -43,6 +43,14 @@ class Is(IntEnum):
     DOCTOR = 3
     PATIENT = 4
 
+class Mood(Enum):
+    HAPPY = '😊Счастливый😊'
+    IRRITATED = '😡Раздраженный😡'
+    RELAXED = '😌Расслабленный😌'
+    CONCERNED = '😟Обеспокоенный😟'
+    RESTLESS = '😕Беспокойный😕'
+    DISAPPOINTED = '😞Разочарованный😞'
+
 
 class SocialPlatform(StrEnum):
     GOOGLE = '(Google)'
