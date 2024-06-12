@@ -1,5 +1,62 @@
 {% extends "base.html" %}
 
+{% include 'forms/new_diary.html'%}
+{% if edit_mode %}
+{% include 'forms/edit_diary.html'%}
+{% endif %}
+
 {% block content %}
-какой-то дневник
+<div class="container d-flex justify-content-center">
+    <div class="card contact-card" style="width: 50%;">
+      <div class="card-body">
+          <div class="d-flex justify-content-center">
+            <img src="{{ url_for('static', filename='img/writing.webp') }}" class="card-img-top pulse" alt="..." style="width: 10%; margin: auto;">
+          </div>
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#newdiaryModal">
+              Новая запись
+            </button>
+            <a class="btn btn-secondary btn-lg" href="{{ url_for('auth.profile', username=current_user.username) }}" role="button">Назад</a>
+          </div>
+          <br>
+        {% if diary_records %}
+          {% for record in diary_records %}
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Настроение: {{ record.mood.value }}</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Дата записи: {{ record.date }}</h6>
+                <p class="card-text">{{ record.record }}</p>
+                <a href="{{ url_for('auth.edit_diary_record', username=current_user.username, diary_id=record.id)}}" class="card-link" style="text-decoration: none;">Редактировать</a>
+                <a href="{{ url_for('auth.delete_diary_record', username=current_user.username, diary_id=record.id)}}" class="card-link" style="text-decoration: none; color:brown">Удалить</a>
+              </div>
+            </div>
+            <br>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+</div>
+{% include 'profile/diary_paginator.html' %}
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+      const newdiaryModal = bootstrap.Modal.getOrCreateInstance('#newdiaryModal');
+      document.addEventListener('DOMContentLoaded', function() {
+        var validationErrorElement = document.querySelector('.validation-error');
+        
+        if (validationErrorElement) {
+            newdiaryModal.show();
+            console.log('Форма не прошла валидацию при предыдущем запросе.');
+        }
+    });
+  </script>
+  {% if edit_mode %}
+  <script>
+    const editdiaryModal = bootstrap.Modal.getOrCreateInstance('#editdiaryModal');
+    document.addEventListener('DOMContentLoaded', function() {
+      editdiaryModal.show();});
+  </script>
+  {% endif %}
 {% endblock %}

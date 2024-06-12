@@ -2,12 +2,13 @@ from collections.abc import Sequence
 from typing import Any, Mapping
 from flask_wtf import FlaskForm
 import phonenumbers
-from wtforms import StringField, PasswordField, EmailField, SubmitField
-from wtforms.validators import DataRequired, Email, ValidationError, Optional, EqualTo
+from wtforms import StringField, PasswordField, EmailField, SubmitField, SelectField, TextAreaField
+from wtforms.validators import DataRequired, Email, ValidationError, Optional, EqualTo, Length
 from mct_app import db
 from mct_app.auth.models import User
 from sqlalchemy import select
 from flask import request
+from config import Mood
 
 class RegistrationForm(FlaskForm):
     username = StringField(
@@ -79,3 +80,12 @@ class ResetPasswordForm(FlaskForm):
     def validate_email(self, email):
         if User.query.filter_by(email=email.data).first() is None:
             raise ValidationError('Такого адреса электронной почты не существует')
+    
+class NewDiaryForm(FlaskForm):
+    mood = SelectField('Выберите настроение:', choices=[mood.value for mood in Mood])
+    record = TextAreaField('Запись в дневник',
+                           render_kw={"placeholder": "Введите текст записи дневника"},
+                           validators=
+                           [DataRequired(message='Требуется ввести текст записи дневника'),
+                            Length(min=3, max=2000, message='Запись не должна быть меньше 3 символов и больше 2000 символов')])
+    submit = SubmitField('Опубликовать')

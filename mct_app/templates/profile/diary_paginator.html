@@ -1,3 +1,4 @@
+{% if not edit_mode %}
 <div class="container d-flex justify-content-center">
     <nav aria-label="..." class="nav-paginate">
       <ul class="pagination">
@@ -16,7 +17,7 @@
               {% if page_num == active_page %}
                 <li class="page-item active"><a class="page-link">{{ page_num }}</a></li>
               {% else %}
-                <li class="page-item"><a class="page-link" href="{{ url_for(current_site, page=page_num) }}">{{ page_num }}</a></li>
+                <li class="page-item"><a class="page-link" href="{{ url_for(current_site, username=current_user.username, page=page_num) }}">{{ page_num }}</a></li>
               {% endif %}
             {% endfor %}
           {% else %}
@@ -24,7 +25,7 @@
               {% if page_num == active_page %}
                 <li class="page-item active"><a class="page-link">{{ page_num }}</a></li>
               {% else %}
-                <li class="page-item"><a class="page-link" href="{{ url_for(current_site, page=page_num) }}">{{ page_num }}</a></li>
+                <li class="page-item"><a class="page-link" href="{{ url_for(current_site, username=current_user.username, page=page_num) }}">{{ page_num }}</a></li>
               {% endif %}
             {% endfor %}
           {% endif %}
@@ -33,7 +34,7 @@
             {% if page_num == active_page %}
               <li class="page-item active"><a class="page-link">{{ page_num }}</a></li>
             {% else %}
-              <li class="page-item"><a class="page-link" href="{{ url_for(current_site, page=page_num) }}">{{ page_num }}</a></li>
+              <li class="page-item"><a class="page-link" href="{{ url_for(current_site, username=current_user.username, page=page_num) }}">{{ page_num }}</a></li>
             {% endif %}
           {% endfor %}
         {% endif %}
@@ -48,4 +49,5 @@
         {% endif %}
       </ul>
     </nav>
-  </div>
+</div>
+{% endif %}

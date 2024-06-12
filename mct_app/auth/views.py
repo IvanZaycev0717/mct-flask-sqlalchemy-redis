@@ -3,13 +3,13 @@ from datetime import datetime
 import random
 from flask import Blueprint, jsonify, make_response, render_template, redirect, session, url_for, flash, request
 import requests
-from mct_app.auth.models import User, UserSession, db, UserRole, Role, SocialAccount
-from mct_app.auth.forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetPasswordForm
+from mct_app.auth.models import User, UserDiary, UserSession, db, UserRole, Role, SocialAccount
+from mct_app.auth.forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetPasswordForm, NewDiaryForm
 from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy import select, update
 from urllib.parse import urlsplit
 from flask import abort
-from config import IMAGE_BASE_PATH, Is, SocialPlatform
+from config import IMAGE_BASE_PATH, Is, Mood, SocialPlatform
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
@@ -99,7 +99,55 @@ def user_statistics(username):
 @auth.route('/profile/<username>/diary', methods=['GET', 'POST'])
 @login_required
 def user_diary(username):
-    return render_template('profile/diary.html')
+    form = NewDiaryForm()
+    if form.validate_on_submit():
+        diary_record = UserDiary(
+            date=datetime.now(),
+            mood=Mood(form.mood.data).name,
+            record=form.record.data,
+            user_id=current_user.id
+        )
+        db.session.add(diary_record)
+        db.session.commit()
+        return redirect(url_for('auth.user_diary', username=current_user.username))
+    page = request.args.get('page', 1, type=int)
+    query = select(UserDiary).order_by(UserDiary.date.desc())
+    diary_records = db.paginate(query, page=page, per_page=5, error_out=False)
+    pages_amount = diary_records.pages
+    active_page = diary_records.page
+    current_site = 'auth.user_diary'
+    next_url = url_for('auth.user_diary', username=current_user.username, page=diary_records.next_num) if diary_records.has_next else None
+    prev_url = url_for('auth.user_diary', username=current_user.username, page=diary_records.prev_num) if diary_records.has_prev else None
+    return render_template('profile/diary.html',
+                           form=form,
+                           current_site=current_site,
+                           diary_records=diary_records.items,
+                           next_url=next_url, prev_url=prev_url,
+                           pages_amount=pages_amount,
+                           active_page=active_page,
+                           edit_mode=False
+                           )
+
+@auth.route('/profile/<username>/diary/delete_<diary_id>', methods=['GET', 'DELETE'])
+@login_required
+def delete_diary_record(username, diary_id):
+    diary = UserDiary.query.get_or_404(diary_id)
+    db.session.delete(diary)
+    db.session.commit()
+    return redirect(url_for('auth.user_diary', username=username))
+
+@auth.route('/profile/<username>/diary/edit_<diary_id>', methods=['GET', 'POST'])
+@login_required
+def edit_diary_record(username, diary_id):
+    diary = UserDiary.query.get_or_404(diary_id)
+    form = NewDiaryForm(obj=diary)
+    if form.validate_on_submit():
+        diary.mood = Mood(form.mood.data).name
+        diary.record = form.record.data
+        db.session.commit()
+        return redirect(url_for('auth.user_diary', username=username))
+    return render_template('profile/diary.html', form=form, edit_mode=True)
+
 
 
 @auth.route('/logout')

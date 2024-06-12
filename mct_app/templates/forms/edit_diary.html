@@ -1,0 +1,35 @@
+<!-- Modal -->
+<div class="modal fade" tabindex="-1" id="editdiaryModal" aria-labelledby="editdiaryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="editdiaryModalLabel">Новая запись в дневнике</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" id="question-form" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                <p class="p-for-label"><strong>{{ form.mood.label }}</strong>{{ form.mood(class="btn dropdown-toggle") }}</p>
+                  {% for error in form.mood.errors %}
+                    <span class="validation-error" style="color: red;">{{ error }}</span>
+                  {% endfor %}
+                </p>
+            </div>
+            <div class="mb-3">
+              <p class="p-for-label"><strong>{{ form.record.label }}</strong></p>
+                <p class="p-for-input-field">{{ form.record(class="form-control") }}
+                  {% for error in form.record.errors %}
+                    <span class="validation-error" style="color: red;">{{ error }}</span>
+                  {% endfor %}
+                </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+              {{ form.submit(class="btn btn-warning", style="font-weight: bold;") }}
+            </div>
+          </form>
+        </div>
+    </div>
+  </div>
+</div>
