@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container__login-registration d-flex justify-content-center">
+    <div class="card d-flex justify-content-center" style="width: 30rem;">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4>Дать рекомендацию к записи в дневнике {{ diary.user.username }}</h4>
+            </div>
+            <div class="card-body">
+                <form action="" method="post" novalidate>
+                    {{ form.hidden_tag() }}
+                    <p>{{ diary.mood.value }}</p>
+                    <p>{{ diary.date }}</p>
+                    <p>{{ diary.record }}</p>
+                    <p class="p-for-label"><strong>{{ form.record.label }}</strong></p>
+                    <p class="p-for-input-field">{{ form.record(class="form-control") }}
+                    {% with errors = get_flashed_messages(category_filter=["name-error"]) %}
+                        {% if errors %}
+                          {% for msg in errors %}
+                                <span style="color: red;">{{ msg }}</span>
+                          {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    </p>
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-warning", style="font-weight: bold;") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

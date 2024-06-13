@@ -3,8 +3,8 @@ from datetime import datetime
 import random
 from flask import Blueprint, jsonify, make_response, render_template, redirect, session, url_for, flash, request
 import requests
-from mct_app.auth.models import User, UserDiary, UserSession, db, UserRole, Role, SocialAccount
-from mct_app.auth.forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetPasswordForm, NewDiaryForm
+from mct_app.auth.models import DiaryRecommendation, User, UserDiary, UserSession, db, UserRole, Role, SocialAccount
+from mct_app.auth.forms import RecommendationForm, RegistrationForm, LoginForm, ResetPasswordForm, RequestResetPasswordForm, NewDiaryForm
 from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy import select, update
 from urllib.parse import urlsplit
@@ -111,7 +111,10 @@ def user_diary(username):
         db.session.commit()
         return redirect(url_for('auth.user_diary', username=current_user.username))
     page = request.args.get('page', 1, type=int)
-    query = select(UserDiary).order_by(UserDiary.date.desc())
+    if current_user.is_admin() or current_user.is_doctor():
+        query = select(UserDiary).filter_by(user_id=User.query.filter_by(username=username).first().id).order_by(UserDiary.date.desc())
+    else:
+        query = select(UserDiary).filter_by(user_id=current_user.id).order_by(UserDiary.date.desc())
     diary_records = db.paginate(query, page=page, per_page=5, error_out=False)
     pages_amount = diary_records.pages
     active_page = diary_records.page
@@ -127,6 +130,15 @@ def user_diary(username):
                            active_page=active_page,
                            edit_mode=False
                            )
+
+@auth.route('/profile/<username>/patient_list', methods=['GET'])
+@login_required
+def patient_list(username):
+    patient_list = UserRole.query.filter_by(role_id=Is.PATIENT).all()
+    links = [(url_for('auth.user_diary', username=user_role.user.username), user_role.user.username) for user_role in patient_list]
+    print(links)
+    return render_template('profile/patient_list.html', links=links, username=username)
+
 
 @auth.route('/profile/<username>/diary/delete_<diary_id>', methods=['GET', 'DELETE'])
 @login_required
@@ -148,7 +160,30 @@ def edit_diary_record(username, diary_id):
         return redirect(url_for('auth.user_diary', username=username))
     return render_template('profile/diary.html', form=form, edit_mode=True)
 
+@auth.route('/profile/<username>/diary/recommend_<diary_id>', methods=['GET', 'POST'])
+@login_required
+def give_recommendation(username, diary_id):
+    diary = UserDiary.query.get_or_404(diary_id)
+    form = RecommendationForm()
+    if form.validate_on_submit():
+        recommendation = DiaryRecommendation(
+            recommendation=form.record.data,
+            user_diary_id=diary.id,
+            user_id=current_user.id
+        )
+        db.session.add(recommendation)
+        db.session.commit()
+        return redirect(url_for('auth.user_diary', username=username))
+    return render_template('forms/recommendation.html', form=form, diary=diary)
 
+@auth.route('/profile/<username>/diary/recommend_delete_<recommed_id>', methods=['GET', 'DELETE'])
+@login_required
+def delete_recommendation(username, recommed_id):
+    recommendation = DiaryRecommendation.query.get_or_404(recommed_id)
+    db.session.delete(recommendation)
+    db.session.commit()
+    return redirect(url_for('auth.user_diary', username=username))
+    
 
 @auth.route('/logout')
 def logout():

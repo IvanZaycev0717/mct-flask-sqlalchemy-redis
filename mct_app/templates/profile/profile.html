@@ -30,21 +30,40 @@
   </div>
 </div>
 <br>
-<div class="container d-flex justify-content-center">
-  <div class="card text-bg-success mb-3 profile-card__green" style="width: 50%;">
-    <div class="row g-0">
-      <div class="col-md-4">
-        <img src="{{ url_for('static', filename='img/writing.webp') }}" class="img-fluid rounded-start text-center" alt="..." width="50%" height="50%" style="margin-left: 20px; margin-top: 15px;">
-      </div>
-      <div class="col-md-8">
-        <div class="card-body">
-          <h5 class="card-title">Мой дневник</h5>
-          <p class="card-text">Дневник доступен только Вам и Вашему психотерапевту. Напишите о своем состоянии и получите рекомендации от Вашего психотерапевта.</p>
+{% if current_user.is_patient() %}
+  <div class="container d-flex justify-content-center">
+    <div class="card text-bg-success mb-3 profile-card__green" style="width: 50%;">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="{{ url_for('static', filename='img/writing.webp') }}" class="img-fluid rounded-start text-center" alt="..." width="50%" height="50%" style="margin-left: 20px; margin-top: 15px;">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">Мой дневник</h5>
+            <p class="card-text">Дневник доступен только Вам и Вашему психотерапевту. Напишите о своем состоянии и получите рекомендации от Вашего психотерапевта.</p>
+          </div>
         </div>
       </div>
+      <a href="{{ url_for('auth.user_diary', username=user.username )}}" class="stretched-link"></a>
     </div>
-    <a href="{{ url_for('auth.user_diary', username=user.username )}}" class="stretched-link"></a>
   </div>
-</div>
+{% elif current_user.is_admin() or current_user.is_doctor() %}
+  <div class="container d-flex justify-content-center">
+    <div class="card text-bg-danger mb-3 profile-card__red" style="width: 50%;">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="{{ url_for('static', filename='img/red_cross.webp') }}" class="img-fluid rounded-start text-center" alt="..." width="50%" height="50%" style="margin-left: 20px; margin-top: 15px;margin-bottom: 10px;">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">Дневники пациентов</h5>
+            <p class="card-text">Ссылки на дневники доступны только психитерапевтам и администратору.</p>
+          </div>
+        </div>
+      </div>
+      <a href="{{ url_for('auth.patient_list', username=current_user.username) }}" class="stretched-link"></a>
+    </div>
+  </div>
+{% endif %}
 <br>
 {% endblock %}

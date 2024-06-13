@@ -89,3 +89,11 @@ class NewDiaryForm(FlaskForm):
                            [DataRequired(message='Требуется ввести текст записи дневника'),
                             Length(min=3, max=2000, message='Запись не должна быть меньше 3 символов и больше 2000 символов')])
     submit = SubmitField('Опубликовать')
+
+class RecommendationForm(FlaskForm):
+    record = TextAreaField('Дать рекомендацию',
+                           render_kw={"placeholder": "Введите текст рекомендации"},
+                           validators=
+                           [DataRequired(message='Требуется ввести текст рекомендации'),
+                            Length(min=3, max=2000, message='Запись не должна быть меньше 3 символов и больше 2000 символов')])
+    submit = SubmitField('дать рекомендацию')

@@ -13,21 +13,38 @@
             <img src="{{ url_for('static', filename='img/writing.webp') }}" class="card-img-top pulse" alt="..." style="width: 10%; margin: auto;">
           </div>
           <div class="d-flex justify-content-between">
-            <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#newdiaryModal">
-              Новая запись
-            </button>
+            {% if not edit_mode %}
+              <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#newdiaryModal">
+                Новая запись
+              </button>
+            {% endif %}
             <a class="btn btn-secondary btn-lg" href="{{ url_for('auth.profile', username=current_user.username) }}" role="button">Назад</a>
           </div>
           <br>
         {% if diary_records %}
           {% for record in diary_records %}
             <div class="card">
-              <div class="card-body">
+              <div class="card-body diary-card">
                 <h5 class="card-title">Настроение: {{ record.mood.value }}</h5>
                 <h6 class="card-subtitle mb-2 text-body-secondary">Дата записи: {{ record.date }}</h6>
                 <p class="card-text">{{ record.record }}</p>
-                <a href="{{ url_for('auth.edit_diary_record', username=current_user.username, diary_id=record.id)}}" class="card-link" style="text-decoration: none;">Редактировать</a>
-                <a href="{{ url_for('auth.delete_diary_record', username=current_user.username, diary_id=record.id)}}" class="card-link" style="text-decoration: none; color:brown">Удалить</a>
+                {% if record.diary_recommendations %}
+                  {% for recommend in record.diary_recommendations%}
+                    <div class="recommendation-card">
+                      <h6>Рекомендация</h6>
+                      <p class="card-text">{{ recommend.recommendation }}</p>
+                      {% if current_user.id == recommend.user_id %}
+                        <a href="{{ url_for('auth.delete_recommendation', username=record.user.username, recommed_id=recommend.id)}}" class="card-link" style="text-decoration: none; color:brown">Удалить</a>
+                      {% endif %}
+                    </div>
+                    <br>
+                  {% endfor %}
+                {% endif %}
+                {% if current_user.is_admin() or current_user.is_doctor() %}
+                  <a href="{{ url_for('auth.give_recommendation', username=record.user.username, diary_id=record.id)}}" class="card-link" style="text-decoration: none; color: green;">Ответить</a>
+                {% endif %}
+                <a href="{{ url_for('auth.edit_diary_record', username=record.user.username, diary_id=record.id)}}" class="card-link" style="text-decoration: none;">Редактировать</a>
+                <a href="{{ url_for('auth.delete_diary_record', username=record.user.username, diary_id=record.id)}}" class="card-link" style="text-decoration: none; color:brown">Удалить</a>
               </div>
             </div>
             <br>
