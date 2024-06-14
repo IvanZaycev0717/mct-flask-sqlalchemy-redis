@@ -1,9 +1,10 @@
+import json
 import os
 from datetime import datetime
 import random
 from flask import Blueprint, jsonify, make_response, render_template, redirect, session, url_for, flash, request
 import requests
-from mct_app.auth.models import DiaryRecommendation, User, UserDiary, UserSession, db, UserRole, Role, SocialAccount
+from mct_app.auth.models import DiaryRecommendation, User, UserDiary, UserSession, UserStatistics, db, UserRole, Role, SocialAccount
 from mct_app.auth.forms import RecommendationForm, RegistrationForm, LoginForm, ResetPasswordForm, RequestResetPasswordForm, NewDiaryForm
 from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy import select, update
@@ -17,6 +18,8 @@ import google.auth.transport.requests
 from config import basedir
 from http import HTTPStatus
 from mct_app.email import send_email
+from mct_app.site.models import Article, TextbookParagraph
+from mct_app.utils import get_statistics_data
 
 
 auth = Blueprint('auth', __name__)
@@ -43,13 +46,15 @@ def registration():
             email=form.email.data)
         if form.phone.data:
             user.phone = form.phone.data
+
         user_role = UserRole()
         user_role.role = db.session.query(Role).filter_by(name='Patient').first()
-
         user.roles.append(user_role)
+
         db.session.add(user)
         db.session.commit()
 
+        _create_user_statistics(user.id)
         _create_user_session(user)
         login_user(user)
         return redirect(url_for('auth.profile', username=user.username))
@@ -94,7 +99,16 @@ def profile(username):
 @auth.route('/profile/<username>/statistics')
 @login_required
 def user_statistics(username):
-    return render_template('profile/statistics.html')
+    articles = json.loads(current_user.user_statistics.articles_statistics)
+    textbooks = json.loads(current_user.user_statistics.textbook_statistics)
+    articles_percent = get_statistics_data(articles)
+    textbooks_percent = get_statistics_data(textbooks)
+    return render_template(
+        'profile/statistics.html',
+        articles_percent=articles_percent,
+        textbooks_percent=textbooks_percent
+        )
+        
 
 @auth.route('/profile/<username>/diary', methods=['GET', 'POST'])
 @login_required
@@ -439,6 +453,7 @@ def social_registration(name, email, social_platform):
         db.session.add(user)
         db.session.commit()
 
+        _create_user_statistics(user.id)
         _create_user_session(user)
         login_user(user)
         _update_user_session(user)
@@ -466,3 +481,22 @@ def _update_user_session(user):
         db.session.commit()
     else:
         _create_user_session(user)
+
+def _add_user_statistics():
+    articles = {id[0]: False for id in db.session.query(Article.id).all()}
+    textbooks = {id[0]: False for id in db.session.query(TextbookParagraph.id).all()}
+    return articles, textbooks
+
+def _create_user_statistics(user_id):
+    article_stat, textbook_stat = _add_user_statistics()
+
+    articles_statistics = json.dumps(article_stat)
+    textbook_statistics = json.dumps(textbook_stat)
+
+    statistics = UserStatistics(
+        articles_statistics=articles_statistics,
+        textbook_statistics=textbook_statistics,
+        user_id=user_id
+    )
+    db.session.add(statistics)
+    db.session.commit()

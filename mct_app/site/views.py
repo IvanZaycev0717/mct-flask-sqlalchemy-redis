@@ -14,6 +14,7 @@ from flask_ckeditor import CKEditor
 import requests
 from flask_login import current_user
 from mct_app.email import send_email
+from mct_app import csrf
 
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, SOICAL_MEDIA_LINKS, basedir
 from mct_app.utils import get_articles_by_months, get_textbook_chapters_paragraphs
@@ -81,6 +82,7 @@ def news():
     return render_template('news.html', news=news.items, next_url=next_url, prev_url=prev_url, pages_amount=pages_amount, active_page=active_page, current_site=current_site)
 
 @site.route('/articles')
+@csrf.exempt
 def articles():
     flash('articles', 'active_links')
 
@@ -101,11 +103,14 @@ def articles():
         current_site=current_site,
         articles_by_month=articles_by_month)
 
-@site.route('/articles/<article_id>')
-def article(article_id):
+@site.route('/articles/<article_id>', methods=['GET', 'POST'])
+def article(article_id, has_read=False):
     articles_by_month = create_articles_list()
     article = Article.query.filter_by(id=article_id).first()
-    return render_template('article.html', article=article, articles_by_month=articles_by_month)
+    print(request.form.get('has_read'))
+    return render_template('article.html', article=article, articles_by_month=articles_by_month, has_read=has_read)
+
+
 
 @site.route('/textbook')
 def textbook():

@@ -8,6 +8,11 @@
         <div class="article-buttons text-center">
             <hr>
             <a class="btn btn-primary btn-lg" href="#" role="button">⬆️ Вверх</a>
+            {% if current_user.is_authenticated %}
+                <a id="readButton" class="btn {% if not has_read %}btn-success{% else %}btn-danger{% endif %} btn-lg" role="button" onclick="toggleButton()">
+                    {% if not has_read %} ✅ Отметить как прочитанное {% else %} ❌ Отметить как непрочитанное {% endif %}
+                </a>
+            {% endif %}
             <a class="btn btn-warning btn-lg" href="{{ url_for('site.articles') }}" role="button">📒 К статьям</a>
             <a class="btn btn-dark btn-lg" href="{{ url_for('site.home') }}" role="button">🛖 На главную</a>
         </div>
@@ -16,4 +21,46 @@
         <span>&times;</span>
         <img src=" " alt="">
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script type="text/javascript">
+        var csrf_token = "{{ csrf_token() }}";
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                }
+            }
+        });
+        function toggleButton() {
+                var button = document.getElementById('readButton');
+                var currentState = button.classList.contains('btn-success');
+                var newState = !currentState;
+                var formData = new FormData();
+
+                // Изменение внешнего вида кнопки
+                if (newState) {
+                    button.classList.remove('btn-danger');
+                    button.classList.add('btn-success');
+                    button.innerText = '✅ Отметить как прочитанное';
+                } else {
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-danger');
+                    button.innerText = '❌ Отметить как непрочитанное';
+                }
+                formData.append('has_read', newState);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/articles/{{ article.id }}', true);
+                xhr.setRequestHeader('X-CSRFToken', csrf_token);
+                xhr.onreadystatechange = function (e) {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        console.log('Кнопка поменяла состояние');
+                    }
+                };
+                xhr.send(formData);
+            }
+    </script>
 {% endblock %}

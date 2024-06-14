@@ -11,6 +11,14 @@ def get_images_names(text: str) -> List[str]:
     pattern = r'<img[^>]*src="/files/([^"]+)"[^>]*>'
     return re.findall(pattern, text)
 
+
+def get_statistics_data(statistics: Dict[int, bool]) -> int:
+    hundred_percent = len(statistics)
+    done_percent = len(
+        [value for value in statistics.values() if value is True]
+        )
+    return int(done_percent*100/hundred_percent)
+
 def get_textbook_chapters_paragraphs(chapters_paragraphs: List[Tuple[str]]) -> Dict[str, List[str]]:
     textbook_data = {}
     for item in chapters_paragraphs:
