@@ -130,14 +130,23 @@ def textbook():
     textbook_items = get_textbook_chapters_paragraphs(textbook_data)
     return render_template('textbook.html', textbook_items=textbook_items)
 
-@site.route('/textbook/<paragraph>')
-def textbook_paragraph(paragraph):
+@site.route('/textbook/<paragraph>', methods=['GET', 'POST'])
+def textbook_paragraph(paragraph, has_read=None):
     paragraph = TextbookParagraph.query.filter_by(name=paragraph).first_or_404()
     paragraphs = TextbookParagraph.query.order_by(TextbookParagraph.name).all()
     current_index = next((index for index, par in enumerate(paragraphs) if par == paragraph), None)
     prev_index = current_index - 1 if current_index > 0 else None
     next_index = current_index + 1 if current_index < len(paragraphs) - 1 else None
-    return render_template('paragraph.html', paragraph=paragraph,  paragraphs=paragraphs, prev_index=prev_index, next_index=next_index)
+    if current_user.is_authenticated:
+        statistics_instance = UserStatistics.query.filter_by(user_id=current_user.id).first()
+        statisticts_dict = json.loads(statistics_instance.textbook_statistics)
+        has_read = statisticts_dict[str(paragraph.id)]
+        if request.form.get('has_read'):
+            has_read = not has_read
+            statisticts_dict[str(paragraph.id)] = has_read
+            statistics_instance.textbook_statistics = json.dumps(statisticts_dict)
+            db.session.commit()
+    return render_template('paragraph.html', paragraph=paragraph,  paragraphs=paragraphs, prev_index=prev_index, next_index=next_index, has_read=has_read)
 
 @site.route('/questions', methods=['GET', 'POST'])
 def questions():

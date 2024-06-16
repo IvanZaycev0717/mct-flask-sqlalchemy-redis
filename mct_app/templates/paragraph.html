@@ -18,6 +18,11 @@
                 {% else %}
                     <a class="btn btn-secondary btn-lg disabled" href="" role="button">К следующему параграфу</a>
                 {% endif %}
+                {% if current_user.is_authenticated %}
+                <a id="readButton" class="btn {% if not has_read %}btn-success{% else %}btn-danger{% endif %} btn-lg" role="button" onclick="toggleButton()">
+                    {% if not has_read %} 📗 Отметить как изученное {% else %} 🧧 Отметить как неизученное {% endif %}
+                </a>
+                {% endif %}
             </div>
             <div>
                 <a class="btn btn-warning btn-lg" href="{{ url_for('site.textbook') }}" role="button">📘 К учебнику</a>
@@ -29,4 +34,46 @@
         <span>&times;</span>
         <img src=" " alt="">
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script type="text/javascript">
+        var csrf_token = "{{ csrf_token() }}";
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                }
+            }
+        });
+        function toggleButton() {
+            var button = document.getElementById('readButton');
+            var currentState = button.classList.contains('btn-success');
+            var newState = !currentState;
+            var formData = new FormData();
+
+            if (newState) {
+                        button.classList.remove('btn-danger');
+                        button.classList.add('btn-success');
+                        button.innerText = '📗 Отметить как изученное';
+            } else {
+                button.classList.remove('btn-success');
+                button.classList.add('btn-danger');
+                button.innerText = '🧧 Отметить как неизученное';
+            }
+
+            formData.append('has_read', newState);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/textbook/{{ paragraph.name }}', true);
+            xhr.setRequestHeader('X-CSRFToken', csrf_token);
+            xhr.onreadystatechange = function (e) {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    console.log('Кнопка поменяла состояние');
+                }
+            };
+            xhr.send(formData);
+        }
+    </script>
 {% endblock %}
