@@ -41,7 +41,7 @@ class User(UserMixin, db.Model):
     question: Mapped['Question'] = relationship(back_populates='user')
     answers: Mapped[List['Answer']] = relationship(back_populates='user', passive_deletes=True)
     consultation: Mapped['Consultation'] = relationship(back_populates='user')
-    user_statistics: Mapped['UserStatistics'] = relationship(back_populates='user')
+    user_statistics: Mapped['UserStatistics'] = relationship(back_populates='user', cascade="all, delete")
     user_diaries: Mapped[List['UserDiary']] = relationship(back_populates='user', cascade="all, delete")
     diary_recommendations: Mapped[List['DiaryRecommendation']] = relationship(back_populates='user', cascade="all, delete")
     

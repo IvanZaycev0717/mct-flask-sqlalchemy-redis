@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 import os
 import uuid
 from flask import Blueprint, abort, jsonify, render_template, request, send_from_directory, session, redirect, url_for, flash
@@ -19,7 +20,7 @@ from mct_app import csrf
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, SOICAL_MEDIA_LINKS, basedir
 from mct_app.utils import get_articles_by_months, get_textbook_chapters_paragraphs
 from mct_app import csrf
-from mct_app.auth.models import Question, Answer, User, Consultation
+from mct_app.auth.models import Question, Answer, User, Consultation, UserStatistics
 
 
 
@@ -105,9 +106,18 @@ def articles():
 
 @site.route('/articles/<article_id>', methods=['GET', 'POST'])
 def article(article_id, has_read=False):
+    if current_user.is_authenticated:
+        statistics_instance = UserStatistics.query.filter_by(user_id=current_user.id).first()
+        statisticts_dict = json.loads(statistics_instance.articles_statistics)
+        has_read = statisticts_dict[article_id]
+        if request.form.get('has_read'):
+            has_read = not has_read
+            statisticts_dict[article_id] = has_read
+            statistics_instance.articles_statistics = json.dumps(statisticts_dict)
+            db.session.commit()
     articles_by_month = create_articles_list()
     article = Article.query.filter_by(id=article_id).first()
-    print(request.form.get('has_read'))
+
     return render_template('article.html', article=article, articles_by_month=articles_by_month, has_read=has_read)
 
 
