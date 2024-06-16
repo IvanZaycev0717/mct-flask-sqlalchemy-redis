@@ -3,20 +3,32 @@
 {% block content %}
 <div class="accordion" id="accordionPanelsStayOpenExample">
   <div class="accordion-item">
-    {% for chapter, paragraphs in textbook_items.items() %}
+    {% for textbook in textbook_data %}
     <h2 class="accordion-header">
       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-        <strong>{{ chapter }}</strong>
+        <strong>{{ textbook.name }}</strong>
         <span class="tooltip-text" id="top"></span>
       </button>
     </h2>
     <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
       <div class="accordion-body">
-        {% for paragraph in paragraphs %}
+        {% for paragraph in textbook.textbook_paragraphs %}
         <div class="list-group">
+          {% if statisticts_dict %}
+            {% if statisticts_dict[paragraph.id|string] %}
+              <a href="{{ url_for('site.textbook_paragraph', paragraph=paragraph) }}" class="list-group-item list-group-item-action" aria-current="true">
+                ✅ {{ paragraph }}
+              </a>
+            {% else %}
+            <a href="{{ url_for('site.textbook_paragraph', paragraph=paragraph) }}" class="list-group-item list-group-item-action" aria-current="true">
+               {{ paragraph.name }}
+            </a>
+            {% endif %}
+          {% else %}
             <a href="{{ url_for('site.textbook_paragraph', paragraph=paragraph) }}" class="list-group-item list-group-item-action" aria-current="true">
               {{ paragraph }}
             </a>
+          {% endif %}
         </div>
         {% endfor %}
       </div>

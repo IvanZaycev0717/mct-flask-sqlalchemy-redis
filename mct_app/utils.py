@@ -19,17 +19,6 @@ def get_statistics_data(statistics: Dict[int, bool]) -> int:
         )
     return int(done_amount*100/full_amount)
 
-def get_textbook_chapters_paragraphs(chapters_paragraphs: List[Tuple[str]]) -> Dict[str, List[str]]:
-    textbook_data = {}
-    for item in chapters_paragraphs:
-        chapter = item[0]
-        paragraph = item[1]
-        if chapter not in textbook_data:
-            textbook_data[chapter] = [paragraph]
-        else:
-            textbook_data[chapter].append(paragraph)
-    return textbook_data
-
 def generate_image_name(obj, file_data):
     image_suffix = uuid.uuid4()
     return secure_filename(f"image_{image_suffix}")

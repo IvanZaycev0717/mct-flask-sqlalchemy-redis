@@ -18,7 +18,7 @@ from mct_app.email import send_email
 from mct_app import csrf
 
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, SOICAL_MEDIA_LINKS, basedir
-from mct_app.utils import get_articles_by_months, get_textbook_chapters_paragraphs
+from mct_app.utils import get_articles_by_months
 from mct_app import csrf
 from mct_app.auth.models import Question, Answer, User, Consultation, UserStatistics
 
@@ -117,18 +117,18 @@ def article(article_id, has_read=False, statisticts_dict=None):
             db.session.commit()
     articles_by_month = create_articles_list()
     article = Article.query.filter_by(id=article_id).first()
-
     return render_template('article.html', article=article, articles_by_month=articles_by_month, has_read=has_read, statisticts_dict=statisticts_dict)
 
 
 
 @site.route('/textbook')
-def textbook():
+def textbook(statisticts_dict=None):
     flash('textbook', 'active_links')
-    query = select(TextbookChapter.name, TextbookParagraph.name).join_from(TextbookParagraph, TextbookChapter).order_by(TextbookChapter.name, TextbookParagraph.name)
-    textbook_data = db.session.execute(query).all()
-    textbook_items = get_textbook_chapters_paragraphs(textbook_data)
-    return render_template('textbook.html', textbook_items=textbook_items)
+    textbook_data = TextbookChapter.query.all()
+    if current_user.is_authenticated:
+        statistics_instance = UserStatistics.query.filter_by(user_id=current_user.id).first()
+        statisticts_dict = json.loads(statistics_instance.textbook_statistics)
+    return render_template('textbook.html', textbook_data=textbook_data, statisticts_dict=statisticts_dict)
 
 @site.route('/textbook/<paragraph>', methods=['GET', 'POST'])
 def textbook_paragraph(paragraph, has_read=None):

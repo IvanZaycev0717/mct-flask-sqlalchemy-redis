@@ -106,6 +106,12 @@ class TextbookParagraph(db.Model):
     images: Mapped[List['TextbookParagraphImage']] = relationship(back_populates='textbook_paragraph', cascade='all, delete')
     textbook_chapter: Mapped['TextbookChapter'] = relationship(back_populates='textbook_paragraphs')
 
+    def __repr__(self) -> str:
+        return str(self.name)
+
+    def __str__(self) -> str:
+        return str(self.name)
+
 class TextbookParagraphImage(db.Model):
     __tablename__ = 'textbook_paragraph_image'
 
