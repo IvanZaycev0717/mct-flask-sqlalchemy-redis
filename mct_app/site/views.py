@@ -105,7 +105,7 @@ def articles():
         articles_by_month=articles_by_month)
 
 @site.route('/articles/<article_id>', methods=['GET', 'POST'])
-def article(article_id, has_read=False):
+def article(article_id, has_read=False, statisticts_dict=None):
     if current_user.is_authenticated:
         statistics_instance = UserStatistics.query.filter_by(user_id=current_user.id).first()
         statisticts_dict = json.loads(statistics_instance.articles_statistics)
@@ -118,7 +118,7 @@ def article(article_id, has_read=False):
     articles_by_month = create_articles_list()
     article = Article.query.filter_by(id=article_id).first()
 
-    return render_template('article.html', article=article, articles_by_month=articles_by_month, has_read=has_read)
+    return render_template('article.html', article=article, articles_by_month=articles_by_month, has_read=has_read, statisticts_dict=statisticts_dict)
 
 
 

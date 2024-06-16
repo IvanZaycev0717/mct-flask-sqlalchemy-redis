@@ -12,9 +12,17 @@
         <div class="card-body">
           <h5 class="card-title">{{ month_year }}</h5>
           <div class="list-group">
-            {% for article_title, article_link in article_list.items() %}
-              <a href="{{ url_for('site.article', article_id=article_link) }}" class="list-group-item list-group-item-action" aria-current="true">
-                {{ article_title }}
+            {% for article_title, article_id in article_list.items() %}
+              <a href="{{ url_for('site.article', article_id=article_id) }}" class="list-group-item list-group-item-action {% if article.id == article_id%}disabled{% endif %}" aria-current="true" style="{% if article.id == article_id%}background-color: 	#494949;{% endif %} color: #d76f02;">
+                {% if statisticts_dict %}
+                  {% if statisticts_dict[article_id|string] %}
+                  ✅ {{ article_title }}
+                  {% else %}
+                   {{ article_title }}
+                  {% endif %}
+                {% else %}
+                  {{ article_title }}
+                {% endif %}
               </a>
             {% endfor %}
           </div>
