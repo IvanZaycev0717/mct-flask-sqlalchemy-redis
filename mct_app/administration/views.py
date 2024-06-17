@@ -273,6 +273,15 @@ class ArticleCardView(AccessView):
                     )
                     article_image.image = image
                     model.article.images.append(article_image)
+            
+            # update users statistics after adding a new article
+            statistics = UserStatistics.query.all()
+            for stat in statistics:
+                stat_dict = json.loads(stat.articles_statistics)
+                stat_dict.update({model.id: False})
+                stat.articles_statistics = json.dumps(stat_dict)
+                db.session.commit()
+
         else:
             # We are EDITING an articlecard and aricle
             # change image of the current card
@@ -319,10 +328,31 @@ class ArticleCardView(AccessView):
                      )
                     article_image.image = image
                     model.article.images.append(article_image)
+            
         super(ArticleCardView, self).on_model_change(form, model, is_created)
+    
+    def on_model_delete(self, model):
+        statistics = UserStatistics.query.all()
+        for stat in statistics:
+                stat_dict = json.loads(stat.articles_statistics)
+                del stat_dict[str(model.article.id)]
+                stat.articles_statistics = json.dumps(stat_dict)
+                db.session.commit()
+        return super().on_model_delete(model)
 
 class TextbookChapterView(AccessView):
     form_excluded_columns = ('textbook_paragraphs', )
+
+    def on_model_delete(self, model):
+        deleted_keys = [paragraph.id for paragraph in model.textbook_paragraphs]
+        statistics = UserStatistics.query.all()
+        for stat in statistics:
+                stat_dict = json.loads(stat.textbook_statistics)
+                for id in deleted_keys:
+                    del stat_dict[str(id)]
+                stat.textbook_statistics = json.dumps(stat_dict)
+                db.session.commit()
+        return super().on_model_delete(model)
 
 class TextbookParagraphView(AccessView):
     form_excluded_columns = ('images', 'content')
@@ -360,6 +390,14 @@ class TextbookParagraphView(AccessView):
                     )
                     paragraph_image.image = image
                     model.images.append(paragraph_image)
+            
+            # update users statistics after adding a new article
+            statistics = UserStatistics.query.all()
+            for stat in statistics:
+                stat_dict = json.loads(stat.textbook_statistics)
+                stat_dict.update({model.id: False})
+                stat.textbook_statistics = json.dumps(stat_dict)
+                db.session.commit()
         else:
             # We are EDITING a paragraph in the textbook
             # write paragraph content to model content
@@ -400,6 +438,15 @@ class TextbookParagraphView(AccessView):
                     paragraph_image.image = image
                     model.images.append(paragraph_image)
         super(TextbookParagraphView, self).on_model_change(form, model, is_created)
+    
+    def on_model_delete(self, model):
+        statistics = UserStatistics.query.all()
+        for stat in statistics:
+                stat_dict = json.loads(stat.textbook_statistics)
+                del stat_dict[str(model.id)]
+                stat.textbook_statistics = json.dumps(stat_dict)
+                db.session.commit()
+        return super().on_model_delete(model)
 
 
 
@@ -431,6 +478,7 @@ def delete_unused_articlecard_images(mapper, connection, target: ArticleCard):
                     os.remove(article_image.image.absolute_path)
         except OSError:
             pass
+        
 
 @listens_for(ArticleCard, 'before_update')
 def delete_unused_articlecard_images_before_update(mapper, connection, target: ArticleCard):
