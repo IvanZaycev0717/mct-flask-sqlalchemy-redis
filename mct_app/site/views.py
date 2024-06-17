@@ -242,3 +242,7 @@ def consultation():
 def contacts():
     flash('contacts', 'active_links')
     return render_template('contacts.html')
+
+@site.route('/cookie-info')
+def cookie_info():
+    return render_template('cookie-info.html')

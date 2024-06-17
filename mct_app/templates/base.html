@@ -25,7 +25,7 @@
     <nav class="navbar navbar-expand-lg bg-body d-flex justify-content-between">
       <div class="logo-social-container">
         <a class="navbar-brand" target="_parent" href="{{ url_for('site.home') }}" data-toggle="popover" title="На главную">
-          <img src="{{ url_for('static', filename='img/logo.png') }}" class="d-inline-block align-top" alt="">
+          <img src="{{ url_for('static', filename='img/logo.svg') }}" class="d-inline-block align-top logo-image" alt="" width="38%">
         </a>
         <a class="navbar-brand" target="_blank" href="{{ links['GitHub'] }}"  data-toggle="popover" title="На сайт разработчика">
           <img class="navbar-brand__header-img d-inline-block align-top" src="{{ url_for('static', filename='img/social_media_ico/github.svg') }}" width="45px" alt="">
@@ -204,7 +204,7 @@
           <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
             <!-- Content -->
             <h6 class="text-uppercase fw-bold mb-4">
-              <i class="fas fa-gem me-3"></i>МКТ-Россия.рф
+              <i class="fas fa-gem me-3"></i>metacognitive.ru
             </h6>
             <p>
               Пожалуйста, обратите внимание, что информация, предоставленная на этом сайте,
@@ -258,7 +258,9 @@
     <!-- Copyright -->
     <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
       © 2022-{{ current_year }} Вернуться на главную:
-      <a class="text-reset fw-bold" target="_parent" href="{{ url_for('site.home') }}">мкт-россия.рф</a>
+      <a class="text-reset fw-bold" target="_parent" href="{{ url_for('site.home') }}">metacognitive.ru</a>
+      Все права защищены. Вся информация, размещенная на данном веб-сайте, предназначена только для персонального пользования и не подлежит дальнейшему воспроизведению и/или распространению в какой-либо форме, иначе как с письменного разрешения metacognitive.ru
+      Сайт metacognitive.ru (далее – сайт) использует файлы cookie. Продолжая работу с сайтом, Вы соглашаетесь на сбор и последующую <a href="{{ url_for('site.cookie_info')}}">обработку файлов cookie</a>.
     </div>
     <!-- Copyright -->
   </footer>

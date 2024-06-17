@@ -4,14 +4,20 @@
 [data-bs-theme=dark] ::selection
     color: black
     background-color:  #ffcc00
-    
 
+
+.logo-image
+    filter: grayscale(100%)
+    transition: filter 0.5s
+    &:hover
+        transform: scale(1)
+        filter: grayscale(0%)
 
 .navbar-expand-lg
     padding-left: 10%
     padding-right: 12%
-    margin-top: 20px
-    margin-bottom: 15px
+    margin-top: 13px
+    margin-bottom: 10px
 
 .container
     &__login-registration
@@ -214,8 +220,6 @@
         box-shadow: 0 0 5px 0 	#ff8a01
 
 
-.logo-social-container
-    padding-left: 1%
 
 .news-bg
     border-color: #6fc7f9
