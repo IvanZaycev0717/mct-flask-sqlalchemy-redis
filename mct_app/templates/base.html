@@ -136,12 +136,7 @@
         <div class="form-check form-switch">
           <input class="form-check-input opacity-10 border border-warning" type="checkbox" id="flexSwitchCheckChecked" onclick="switchThemeFunction()">
         </div>
-        <div class="search-form">
-          <form class="d-flex justify-content-around" role="search">
-            <input class="form-control me-2" type="search" placeholder="Что вас волнует" aria-label="Search">
-            <button class="btn btn-warning" type="submit">Найти</button>
-          </form>
-        </div>
+        {% include 'forms/search.html' %}
       <!-- </div> -->
     </nav>
   </header>
@@ -257,10 +252,10 @@
 
     <!-- Copyright -->
     <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-      © 2022-{{ current_year }} Вернуться на главную:
-      <a class="text-reset fw-bold" target="_parent" href="{{ url_for('site.home') }}">metacognitive.ru</a>
-      Все права защищены. Вся информация, размещенная на данном веб-сайте, предназначена только для персонального пользования и не подлежит дальнейшему воспроизведению и/или распространению в какой-либо форме, иначе как с письменного разрешения metacognitive.ru
-      Сайт metacognitive.ru (далее – сайт) использует файлы cookie. Продолжая работу с сайтом, Вы соглашаетесь на сбор и последующую <a href="{{ url_for('site.cookie_info')}}">обработку файлов cookie</a>.
+      <p>© 2022-{{ current_year }} Вернуться на главную:
+      <a class="text-reset fw-bold" target="_parent" href="{{ url_for('site.home') }}">metacognitive.ru</a></p>
+      <p>Все права защищены. Вся информация, размещенная на данном веб-сайте, предназначена только для персонального пользования и не подлежит дальнейшему воспроизведению и/или распространению в какой-либо форме, иначе как с письменного разрешения metacognitive.ru
+      Сайт metacognitive.ru (далее – сайт) использует файлы cookie. Продолжая работу с сайтом, Вы соглашаетесь на сбор и последующую <a href="{{ url_for('site.cookie_info')}}">обработку файлов cookie</a>.</p>
     </div>
     <!-- Copyright -->
   </footer>
@@ -276,5 +271,10 @@
     <script src="{{ url_for('static', filename='js/responsive.popup.image.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery-3.7.1.js') }}"></script>
     <!-- <script src="{{ url_for('static', filename='js/popover.scr.js') }}"></script> -->
+    <script>
+      function submitForm() {
+        return true;
+      }
+    </script>
   {% endblock %}
 </body>

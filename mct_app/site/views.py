@@ -5,8 +5,9 @@ import uuid
 from flask import Blueprint, abort, jsonify, render_template, request, send_from_directory, session, redirect, url_for, flash
 import werkzeug.exceptions
 from mct_app import db
+from flask import g
 
-from mct_app.site.forms import ConsultationForm, QuestionForm, AnswerForm
+from mct_app.site.forms import ConsultationForm, QuestionForm, AnswerForm, SearchForm
 from mct_app.site.models import Article, ArticleCard, News, TextbookChapter, TextbookParagraph
 from sqlalchemy import select, func
 from sqlalchemy.orm import aliased
@@ -48,6 +49,9 @@ def access_denied(e):
 def server_error(e):
     return render_template('errors/500.html'), 500
 
+@site.before_app_request
+def before_request():
+    g.search_form = SearchForm()
 
 @site.app_context_processor
 def base_template_data_processor() -> dict[str, str]:
@@ -68,6 +72,36 @@ def create_articles_list():
 @site.route('/home')
 def home():
     return render_template('home.html')
+
+@site.route('/search')
+def search():
+    if not g.search_form.validate():
+        return redirect(url_for('site.home'))
+    page = request.args.get('page', 1, type=int)
+    articles, articles_total = Article.search(
+        g.search_form.q.data,
+        page,
+        2
+    )
+    paragraphs, paragraphs_total = TextbookParagraph.search(
+        g.search_form.q.data,
+        page,
+        2
+    )
+    print(articles_total)
+    print(paragraphs_total)
+    total = articles_total + paragraphs_total
+    next_url = url_for('site.search', q=g.search_form.q.data, page=page + 1) if total > 4 else None
+    prev_url = url_for('site.search', q=g.search_form.q.data, page=page - 1) if page > 1 else None
+    return render_template(
+        'search_result.html',
+        title='Результаты поиска',
+        articles=articles,
+        paragraphs=paragraphs,
+        next_url=next_url,
+        prev_url=prev_url
+        )
+
 
 @site.route('/news')
 def news():

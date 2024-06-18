@@ -2,7 +2,7 @@ from mct_app import create_app, db
 from flask_migrate import Migrate
 from config import CSV_FILE_PATHS
 from mct_app.auth.models import Role, User, UserRole
-from mct_app.site.models import Image, News
+from mct_app.site.models import Image, News, Article, TextbookParagraph
 import locale
 
 
@@ -18,7 +18,9 @@ def make_shell_context():
             'recreate_db': recreate_db,
             'User': User,
             'Image': Image,
-            'news': News}
+            'news': News,
+            'article': Article,
+            'textbook': TextbookParagraph}
 
 def recreate_db():
     db.drop_all()

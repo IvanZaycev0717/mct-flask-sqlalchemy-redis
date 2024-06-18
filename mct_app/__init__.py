@@ -9,6 +9,7 @@ from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_mailman import Mail
 from flask_ckeditor import CKEditor
+from elasticsearch import Elasticsearch
 
 
 load_dotenv()
@@ -37,6 +38,7 @@ def create_app():
     mail.init_app(app)
     ckeditor.init_app(app) 
     csrf.init_app(app)
+    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) if app.config['ELASTICSEARCH_URL'] else None
 
     with app.app_context():
         db.create_all()

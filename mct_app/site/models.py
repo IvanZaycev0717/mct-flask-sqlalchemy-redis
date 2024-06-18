@@ -2,11 +2,53 @@ from datetime import datetime
 from typing import List, Optional
 
 
-from sqlalchemy import DateTime, Integer, String, ForeignKey, UnicodeText, Text
+from sqlalchemy import DateTime, Integer, String, ForeignKey, UnicodeText, Text, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 from mct_app import db
+from mct_app.search import add_to_index, remove_from_index, query_index
+
+
+class SearchableMixin:
+    @classmethod
+    def search(cls, expression, page, per_page):
+        ids, total = query_index(cls.__tablename__, expression, page, per_page)
+        if total == 0:
+            return [], 0
+        when = []
+        for i in range(len(ids)):
+            when.append((ids[i], i))
+        query = select(cls).where(cls.id.in_(ids)).order_by(
+            db.case(*when, value=cls.id))
+        return db.session.scalars(query), total
+
+    @classmethod
+    def before_commit(cls, session):
+        session._changes = {
+            'add': list(session.new),
+            'update': list(session.dirty),
+            'delete': list(session.deleted)
+        }
+
+    @classmethod
+    def after_commit(cls, session):
+        for obj in session._changes['add']:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['update']:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['delete']:
+            if isinstance(obj, SearchableMixin):
+                remove_from_index(obj.__tablename__, obj)
+        session._changes = None
+
+    @classmethod
+    def reindex(cls):
+        for obj in db.session.scalars(select(cls)):
+            add_to_index(cls.__tablename__, obj)
+
 
 class Image(db.Model):
     __tablename__ = "image"
@@ -42,8 +84,9 @@ class ArticleCard(db.Model):
     article: Mapped['Article'] = relationship(back_populates='article_card', cascade="all, delete")
 
 
-class Article(db.Model):
+class Article(SearchableMixin, db.Model):
     __tablename__ = 'article'
+    __searchable__ = ['body']
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(255))
@@ -70,6 +113,7 @@ class ArticleImage(db.Model):
 
 class News(db.Model):
     __tablename__ = 'news'
+
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(255))
     content: Mapped[str] = mapped_column(Text)
@@ -95,8 +139,9 @@ class TextbookChapter(db.Model):
     def __str__(self) -> str:
         return str(self.name)
 
-class TextbookParagraph(db.Model):
+class TextbookParagraph(SearchableMixin, db.Model):
     __tablename__ = 'textbook_paragraph'
+    __searchable__ = ['content']
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -120,5 +165,8 @@ class TextbookParagraphImage(db.Model):
 
     image: Mapped['Image'] = relationship(back_populates='textbook_paragraphs', cascade='all, delete')
     textbook_paragraph: Mapped['TextbookParagraph'] = relationship(back_populates='images')
+
+db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
+db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
 
 

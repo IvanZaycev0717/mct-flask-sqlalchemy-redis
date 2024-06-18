@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <h2>{{ title }}</h2>
+    
+</div>
+<br>
+    {%for paragraph in paragraphs %}
+    <div class="container d-flex justify-content-center">
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ url_for('static', filename='img/textbook.webp') }}" class="img-fluid rounded-start" alt="...">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                <h5 class="card-title">Глава учебника</h5>
+                <h6 class="card-title">{{ paragraph.name }}</h6>
+                <p class="card-text">{{paragraph.content[:100]|safe }}...</p>
+                <p class="card-text">
+                    <a href="{{ url_for('site.textbook_paragraph', paragraph=paragraph.name, _external=true) }}">
+                        Перейти к прочтению
+                    </a>
+                </p>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {%for article in articles %}
+    <div class="container d-flex justify-content-center">
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ url_for('static', filename='img/articles.webp') }}" class="img-fluid rounded-start" alt="...">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                <h5 class="card-title">Статья</h5>
+                <h6 class="card-title">{{ article.title }}</h6>
+                <p class="card-text">{{article.body[:100]|safe }}...</p>
+                <p class="card-text">
+                    <a href="{{ url_for('site.article', article_id=article.id, _external=true) }}">
+                        Перейти к прочтению
+                    </a>
+                </p>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="container d-flex justify-content-center">
+        <nav aria-label="Post navigation">
+            <ul class="pagination">
+                <li class="page-item{% if not prev_url %} disabled{% endif %}">
+                    <a class="page-link" href="{{ prev_url }}">
+                        Назад
+                    </a>
+                </li>
+                <li class="page-item{% if not next_url %} disabled{% endif %}">
+                    <a class="page-link" href="{{ next_url }}">
+                        Далее
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}

@@ -1,4 +1,6 @@
+from flask import request
 from flask_wtf import FlaskForm
+from flask_wtf.form import _Auto
 import phonenumbers
 from wtforms import StringField, SubmitField, TextAreaField, ValidationError
 from wtforms.validators import DataRequired, Optional, Length
@@ -69,3 +71,13 @@ class ConsultationForm(FlaskForm):
                 raise ValueError()
         except (phonenumbers.phonenumberutil.NumberParseException, ValueError):
             raise ValidationError('Неправильно введен номер телефона')
+    
+class SearchForm(FlaskForm):
+    q = StringField('Что вас волнует', validators=[DataRequired()])
+
+    def __init__(self, *args, **kwargs):
+        if 'formdata' not in kwargs:
+            kwargs['formdata'] = request.args
+        if 'meta' not in kwargs:
+            kwargs['meta'] = {'csrf': False}
+        super(SearchForm, self).__init__(*args, **kwargs)

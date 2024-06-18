@@ -1,8 +1,11 @@
-{% entends "base.html" %}
+{% if g.search_form %}
+  <div class="search-form">
+      <form class="d-flex justify-content-around" role="search" method="get" action="{{ url_for('site.search') }}" onsubmit="return submitForm()">
+        {{ g.search_form.q(size=20, class='form-control me-2', placeholder=g.search_form.q.label.text) }}
+        <button class="btn btn-warning">Найти</button>
+      </form>
+  </div>
+{% endif %}
 
-{% block search %}
-<form class="d-flex" role="search">
-    <input class="form-control me-2" type="search" placeholder="Что вас волнует" aria-label="Search">
-    <button class="btn btn-outline-success" type="submit">Найти</button>
-</form>
-{% endblock %}
+
+
