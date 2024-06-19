@@ -1,5 +1,6 @@
 import os
 
+
 from dotenv import load_dotenv
 from flask import Flask, request, session, url_for
 from flask_admin import Admin
@@ -10,7 +11,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_mailman import Mail
 from flask_ckeditor import CKEditor
 from elasticsearch import Elasticsearch
-from utils import celery_init_app
+from celery import Celery, Task
 
 
 load_dotenv()
@@ -30,6 +31,13 @@ csrf = CSRFProtect()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(os.environ.get('APP_SETTINGS'))
+    app.config.from_mapping(
+        CELERY=dict(
+            broker_url=os.environ.get('BROKER_URL'),
+            result_backend=os.environ.get('RESULT_BACKEND'),
+            task_ignore_result=True,
+        ),
+    )
     app.app_context().push()
     CSRFProtect(app)
 
@@ -37,7 +45,7 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
-    ckeditor.init_app(app) 
+    ckeditor.init_app(app)
     csrf.init_app(app)
     app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) if app.config['ELASTICSEARCH_URL'] else None
     celery = celery_init_app(app)
@@ -56,3 +64,15 @@ def create_app():
     admin.init_app(app, index_view=MyAdminIndexView())
 
     return app, celery
+
+def celery_init_app(app: Flask) -> Celery:
+    class FlaskTask(Task):
+        def __call__(self, *args: object, **kwargs: object) -> object:
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery_app = Celery(app.name, task_cls=FlaskTask)
+    celery_app.config_from_object(app.config["CELERY"])
+    celery_app.set_default()
+    app.extensions["celery"] = celery_app
+    return celery_app

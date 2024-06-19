@@ -8,25 +8,10 @@ from mct_app.site.models import ArticleCard
 from PIL import Image
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
-from celery import Celery, Task
 
 def get_images_names(text: str) -> List[str]:
     pattern = r'<img[^>]*src="/files/([^"]+)"[^>]*>'
     return re.findall(pattern, text)
-
-
-
-def celery_init_app(app: Flask) -> Celery:
-    class FlaskTask(Task):
-        def __call__(self, *args: object, **kwargs: object) -> object:
-            with app.app_context():
-                return self.run(*args, **kwargs)
-
-    celery_app = Celery(app.name, task_cls=FlaskTask)
-    celery_app.config_from_object(app.config["CELERY"])
-    celery_app.set_default()
-    app.extensions["celery"] = celery_app
-    return celery_app
 
 
 def get_statistics_data(statistics: Dict[int, bool]) -> int:
