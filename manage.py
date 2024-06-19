@@ -7,7 +7,7 @@ import locale
 
 
 locale.setlocale(locale.LC_ALL, ('ru_RU', 'UTF-8'))
-app = create_app()
+app, celery = create_app()
 migrate = Migrate(app, db)
 
 

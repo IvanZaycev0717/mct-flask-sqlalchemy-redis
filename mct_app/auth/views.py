@@ -219,7 +219,7 @@ def reset_password_request():
             else:
                 token = user.generate_password_reset_token()
                 reset_link = url_for('auth.reset_password', token=token, _external=True)
-                send_email(
+                task = send_email.delay(
                     user.email,
                     'Сброс пароля',
                     'forms/email/reset_password',

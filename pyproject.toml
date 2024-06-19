@@ -29,6 +29,7 @@ wtforms-alchemy = "^0.18.0"
 pillow = "^10.3.0"
 flask-ckeditor = {extras = ["all"], version = "^0.5.1"}
 elasticsearch = "^8.14.0"
+celery = "^5.4.0"
 
 
 [build-system]

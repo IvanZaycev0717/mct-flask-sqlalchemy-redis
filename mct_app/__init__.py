@@ -10,6 +10,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_mailman import Mail
 from flask_ckeditor import CKEditor
 from elasticsearch import Elasticsearch
+from utils import celery_init_app
 
 
 load_dotenv()
@@ -39,6 +40,8 @@ def create_app():
     ckeditor.init_app(app) 
     csrf.init_app(app)
     app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) if app.config['ELASTICSEARCH_URL'] else None
+    celery = celery_init_app(app)
+    celery.set_default()
 
     with app.app_context():
         db.create_all()
@@ -52,4 +55,4 @@ def create_app():
     from mct_app.administration.views import MyAdminIndexView
     admin.init_app(app, index_view=MyAdminIndexView())
 
-    return app
+    return app, celery

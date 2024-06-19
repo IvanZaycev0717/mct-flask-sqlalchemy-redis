@@ -81,6 +81,7 @@ class Config:
     GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY')
     GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY')
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
+    CELERY_CONFIG = {"broker_url": "redis://redis:6379", "result_backend": "redis://redis:6379"}
     
     
 

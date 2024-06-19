@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+  
+  redis-insight:
+    image: redislabs/redisinsight:latest
+    ports:
+      - "8001:8001"
+    environment:
+      - REDIS_URI=redis://redis:6379
+    depends_on:
+      - redis
