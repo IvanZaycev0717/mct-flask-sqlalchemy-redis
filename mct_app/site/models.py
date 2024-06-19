@@ -84,9 +84,8 @@ class ArticleCard(db.Model):
     article: Mapped['Article'] = relationship(back_populates='article_card', cascade="all, delete")
 
 
-class Article(SearchableMixin, db.Model):
+class Article(db.Model):
     __tablename__ = 'article'
-    __searchable__ = ['body']
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(255))
@@ -168,5 +167,3 @@ class TextbookParagraphImage(db.Model):
 
 db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
 db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
-
-

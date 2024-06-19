@@ -29,6 +29,7 @@ GOOGLE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
 NEWS_PER_PAGE = 3
 ARTICLES_PER_PAGE = 2
 QUESTIONS_PER_PAGE = 6
+SEARCH_RESULTS_PER_PAGE = 4
 
 
 site = Blueprint('site', __name__)
@@ -78,25 +79,16 @@ def search():
     if not g.search_form.validate():
         return redirect(url_for('site.home'))
     page = request.args.get('page', 1, type=int)
-    articles, articles_total = Article.search(
+    paragraphs, total = TextbookParagraph.search(
         g.search_form.q.data,
         page,
-        2
+        SEARCH_RESULTS_PER_PAGE
     )
-    paragraphs, paragraphs_total = TextbookParagraph.search(
-        g.search_form.q.data,
-        page,
-        2
-    )
-    print(articles_total)
-    print(paragraphs_total)
-    total = articles_total + paragraphs_total
-    next_url = url_for('site.search', q=g.search_form.q.data, page=page + 1) if total > 4 else None
+    next_url = url_for('site.search', q=g.search_form.q.data, page=page + 1) if total > page * SEARCH_RESULTS_PER_PAGE else None
     prev_url = url_for('site.search', q=g.search_form.q.data, page=page - 1) if page > 1 else None
     return render_template(
         'search_result.html',
         title='Результаты поиска',
-        articles=articles,
         paragraphs=paragraphs,
         next_url=next_url,
         prev_url=prev_url
