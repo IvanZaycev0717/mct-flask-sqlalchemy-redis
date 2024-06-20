@@ -4,29 +4,19 @@ services:
   mct-app:
     build:
       context: .
+      dockerfile: Dockerfile
     ports:
-      - 443:443
-    environment:
-      FLASK_APP: manage
+      - 80:80
     depends_on:
-      - redis
       - elasticsearch
-      - redis-insight
-    volumes:
-      - .:/app
-    command: flask manage -h 0.0.0.0
+    restart: always
   celery:
     build:
       context: .
-    environment:
-      FLASK_APP: manage
-    volumes:
-      - .:/app
+      dockerfile: Dockerfile.celery
     depends_on:
       - redis
-      - elasticsearch
       - redis-insight
-    command: celery -A manage.celery worker --loglevel=info
   redis:
     image: redis:latest
     ports:
@@ -43,13 +33,10 @@ services:
     restart: always
   elasticsearch:
     image: elasticsearch:8.7.1
+    container_name: elasticsearch
     ports:
       - "9200:9200"
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-    deploy:
-      resources:
-        limits:
-          memory: 2GB
-    restart: always
+    mem_limit: 2GB

@@ -39,9 +39,6 @@ def create_app():
             result_backend=os.environ.get('RESULT_BACKEND'),
         ),
     )
-    
-    
-
     # init app
     CSRFProtect(app)
     db.init_app(app)

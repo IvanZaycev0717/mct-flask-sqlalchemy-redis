@@ -29,6 +29,10 @@ def recreate_db():
     db.session.commit()
 
 
+def recreate_search_indexes():
+    TextbookParagraph.reindex()
+
+
 def general_setup():
     Role.insert_roles(CSV_FILE_PATHS.get('roles'))
     User.create_admin()
@@ -37,4 +41,4 @@ def general_setup():
 
 if __name__ == '__main__':
     general_setup()
-    app.run(host='0.0.0.0', port=443, ssl_context='adhoc')
+    app.run(host='0.0.0.0', port=80)
