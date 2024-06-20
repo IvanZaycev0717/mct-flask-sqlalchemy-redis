@@ -251,8 +251,8 @@ def consultation():
         )
         db.session.add(consultation)
         db.session.commit()
-        send_email(
-            'dawkinsforest5@gmail.com',
+        task = send_email.delay(
+            os.environ.get('ADMIN_EMAIL'),
             'Запись на консультацию',
             'forms/email/consultation',
             first_name=form.first_name.data,

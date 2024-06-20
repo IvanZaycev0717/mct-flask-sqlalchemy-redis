@@ -1,13 +1,20 @@
-FROM python:alpine
+FROM python:3-alpine3.20
 
+RUN pip install poetry==1.8.2
 
-RUN pip install poetry
+ENV POETRY_CACHE_DIR=/tmp/poetry_cache
 
-COPY . .
+WORKDIR /app
 
-RUN poetry install
+COPY pyproject.toml poetry.lock ./
 
-ENTRYPOINT ["poetry", "run", "python", "-m", "manage", "--host='0.0.0.0'", "--port=443", "--ssl_context='adhoc'"]
+RUN poetry config virtualenvs.in-project true
+
+RUN poetry install --without dev --no-root && rm -rf ${POETRY_CACHE_DIR}
+
+COPY . ./
+
+RUN poetry install --without dev
 
 
 

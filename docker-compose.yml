@@ -1,10 +1,37 @@
 version: '3.8'
 
 services:
+  mct-app:
+    build:
+      context: .
+    ports:
+      - 443:443
+    environment:
+      FLASK_APP: manage
+    depends_on:
+      - redis
+      - elasticsearch
+      - redis-insight
+    volumes:
+      - .:/app
+    command: flask manage -h 0.0.0.0
+  celery:
+    build:
+      context: .
+    environment:
+      FLASK_APP: manage
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - elasticsearch
+      - redis-insight
+    command: celery -A manage.celery worker --loglevel=info
   redis:
     image: redis:latest
     ports:
       - "6379:6379"
+    restart: always
   redis-insight:
     image: redislabs/redisinsight:latest
     ports:
@@ -13,6 +40,7 @@ services:
       - REDIS_URI=redis://redis:6379
     depends_on:
       - redis
+    restart: always
   elasticsearch:
     image: elasticsearch:8.7.1
     ports:
@@ -24,3 +52,4 @@ services:
       resources:
         limits:
           memory: 2GB
+    restart: always
