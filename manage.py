@@ -11,7 +11,6 @@ app, celery = create_app()
 app.app_context().push()
 migrate = Migrate(app, db)
 
-
 @app.shell_context_processor
 def make_shell_context():
     return {'app': app, 'db': db,
@@ -37,8 +36,8 @@ def general_setup():
     Role.insert_roles(CSV_FILE_PATHS.get('roles'))
     User.create_admin()
     UserRole.create_admin_role()
-
+    recreate_search_indexes()
 
 if __name__ == '__main__':
     general_setup()
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=443, ssl_context='adhoc')

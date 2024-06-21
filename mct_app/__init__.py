@@ -46,7 +46,7 @@ def create_app():
     mail.init_app(app)
     ckeditor.init_app(app)
     csrf.init_app(app)
-    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) if app.config['ELASTICSEARCH_URL'] else None
+    app.elasticsearch = Elasticsearch(os.environ.get('ELASTICSEARCH_URL')) if os.environ.get('ELASTICSEARCH_URL') else None
     celery = make_celery(app)
     celery.set_default()
 

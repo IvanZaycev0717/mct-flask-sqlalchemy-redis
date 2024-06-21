@@ -5,38 +5,35 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: mct-app
     ports:
-      - 80:80
+      - 443:443
     depends_on:
       - elasticsearch
+      - redis
     restart: always
+
   celery:
     build:
       context: .
       dockerfile: Dockerfile.celery
+    container_name: celery
     depends_on:
       - redis
-      - redis-insight
+
   redis:
     image: redis:latest
+    container_name: redis
     ports:
-      - "6379:6379"
+      - 6379:6379
     restart: always
-  redis-insight:
-    image: redislabs/redisinsight:latest
-    ports:
-      - "8001:8001"
-    environment:
-      - REDIS_URI=redis://redis:6379
-    depends_on:
-      - redis
-    restart: always
+
+
   elasticsearch:
-    image: elasticsearch:8.7.1
+    image: elasticsearch:7.17.22
     container_name: elasticsearch
-    ports:
-      - "9200:9200"
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
     mem_limit: 2GB
+
