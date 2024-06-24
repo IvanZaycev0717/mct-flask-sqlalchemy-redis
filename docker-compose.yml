@@ -18,8 +18,12 @@ services:
       context: .
       dockerfile: Dockerfile.celery
     container_name: celery
+    environment:
+      FLASK_APP: manage
     depends_on:
       - redis
+      - elasticsearch
+    restart: always
 
   redis:
     image: redis:latest

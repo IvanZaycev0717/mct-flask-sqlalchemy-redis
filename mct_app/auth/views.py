@@ -220,10 +220,9 @@ def reset_password_request():
                 token = user.generate_password_reset_token()
                 reset_link = url_for('auth.reset_password', token=token, _external=True)
                 task = send_email.delay(
-                    user.email,
-                    'Сброс пароля',
-                    'forms/email/reset_password',
-                    user=user,
+                    recipient=user.email,
+                    subject='Сброс пароля',
+                    template='forms/email/reset_password',
                     reset_link=reset_link,
                     next=request.args.get('next'))
         flash(f'Сброс пароля был отправлен на почту {form.email.data}', 'send-reset-password')

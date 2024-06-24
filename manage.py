@@ -7,7 +7,8 @@ import locale
 
 
 locale.setlocale(locale.LC_ALL, ('ru_RU', 'UTF-8'))
-app, celery = create_app()
+app = create_app()
+celery = app.extensions['celery']
 app.app_context().push()
 migrate = Migrate(app, db)
 
@@ -30,6 +31,7 @@ def recreate_db():
 
 def recreate_search_indexes():
     TextbookParagraph.reindex()
+
 
 
 def general_setup():

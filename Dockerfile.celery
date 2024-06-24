@@ -16,4 +16,6 @@ COPY . ./
 
 RUN poetry install --without dev
 
-ENTRYPOINT ["poetry", "run", "python", "-m", "manage", "celery", "worker", "--loglevel=info"]
+RUN chmod +x start_celery.sh
+
+ENTRYPOINT ["poetry", "run", "./start_celery.sh"]

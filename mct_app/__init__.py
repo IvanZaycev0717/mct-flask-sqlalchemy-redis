@@ -37,6 +37,8 @@ def create_app():
         CELERY=dict(
             broker_url=os.environ.get('BROKER_URL'),
             result_backend=os.environ.get('RESULT_BACKEND'),
+            task_ignore_results=True,
+            broker_connection_retry_on_startup=True
         ),
     )
     # init app
@@ -47,8 +49,8 @@ def create_app():
     ckeditor.init_app(app)
     csrf.init_app(app)
     app.elasticsearch = Elasticsearch(os.environ.get('ELASTICSEARCH_URL')) if os.environ.get('ELASTICSEARCH_URL') else None
-    celery = make_celery(app)
-    celery.set_default()
+    app.config.from_prefixed_env()
+    celery_init_app(app)
 
     with app.app_context():
         db.create_all()
@@ -62,16 +64,16 @@ def create_app():
     from mct_app.administration.views import MyAdminIndexView
     admin.init_app(app, index_view=MyAdminIndexView())
 
-    return app, celery
+    return app
 
-def make_celery(app: Flask) -> Celery:
-    celery = Celery(app.import_name)
-    celery.conf.update(app.config["CELERY"])
-
-    class ContextTask(celery.Task):
-        def __call__(self, *args, **kwargs):
+def celery_init_app(app: Flask) -> Celery:
+    class FlaskTask(Task):
+        def __call__(self, *args: object, **kwargs: object) -> object:
             with app.app_context():
                 return self.run(*args, **kwargs)
-    
-    celery.Task = ContextTask
+
+    celery = Celery(app.name, task_cls=FlaskTask)
+    celery.config_from_object(app.config["CELERY"])
+    celery.set_default()
+    app.extensions["celery"] = celery
     return celery
