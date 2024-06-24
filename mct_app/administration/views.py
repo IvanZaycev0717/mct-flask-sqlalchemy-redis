@@ -31,6 +31,7 @@ from werkzeug.datastructures.headers import Headers
 
 from mct_app.auth.models import *
 from mct_app import db, admin
+from mct_app.search import add_to_index
 from mct_app.site.models import (ArticleCard, ArticleImage, 
                                  News, Image as MyImage,
                                  Article, TextbookChapter,
@@ -437,6 +438,7 @@ class TextbookParagraphView(AccessView):
                     )
                     paragraph_image.image = image
                     model.images.append(paragraph_image)
+        add_to_index(model.__tablename__, model)
         super(TextbookParagraphView, self).on_model_change(form, model, is_created)
     
     def on_model_delete(self, model):
@@ -523,3 +525,4 @@ admin.add_view(AccessView(Question, db.session, 'Вопросы'))
 admin.add_views(AccessView(Answer, db.session, 'Ответы'))
 admin.add_views(AccessView(UserDiary, db.session, 'Дневник пользователя'))
 admin.add_views(AccessView(DiaryRecommendation, db.session, 'Рекомендации'))
+admin.add_views(AccessView(Consultation, db.session, 'Консультации'))

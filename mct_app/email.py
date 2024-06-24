@@ -1,12 +1,8 @@
-import json
 import os
-import smtplib
 
 from celery import shared_task
-from celery.contrib.abortable import AbortableTask
 from flask import render_template
 from flask_mailman import EmailMessage
-
 
 
 @shared_task(ignore_result=True)
