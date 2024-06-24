@@ -12,6 +12,7 @@ from flask_mailman import Mail
 from flask_ckeditor import CKEditor
 from elasticsearch import Elasticsearch
 from celery import Celery, Task
+from flask_debugtoolbar import DebugToolbarExtension
 
 
 load_dotenv()
@@ -26,7 +27,7 @@ login_manager = LoginManager()
 admin = Admin(template_mode='bootstrap4')
 ckeditor = CKEditor()
 csrf = CSRFProtect()
-
+toolbar = DebugToolbarExtension()
 
 def create_app():
     app = Flask(__name__)
@@ -48,6 +49,7 @@ def create_app():
     mail.init_app(app)
     ckeditor.init_app(app)
     csrf.init_app(app)
+    toolbar.init_app(app)
     app.elasticsearch = Elasticsearch(os.environ.get('ELASTICSEARCH_URL')) if os.environ.get('ELASTICSEARCH_URL') else None
     app.config.from_prefixed_env()
     celery_init_app(app)

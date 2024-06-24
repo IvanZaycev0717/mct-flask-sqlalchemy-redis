@@ -1,3 +1,4 @@
+import hmac
 import json
 import os
 from datetime import datetime
@@ -19,11 +20,13 @@ from config import basedir
 from http import HTTPStatus
 from mct_app.email import send_email
 from mct_app.site.models import Article, TextbookParagraph
-from mct_app.utils import get_statistics_data
+from mct_app.utils import get_statistics_data, get_random_email
+import hashlib
 
 
 auth = Blueprint('auth', __name__)
 
+BOT_TOKEN_HASH = hashlib.sha256(os.environ['BOT_TOKEN'].encode())
 client_secrets_file = os.path.join(basedir, 'client_secret.json')
 
 flow = Flow.from_client_secrets_file(
@@ -272,6 +275,9 @@ def google_callback():
     username = id_info.get("name")
     email = id_info.get("email")
 
+    if not email:
+        email = get_random_email()
+
     registration_result = social_registration(username, email, SocialPlatform.GOOGLE)
 
     if not registration_result:
@@ -313,7 +319,7 @@ def vk_callback():
                 'last_name': user_info.get('last_name'),
             }
             username = f'{user_data['first_name']} {user_data['last_name']}'
-            email = os.environ['SOCIAL_EMAIL']
+            email = get_random_email()
             registration_result = social_registration(username, email, SocialPlatform.VK)
 
             if not registration_result:
@@ -349,7 +355,7 @@ def ok_callback():
             email = ok_user_data.get('email')
 
             if not email:
-                email = os.environ.get('SOCIAL_EMAIL')
+                email = get_random_email()
 
             registration_result = social_registration(username, email, SocialPlatform.ODNOKLASSNIKI)
 
@@ -391,6 +397,9 @@ def yandex_callback():
             username = user_info['login']
             email = user_info['default_email']
 
+            if not email:
+                email = get_random_email()
+
             registration_result = social_registration(username, email, SocialPlatform.YANDEX)
 
             if not registration_result:
@@ -403,17 +412,26 @@ def yandex_callback():
 @auth.route('/telegram-callback')
 def telegram_callback():
     username = request.args.get('username')
-    if username:
-        email = os.environ['SOCIAL_EMAIL']
 
+    if username:
+        # check security
+        query_hash = request.args.get('hash')
+        params = request.args.items()
+        data_check_string = '\n'.join(sorted(f'{x}={y}' for x, y in params if x not in ('hash', 'next')))
+        computed_hash = hmac.new(BOT_TOKEN_HASH.digest(), data_check_string.encode(), 'sha256').hexdigest()
+        is_correct = hmac.compare_digest(computed_hash, query_hash)
+        if not is_correct:
+            abort(403)
+        
+        email = get_random_email()
         registration_result = social_registration(username, email, SocialPlatform.TELEGRAM)
 
         if not registration_result:
             abort(500)
+
         return redirect(url_for('auth.profile', username=registration_result.username))
     else:
         abort(500)
-
 
 
 def social_registration(name, email, social_platform):

@@ -58,8 +58,8 @@ class Image(db.Model):
     absolute_path: Mapped[str] = mapped_column(String(255))
     relative_path: Mapped[str] = mapped_column(String(255))
 
-    news: Mapped['News'] = relationship(back_populates='image')
-    article_card: Mapped['ArticleCard'] = relationship(back_populates='image')
+    news: Mapped['News'] = relationship(back_populates='image', lazy='joined')
+    article_card: Mapped['ArticleCard'] = relationship(back_populates='image', lazy='joined')
     articles: Mapped[List['ArticleImage']] = relationship(back_populates='image')
     textbook_paragraphs: Mapped[List['TextbookParagraphImage']] = relationship(back_populates='image')
 
@@ -80,7 +80,7 @@ class ArticleCard(db.Model):
     image_id: Mapped[int] = mapped_column(ForeignKey('image.id', ondelete='CASCADE'))
     article_id: Mapped[int] = mapped_column(ForeignKey('article.id', ondelete='CASCADE'))
 
-    image: Mapped['Image'] = relationship(back_populates='article_card', cascade="all, delete")
+    image: Mapped['Image'] = relationship(back_populates='article_card', cascade="all, delete", lazy='joined')
     article: Mapped['Article'] = relationship(back_populates='article_card', cascade="all, delete")
 
 
@@ -119,7 +119,7 @@ class News(db.Model):
     last_update: Mapped[datetime] = mapped_column(DateTime)
     image_id: Mapped[int] = mapped_column(ForeignKey('image.id', ondelete='CASCADE'))
 
-    image: Mapped['Image'] = relationship(back_populates='news', cascade="all, delete")
+    image: Mapped['Image'] = relationship(back_populates='news', cascade="all, delete", lazy='joined')
 
 
 
@@ -130,7 +130,7 @@ class TextbookChapter(db.Model):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=True)
 
-    textbook_paragraphs: Mapped[List['TextbookParagraph']] = relationship(back_populates='textbook_chapter', passive_deletes=True)
+    textbook_paragraphs: Mapped[List['TextbookParagraph']] = relationship(back_populates='textbook_chapter', passive_deletes=True, lazy='joined')
 
     def __repr__(self) -> str:
         return str(self.name)
@@ -148,7 +148,7 @@ class TextbookParagraph(SearchableMixin, db.Model):
     textbook_chapter_id: Mapped[int] = mapped_column(ForeignKey('textbook_chapter.id', ondelete='SET NULL'), nullable=True)
 
     images: Mapped[List['TextbookParagraphImage']] = relationship(back_populates='textbook_paragraph', cascade='all, delete')
-    textbook_chapter: Mapped['TextbookChapter'] = relationship(back_populates='textbook_paragraphs')
+    textbook_chapter: Mapped['TextbookChapter'] = relationship(back_populates='textbook_paragraphs', lazy='joined')
 
     def __repr__(self) -> str:
         return str(self.name)

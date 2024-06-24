@@ -33,12 +33,10 @@ def recreate_search_indexes():
     TextbookParagraph.reindex()
 
 
-
 def general_setup():
     Role.insert_roles(CSV_FILE_PATHS.get('roles'))
     User.create_admin()
     UserRole.create_admin_role()
-    recreate_search_indexes()
 
 if __name__ == '__main__':
     general_setup()

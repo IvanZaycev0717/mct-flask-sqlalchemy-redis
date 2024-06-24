@@ -38,8 +38,8 @@ class User(UserMixin, db.Model):
     social_account: Mapped['SocialAccount'] = relationship(
         back_populates="user", cascade="all, delete-orphan"
         )
-    question: Mapped['Question'] = relationship(back_populates='user')
-    answers: Mapped[List['Answer']] = relationship(back_populates='user', passive_deletes=True)
+    question: Mapped['Question'] = relationship(back_populates='user', lazy='joined')
+    answers: Mapped[List['Answer']] = relationship(back_populates='user', passive_deletes=True, lazy='joined')
     consultation: Mapped['Consultation'] = relationship(back_populates='user')
     user_statistics: Mapped['UserStatistics'] = relationship(back_populates='user', cascade="all, delete")
     user_diaries: Mapped[List['UserDiary']] = relationship(back_populates='user', cascade="all, delete")
@@ -179,8 +179,8 @@ class Question(db.Model):
     date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     ip_address: Mapped[str] = mapped_column(String(45))
 
-    answers: Mapped[List['Answer']] = relationship(back_populates='question', cascade='all, delete')
-    user: Mapped['User'] = relationship(back_populates='question')
+    answers: Mapped[List['Answer']] = relationship(back_populates='question', cascade='all, delete', lazy='joined')
+    user: Mapped['User'] = relationship(back_populates='question', lazy='joined')
 
     def __repr__(self) -> str:
         return f'{self.id} {self.body}'
@@ -197,8 +197,8 @@ class Answer(db.Model):
     question_id: Mapped[Optional[int]] = mapped_column(ForeignKey('question.id'))
     user_id: Mapped[Optional[int]] = mapped_column(ForeignKey('user.id', ondelete='SET NULL'), nullable=True)
 
-    user: Mapped[Optional['User']] = relationship(back_populates='answers')
-    question: Mapped[Optional['Question']] = relationship(back_populates='answers')
+    user: Mapped[Optional['User']] = relationship(back_populates='answers', lazy='joined')
+    question: Mapped[Optional['Question']] = relationship(back_populates='answers', lazy='joined')
 
     def __repr__(self) -> str:
         return f'{self.id} {self.body}'

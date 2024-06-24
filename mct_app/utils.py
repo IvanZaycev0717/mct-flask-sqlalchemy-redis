@@ -13,6 +13,8 @@ def get_images_names(text: str) -> List[str]:
     pattern = r'<img[^>]*src="/files/([^"]+)"[^>]*>'
     return re.findall(pattern, text)
 
+def get_random_email() -> str:
+    return f'{uuid.uuid4()}@metacognitive.ru'
 
 def get_statistics_data(statistics: Dict[int, bool]) -> int:
     full_amount = len(statistics)

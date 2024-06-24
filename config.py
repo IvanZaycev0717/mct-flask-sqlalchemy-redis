@@ -95,6 +95,8 @@ class StagingConfig(Config):
 class DevelopmentConfig(Config):
     DEBUG = True
     ASSETS_DEBUG = True
+    DEBUG_TB_ENABLED = True
+    SQLALCHEMY_RECORD_QUERIES = True
 
 
 class TestingConfig(Config):
