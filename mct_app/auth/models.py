@@ -24,7 +24,8 @@ class User(UserMixin, db.Model):
     username: Mapped[str] = mapped_column(
         String(45),
         unique=True,
-        nullable=False
+        nullable=False,
+        index=True
         )
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     email: Mapped[str] = mapped_column(String(120), nullable=False)
@@ -38,7 +39,7 @@ class User(UserMixin, db.Model):
     social_account: Mapped['SocialAccount'] = relationship(
         back_populates="user", cascade="all, delete-orphan"
         )
-    question: Mapped['Question'] = relationship(back_populates='user', lazy='joined')
+    question: Mapped['Question'] = relationship(back_populates='user')
     answers: Mapped[List['Answer']] = relationship(back_populates='user', passive_deletes=True, lazy='joined')
     consultation: Mapped['Consultation'] = relationship(back_populates='user')
     user_statistics: Mapped['UserStatistics'] = relationship(back_populates='user', cascade="all, delete")
@@ -124,7 +125,7 @@ class Role(db.Model):
     __tablename__ = "role"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(80), unique=True, nullable=False, index=True)
     description: Mapped[str] = mapped_column(String, nullable=False)
 
     users: Mapped[List['UserRole']] = relationship(back_populates='role')
@@ -176,7 +177,7 @@ class Question(db.Model):
     anon_name: Mapped[str] = mapped_column(String(45), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=True)
     body: Mapped[str] = mapped_column(UnicodeText)
-    date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    date: Mapped[datetime] = mapped_column(DateTime, nullable=True, index=True)
     ip_address: Mapped[str] = mapped_column(String(45))
 
     answers: Mapped[List['Answer']] = relationship(back_populates='question', cascade='all, delete', lazy='joined')
@@ -231,7 +232,7 @@ class UserDiary(db.Model):
     __tablename__ = 'user_diary'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    date: Mapped[datetime] = mapped_column(DateTime)
+    date: Mapped[datetime] = mapped_column(DateTime, index=True)
     mood: Mapped[List[str]] = mapped_column(Enum(Mood))
     record: Mapped[str] = mapped_column(UnicodeText)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id', ondelete='CASCADE'))

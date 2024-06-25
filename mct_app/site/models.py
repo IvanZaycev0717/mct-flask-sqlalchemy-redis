@@ -76,7 +76,7 @@ class ArticleCard(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(255))
     description: Mapped[str] = mapped_column(String(255))
-    last_update: Mapped[datetime] = mapped_column(DateTime)
+    last_update: Mapped[datetime] = mapped_column(DateTime, index=True)
     image_id: Mapped[int] = mapped_column(ForeignKey('image.id', ondelete='CASCADE'))
     article_id: Mapped[int] = mapped_column(ForeignKey('article.id', ondelete='CASCADE'))
 
@@ -116,7 +116,7 @@ class News(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(255))
     content: Mapped[str] = mapped_column(Text)
-    last_update: Mapped[datetime] = mapped_column(DateTime)
+    last_update: Mapped[datetime] = mapped_column(DateTime, index=True)
     image_id: Mapped[int] = mapped_column(ForeignKey('image.id', ondelete='CASCADE'))
 
     image: Mapped['Image'] = relationship(back_populates='news', cascade="all, delete", lazy='joined')
@@ -143,7 +143,7 @@ class TextbookParagraph(SearchableMixin, db.Model):
     __searchable__ = ['content']
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     content: Mapped[str] = mapped_column(UnicodeText)
     textbook_chapter_id: Mapped[int] = mapped_column(ForeignKey('textbook_chapter.id', ondelete='SET NULL'), nullable=True)
 
