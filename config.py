@@ -1,34 +1,41 @@
 import os
-from enum import IntEnum, StrEnum, Enum
+from enum import Enum, IntEnum, StrEnum
 
-
+# Constants
 ALLOWED_RUS_SYMBOLS = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя -'
-
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
+# Paths
+basedir = os.path.abspath(os.path.dirname(__file__))
 CSV_FILE_PATHS = {
     'roles': os.path.join(basedir, 'csv', 'roles.csv'),
 }
-
 FILE_BASE_PATH = os.path.join(basedir, 'mct_app', 'files')
 FILE_REL_PATH = os.path.join('..', '..', '..', 'files')
-
 IMAGE_BASE_PATH = {
-    'news': os.path.join(basedir, 'mct_app', 'static', 'uploads', 'news'),
-    'articles': os.path.join(basedir, 'mct_app', 'static', 'uploads', 'articles'),
-    'textbook': os.path.join(basedir, 'mct_app', 'static', 'uploads', 'textbook'),
+    'news': os.path.join(
+        basedir, 'mct_app', 'static', 'uploads', 'news'
+        ),
+    'articles': os.path.join(
+        basedir, 'mct_app', 'static', 'uploads', 'articles'
+        ),
+    'textbook': os.path.join(
+        basedir, 'mct_app', 'static', 'uploads', 'textbook'
+        ),
 }
-
 IMAGE_REL_PATHS = {
-    'news': os.path.join('..', '..', '..', 'static', 'uploads', 'news'),
-    'articles': os.path.join('..', '..', '..', 'static', 'uploads', 'articles'),
-    'textbook': os.path.join('..', '..', '..', 'static', 'uploads', 'textbook'),
+    'news': os.path.join(
+        '..', '..', '..', 'static', 'uploads', 'news'
+        ),
+    'articles': os.path.join(
+        '..', '..', '..', 'static', 'uploads', 'articles'
+        ),
+    'textbook': os.path.join(
+        '..', '..', '..', 'static', 'uploads', 'textbook'
+        ),
 }
 
-
+# Links
 SOICAL_MEDIA_LINKS = {
     'GitHub': r'https://github.com/IvanZaycev0717/mct-flask-sqlalchemy-redis',
     'YouTube': r'https://www.youtube.com/@IvanZaycev_0717',
@@ -37,11 +44,15 @@ SOICAL_MEDIA_LINKS = {
 }
 
 
+# Enum classes
 class Is(IntEnum):
+    """Class of digits for a current role."""
+
     ADMIN = 1
     CONTENT_MANAGER = 2
     DOCTOR = 3
     PATIENT = 4
+
 
 class Mood(Enum):
     HAPPY = '😊Счастливый😊'
@@ -60,6 +71,7 @@ class SocialPlatform(StrEnum):
     TELEGRAM = '(Telegram)'
 
 
+# Config classes
 class Config:
     APP_NAME = os.environ.get('APP_NAME')
     TESTING = False
@@ -72,7 +84,9 @@ class Config:
     MAIL_PASSWORD = os.environ.get('PASS_2')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
     FLASK_ADMIN_SWATCH = os.environ.get('FLASK_ADMIN_SWATCH')
-    UPLOAD_FOLDER = os.path.join(basedir, 'mct_app', 'static', 'uploads', 'news')
+    UPLOAD_FOLDER = os.path.join(
+        basedir, 'mct_app', 'static', 'uploads', 'news'
+        )
     ALLOWED_EXTENSIONS = ALLOWED_EXTENSIONS
     CKEDITOR_SERVE_LOCAL = True
     CKEDITOR_FILE_UPLOADER = 'administration.upload'
