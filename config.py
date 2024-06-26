@@ -111,7 +111,7 @@ class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
     ASSETS_DEBUG = True
-    DEBUG_TB_ENABLED = False
+    DEBUG_TB_ENABLED = True
     SQLALCHEMY_RECORD_QUERIES = True
     WTF_CSRF_CHECK_DEFAULT = True
 

@@ -63,8 +63,8 @@ class Image(db.Model):
     absolute_path: Mapped[str] = mapped_column(String(255))
     relative_path: Mapped[str] = mapped_column(String(255))
 
-    news: Mapped['News'] = relationship(back_populates='image', lazy='joined')
-    article_card: Mapped['ArticleCard'] = relationship(back_populates='image', lazy='joined')
+    news: Mapped['News'] = relationship(back_populates='image')
+    article_card: Mapped['ArticleCard'] = relationship(back_populates='image')
     articles: Mapped[List['ArticleImage']] = relationship(back_populates='image')
     textbook_paragraphs: Mapped[List['TextbookParagraphImage']] = relationship(back_populates='image')
 
@@ -85,7 +85,7 @@ class ArticleCard(db.Model):
     image_id: Mapped[int] = mapped_column(ForeignKey('image.id', ondelete='CASCADE'))
     article_id: Mapped[int] = mapped_column(ForeignKey('article.id', ondelete='CASCADE'))
 
-    image: Mapped['Image'] = relationship(back_populates='article_card', cascade="all, delete", lazy='joined')
+    image: Mapped['Image'] = relationship(back_populates='article_card', cascade="all, delete")
     article: Mapped['Article'] = relationship(back_populates='article_card', cascade="all, delete")
 
 
@@ -124,7 +124,7 @@ class News(db.Model):
     last_update: Mapped[datetime] = mapped_column(DateTime, index=True)
     image_id: Mapped[int] = mapped_column(ForeignKey('image.id', ondelete='CASCADE'))
 
-    image: Mapped['Image'] = relationship(back_populates='news', cascade="all, delete", lazy='joined')
+    image: Mapped['Image'] = relationship(back_populates='news', cascade="all, delete")
 
 
 

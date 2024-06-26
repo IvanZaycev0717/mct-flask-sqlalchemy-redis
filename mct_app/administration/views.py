@@ -10,6 +10,7 @@ import elastic_transport
 from flask import Blueprint, flash, request, send_from_directory, url_for, g
 from flask_ckeditor import upload_success, upload_fail
 from flask import abort, url_for
+from flask_sqlalchemy import SQLAlchemy
 from markupsafe import Markup
 from werkzeug.security import generate_password_hash
 from flask_login import current_user
@@ -245,7 +246,7 @@ class ArticleCardView(AccessView):
             base_path=IMAGE_BASE_PATH['articles'],
             namegen=generate_image_name,
             max_size=(300, 300, True),
-            allow_overwrite=False,
+            allow_overwrite=True,
             )
         form_class.body = CKEditorField()
         return form_class
@@ -505,6 +506,7 @@ def delete_unused_articlecard_images(mapper, connection, target: TextbookParagra
         except OSError:
             pass
 
+
 @listens_for(db.session, 'after_flush')
 def delete_images_from_content(session, flush_content):
     if session.deleted:
@@ -513,7 +515,7 @@ def delete_images_from_content(session, flush_content):
                 if isinstance(item, ArticleImage):
                     os.remove(item.image.absolute_path)
                 if isinstance(item, TextbookParagraphImage):
-                    os.remove(item.image.absolute_path)
+                    os.remove(item.image.absolute_path)             
         except OSError:
             pass
 
