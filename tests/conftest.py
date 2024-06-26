@@ -1,16 +1,15 @@
-from http import HTTPStatus
-
-
+import os
 import pytest
-from mct_app import create_app
+from mct_app import create_app, db
 
+expected_title = "<title>Метакогнитивная терапия - новости, статьи, учебник, консультации</title>"
 
 @pytest.fixture()
 def app():
     app = create_app()
-    app.config.update({
-        'TESTING': True
-    })
+    app.config.from_object(os.environ.get('APP_TEST_MODE'))
+    with app.app_context():
+        db.create_all()
     yield app
 
 @pytest.fixture()
@@ -21,13 +20,18 @@ def client(app):
 def runner(app):
     return app.test_cli_runner()
 
-def test_home(client):
-    response = client.get('/')
-    assert response.status_code == HTTPStatus.OK, 'Главная страница недоступна'
-    
-    response = client.get('/home')
-    assert response.status_code == HTTPStatus.OK, 'Главная страница недоступна'
+@pytest.fixture(params=[
+    '/', '/home', '/articles', 'textbook', 'questions',
+    'consultation', 'contacts', 'cookie-info'])
+def site_url(client, request):
+    return request.param
 
-def test_news(client):
-    response = client.get('/news')
-    assert response.status_code == HTTPStatus.OK, 'Страница новостей недоступна'
+@pytest.fixture(params=[
+    'registration', 'login', 'reset-password'])
+def auth_url(client, request):
+    return request.param
+
+@pytest.fixture(params=[
+    'google-login', 'vk-login', 'ok-login', 'ok-redirect', 'yandex-login'])
+def social_url(client, request):
+    return request.param

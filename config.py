@@ -74,7 +74,6 @@ class SocialPlatform(StrEnum):
 # Config classes
 class Config:
     APP_NAME = os.environ.get('APP_NAME')
-    TESTING = False
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
@@ -99,6 +98,8 @@ class Config:
 
 class ProductionConfig(Config):
     DEBUG = False
+    TESTING = False
+    DEVELOPMENT = False
 
 
 class StagingConfig(Config):
@@ -107,6 +108,8 @@ class StagingConfig(Config):
 
 
 class DevelopmentConfig(Config):
+    TESTING = False
+    DEVELOPMENT = True
     DEBUG = True
     ASSETS_DEBUG = True
     DEBUG_TB_ENABLED = True
@@ -115,3 +118,6 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+    DEVELOPMENT = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
+    CKEDITOR_ENABLE_CSRF = False
