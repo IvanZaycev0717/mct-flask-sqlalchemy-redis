@@ -16,10 +16,9 @@ def app():
     })
     with app.app_context():
         db.create_all()
-    general_setup()
+        general_setup()
+    
     yield app
-    with app.app_context():
-        db.drop_all()
 
 @pytest.fixture()
 def client(app):

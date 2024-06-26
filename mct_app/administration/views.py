@@ -1,10 +1,13 @@
+import gettext
+import logging
 import uuid
 import os
 import os.path as op
 from typing import List
 
 
-from flask import Blueprint, request, send_from_directory, url_for, g
+import elastic_transport
+from flask import Blueprint, flash, request, send_from_directory, url_for, g
 from flask_ckeditor import upload_success, upload_fail
 from flask import abort, url_for
 from markupsafe import Markup
@@ -31,7 +34,7 @@ from werkzeug.datastructures.headers import Headers
 
 from mct_app.auth.models import *
 from mct_app import db, admin
-from mct_app.search import add_to_index
+from mct_app.search import add_to_index, remove_from_index
 from mct_app.site.models import (ArticleCard, ArticleImage, 
                                  News, Image as MyImage,
                                  Article, TextbookChapter,
@@ -438,7 +441,10 @@ class TextbookParagraphView(AccessView):
                     )
                     paragraph_image.image = image
                     model.images.append(paragraph_image)
-        add_to_index(model.__tablename__, model)
+        try:
+            add_to_index(model.__tablename__, model)
+        except elastic_transport.ConnectionError:
+            logging.info('Paragrapth created with out Elasticsearch')
         super(TextbookParagraphView, self).on_model_change(form, model, is_created)
     
     def on_model_delete(self, model):
@@ -449,7 +455,6 @@ class TextbookParagraphView(AccessView):
                 stat.textbook_statistics = json.dumps(stat_dict)
                 db.session.commit()
         return super().on_model_delete(model)
-
 
 
 # SQLAlchemy Events

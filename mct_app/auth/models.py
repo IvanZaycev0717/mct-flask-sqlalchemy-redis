@@ -79,6 +79,13 @@ class User(UserMixin, db.Model):
                 email=os.environ.get('ADMIN_EMAIL'))
             db.session.add(admin)
             db.session.commit()
+            admin_statistics = UserStatistics(
+                articles_statistics=json.dumps({}),
+                textbook_statistics=json.dumps({}),
+                user_id=Is.ADMIN
+            )
+            db.session.add(admin_statistics)
+            db.session.commit()
     
     def reset_password(self, token, new_password):
         s = URLSafeTimedSerializer(os.environ['SECRET_KEY'])

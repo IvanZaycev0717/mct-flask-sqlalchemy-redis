@@ -1,7 +1,9 @@
 from datetime import datetime
+import logging
 from typing import List, Optional
 
 
+import elastic_transport
 from sqlalchemy import DateTime, Integer, String, ForeignKey, UnicodeText, Text, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -33,16 +35,19 @@ class SearchableMixin:
 
     @classmethod
     def after_commit(cls, session):
-        for obj in session._changes['add']:
-            if isinstance(obj, SearchableMixin):
-                add_to_index(obj.__tablename__, obj)
-        for obj in session._changes['update']:
-            if isinstance(obj, SearchableMixin):
-                add_to_index(obj.__tablename__, obj)
-        for obj in session._changes['delete']:
-            if isinstance(obj, SearchableMixin):
-                remove_from_index(obj.__tablename__, obj)
-        session._changes = None
+        try:
+            for obj in session._changes['add']:
+                if isinstance(obj, SearchableMixin):
+                    add_to_index(obj.__tablename__, obj)
+            for obj in session._changes['update']:
+                if isinstance(obj, SearchableMixin):
+                    add_to_index(obj.__tablename__, obj)
+            for obj in session._changes['delete']:
+                if isinstance(obj, SearchableMixin):
+                    remove_from_index(obj.__tablename__, obj)
+            session._changes = None
+        except elastic_transport.ConnectionError:
+            logging.info('Elasticsearch server error')
 
     @classmethod
     def reindex(cls):
