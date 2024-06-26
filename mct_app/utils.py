@@ -21,7 +21,9 @@ def get_statistics_data(statistics: Dict[int, bool]) -> int:
     done_amount = len(
         [value for value in statistics.values() if value is True]
         )
-    return int(done_amount*100/full_amount)
+    if full_amount != 0:
+        return int(done_amount*100/full_amount)
+    return 0
 
 def generate_image_name(obj, file_data):
     image_suffix = uuid.uuid4()

@@ -28,6 +28,7 @@ def test_registration(client, app):
         })
 
     with app.app_context():
+        print(User.query.all())
         assert User.query.count() == 1
         assert response.status_code == HTTPStatus.FOUND, 'После регистрации страница недоступна'
         assert User.query.first().email == "test@test.ru"
