@@ -40,7 +40,9 @@ flake8-docstrings = "^1.7.0"
 flake8-import-order = "^0.18.2"
 ruff = "^0.4.9"
 flask-debugtoolbar = "^0.15.1"
+coverage = "^7.5.4"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
