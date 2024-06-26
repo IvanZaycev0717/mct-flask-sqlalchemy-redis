@@ -75,7 +75,6 @@ class SocialPlatform(StrEnum):
 class Config:
     APP_NAME = os.environ.get('APP_NAME')
     SECRET_KEY = os.environ.get('SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
     MAIL_PORT = os.environ.get('MAIL_PORT')
     MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL')
@@ -112,12 +111,14 @@ class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
     ASSETS_DEBUG = True
-    DEBUG_TB_ENABLED = True
+    DEBUG_TB_ENABLED = False
     SQLALCHEMY_RECORD_QUERIES = True
+    WTF_CSRF_CHECK_DEFAULT = True
 
 
 class TestingConfig(Config):
     TESTING = True
-    DEVELOPMENT = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
-    CKEDITOR_ENABLE_CSRF = False
+    DEBUG = False
+    WTF_CSRF_CHECK_DEFAULT = False
+    WTF_CSRF_ENABLED: False
+

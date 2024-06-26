@@ -29,11 +29,12 @@ ckeditor = CKEditor()
 csrf = CSRFProtect()
 toolbar = DebugToolbarExtension()
 
-def create_app():
+def create_app(database_uri=os.environ.get('DATABASE_URL')):
     app = Flask(__name__)
 
     # config setUp
     app.config.from_object(os.environ.get('APP_SETTINGS'))
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
     app.config.from_mapping(
         CELERY=dict(
             broker_url=os.environ.get('BROKER_URL'),

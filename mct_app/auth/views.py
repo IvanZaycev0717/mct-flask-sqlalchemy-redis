@@ -51,7 +51,7 @@ def registration():
             user.phone = form.phone.data
 
         user_role = UserRole()
-        user_role.role = db.session.query(Role).filter_by(name='Patient').first()
+        user_role.role_id = Is.PATIENT
         user.roles.append(user_role)
 
         db.session.add(user)
@@ -153,7 +153,6 @@ def user_diary(username):
 def patient_list(username):
     patient_list = UserRole.query.filter_by(role_id=Is.PATIENT).all()
     links = [(url_for('auth.user_diary', username=user_role.user.username), user_role.user.username) for user_role in patient_list]
-    print(links)
     return render_template('profile/patient_list.html', links=links, username=username)
 
 
@@ -288,7 +287,6 @@ def google_callback():
 @auth.route('/vk-login')
 def vk_login():
     redirect_url = os.environ.get('VK_API_REQUEST')
-    print(redirect_url)
     return redirect(redirect_url)
 
 @auth.route('/vk-callback')
