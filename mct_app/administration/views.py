@@ -447,7 +447,7 @@ class TextbookParagraphView(AccessView):
         except elastic_transport.ConnectionError:
             logging.info('Paragrapth created with out Elasticsearch')
         super(TextbookParagraphView, self).on_model_change(form, model, is_created)
-    
+
     def on_model_delete(self, model):
         statistics = UserStatistics.query.all()
         for stat in statistics:
@@ -486,7 +486,7 @@ def delete_unused_articlecard_images(mapper, connection, target: ArticleCard):
                     os.remove(article_image.image.absolute_path)
         except OSError:
             pass
-        
+
 
 @listens_for(ArticleCard, 'before_update')
 def delete_unused_articlecard_images_before_update(mapper, connection, target: ArticleCard):

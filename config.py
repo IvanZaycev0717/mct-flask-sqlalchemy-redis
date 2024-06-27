@@ -93,6 +93,7 @@ class Config:
     GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY')
     GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY')
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 
 class ProductionConfig(Config):
@@ -117,8 +118,10 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
+    DEBUG_TB_ENABLED = False
     TESTING = True
     DEBUG = False
     WTF_CSRF_CHECK_DEFAULT = False
-    WTF_CSRF_ENABLED: False
+    WTF_CSRF_ENABLED = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
 

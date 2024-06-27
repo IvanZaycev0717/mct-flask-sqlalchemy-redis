@@ -32,6 +32,7 @@ celery = "^5.4.0"
 flask-ckeditor = {extras = ["all"], version = "^0.5.1"}
 redis = "^5.0.6"
 pip = "^24.1"
+mimesis = "^17.0.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.10.0"
