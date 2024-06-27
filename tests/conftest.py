@@ -6,8 +6,14 @@ from mimesis import Locale, Generic, random
 from mct_app import create_app, db
 from manage import general_setup
 
-random.global_seed = 0xFF
 generic = Generic(locale=Locale.RU)
+
+username = generic.person.username()
+password = generic.person.password()
+email = generic.person.email()
+phone = generic.person.telephone()
+text = generic.text.text()
+
 expected_title = "<title>Метакогнитивная терапия - новости, статьи, учебник, консультации</title>"
 
 @pytest.fixture(scope='session')
@@ -49,13 +55,15 @@ def social_url(client, request):
     return request.param
 
 
-class AuthActions:
+
+class AuthActions:    
+
     def __init__(self, client):
         self._client = client
-        self._username = generic.person.username()
-        self._password = generic.person.password()
-        self._email = generic.person.email()
-        self._phone = generic.person.telephone()
+        self._username = username
+        self._password = password
+        self._email = email
+        self._phone = phone
     
     def register(self):
         return self._client.post('/registration', data={
@@ -73,6 +81,7 @@ class AuthActions:
 @pytest.fixture(scope='session')
 def auth(client):
     return AuthActions(client)
+
 
 
 

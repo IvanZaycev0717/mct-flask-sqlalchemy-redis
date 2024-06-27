@@ -3,7 +3,7 @@ from http import HTTPStatus
 import pytest
 
 
-from tests.conftest import expected_title, generic
+from tests.conftest import expected_title, username, password, email, generic
 
 from mct_app.auth.models import User
 
@@ -43,7 +43,7 @@ def test_new_user_roles(app):
         assert user.is_patient() is True, 'Новый пользователь должен быть пациентом'
         assert user.is_anonymous is False, 'После регистрации пользователь не может быть анонимным'
 
-def test_logout(app, auth):
+def test_logout(app, client, auth):
     response = auth.logout()
 
     with app.app_context():
@@ -51,10 +51,10 @@ def test_logout(app, auth):
 
 @pytest.mark.parametrize(
         ('username', 'password', 'email', 'message'),
-        (('', '1234', 'test@test.ru', bytes('Требуется ввести имя пользователя', 'utf-8')),
-        ('testuser', '', 'test@test.ru', bytes('Требуется ввести пароль', 'utf-8')),
-        ('testuser', '1234', '', bytes('Требуется ввести адрес электронной почты', 'utf-8')),
-        ('testuser', '1234', 'test', bytes('Неверно введён адрес электронной почты', 'utf-8'))
+        (('', generic.person.password(), generic.person.email(), bytes('Требуется ввести имя пользователя', 'utf-8')),
+        (generic.person.username(), '', generic.person.email(), bytes('Требуется ввести пароль', 'utf-8')),
+        (generic.person.username(), generic.person.password(), '', bytes('Требуется ввести адрес электронной почты', 'utf-8')),
+        (generic.person.username(), generic.person.password(), generic.person.username(), bytes('Неверно введён адрес электронной почты', 'utf-8'))
         ))
 def test_empty_fields_registration(client, app, username, password, email, message):
     response = client.post('/registration', data={'username': username, 'password': password, 'email': email})
@@ -62,7 +62,16 @@ def test_empty_fields_registration(client, app, username, password, email, messa
     with app.app_context():
         assert message in response.data, f'Не было выведено {message}'
 
+@pytest.mark.parametrize(
+        ('username', 'password', 'email', 'message'),
+        ((username, password, generic.person.email(), bytes('Пользователь с таким именем уже существует', 'utf-8')),
+        (generic.person.username(), password, email, bytes('Такой адрес электронной почты уже существует', 'utf-8'))
+        ))
+def test_user_is_already_exists_registration(app, client, username, password, email, message):
+    response = client.post('/registration', data={'username': username, 'password': password, 'email': email})
 
+    with app.app_context():
+        assert message in response.data, f'Не было выведено {message}'
 
 def test_login(app, auth):
     response = auth.login()
