@@ -73,11 +73,74 @@ def test_user_is_already_exists_registration(app, client, username, password, em
     with app.app_context():
         assert message in response.data, f'Не было выведено {message}'
 
-def test_login(app, auth):
+def test_successful_login(app, auth):
     response = auth.login()
 
     with app.app_context():
         assert bytes('Приветствуем,', 'utf-8') in response.data, 'Зарегистрированный пользователь не перенесен в личный кабинет'
+
+@pytest.mark.parametrize(
+        ('username', 'password', 'message'),
+        (('', password, bytes('Требуется ввести имя пользователя', 'utf-8')),
+        (username, '', bytes('Требуется ввести пароль', 'utf-8'))
+        ))
+def test_empty_fields_login(app, auth, client, username, password, message):
+    auth.logout()
+    response = client.post('/login', data={'username': username, 'password': password})
+
+    with app.app_context():
+        assert message in response.data, f'Не было выведено {message}'
+
+@pytest.mark.parametrize(
+        ('email', 'message'),
+        (('',  bytes('Требуется ввести адрес электронной почты', 'utf-8')),
+        (username, bytes('Неверно введён адрес электронной почты', 'utf-8'))
+        ))
+def test_incorrect_reset_password(app, client, email, message):
+    response = client.post('/reset-password', data={'email': email})
+
+    with app.app_context():
+        assert message in response.data, f'Не было выведено {message}'
+
+def test_auth_user_has_statistics_access(app, auth, client):
+    auth.login()
+    response = client.get(f'/profile/{username}/statistics')
+
+    with app.app_context():
+        assert bytes('Изученные статьи:', 'utf-8') in response.data, 'Пользователь не получил доступ к статистике'
+
+def test_auth_user_has_diary_access(app, client):
+    response = client.get(f'/profile/{username}/diary')
+
+    with app.app_context():
+        assert bytes('Новая запись', 'utf-8') in response.data, 'Пользователь не получил доступ к дневнику'
+
+@pytest.mark.parametrize(('user_url'), (('admin'), (username)))
+def test_anon_user_hasnt_statistics_access(app, auth, client, user_url):
+    auth.logout()
+    response = client.get(f'/profile/{user_url}/statistics')
+
+    with app.app_context():
+        assert response.status_code == HTTPStatus.UNAUTHORIZED, 'Анонимный пользователь не должен был получить доступ к статистике'
+
+@pytest.mark.parametrize(('user_url'), ('admin', username))
+def test_anon_user_hasnt_diary_access(app, client, user_url):
+    response = client.get(f'/profile/{user_url}/diary')
+
+    with app.app_context():
+        assert response.status_code == HTTPStatus.UNAUTHORIZED, 'Анонимный пользователь не должен был получить доступ к дневнику'
+
+def test_admin_has_access_to_user_diary(app, client, admin):
+    admin.login()
+    response = client.get(f'/profile/{username}/diary')
+
+    with app.app_context():
+        assert response.status_code == HTTPStatus.OK, 'Админ не имеет доступа к статистике пользователя'
+
+
+
+
+
 
 
 

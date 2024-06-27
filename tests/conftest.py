@@ -25,7 +25,6 @@ def app():
     
     yield app
 
-
 @pytest.fixture(scope='session')
 def client(app):
     return app.test_client()
@@ -77,6 +76,29 @@ class AuthActions:
 
     def logout(self):
         return self._client.get('/logout')
+
+class AdminActions:
+    def __init__(self, client):
+        self._client = client
+        self._username = os.environ.get("ADMIN_NAME")
+        self._password = os.environ.get("ADMIN_PASS")
+        self._email = os.environ.get("ADMIN_EMAIL")
+
+    def login(self):
+        return self._client.post(
+            '/login',
+            data={
+                'username': self._username,
+                'password': self._password},
+                follow_redirects=True
+                )
+    def logout(self):
+        return self._client.get('/logout')
+
+
+@pytest.fixture(scope='session')
+def admin(client):
+    return AdminActions(client)
 
 @pytest.fixture(scope='session')
 def auth(client):

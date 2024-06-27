@@ -1,4 +1,35 @@
-<!DOCTYPE html>
+<!-- Modal -->
+<div class="modal fade" tabindex="-1" id="newdiaryModal" aria-labelledby="newdiaryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="newdiaryModalLabel">Новая запись в дневнике</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" id="question-form" novalidate>
+            
+            <div class="mb-3">
+                <p class="p-for-label"><strong><label for="mood">Выберите настроение:</label></strong><select class="btn dropdown-toggle" id="mood" name="mood"><option value="😊Счастливый😊">😊Счастливый😊</option><option value="😡Раздраженный😡">😡Раздраженный😡</option><option value="😌Расслабленный😌">😌Расслабленный😌</option><option value="😟Обеспокоенный😟">😟Обеспокоенный😟</option><option value="😕Беспокойный😕">😕Беспокойный😕</option><option value="😞Разочарованный😞">😞Разочарованный😞</option></select></p>
+                  
+                </p>
+            </div>
+            <div class="mb-3">
+              <p class="p-for-label"><strong><label for="record">Запись в дневник</label></strong></p>
+                <p class="p-for-input-field"><textarea class="form-control" id="record" maxlength="2000" minlength="3" name="record" placeholder="Введите текст записи дневника" required>
+</textarea>
+                  
+                </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+              <input class="btn btn-warning" id="submit" name="submit" style="font-weight: bold;" type="submit" value="Опубликовать">
+            </div>
+          </form>
+        </div>
+    </div>
+  </div>
+</div><!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -66,8 +97,9 @@
       </div>
       <div class="button-login-registratition">
         
-        <a class="btn btn-secondary" href="/login" role="button">Войти</a>
-        <a class="btn btn-dark" href="/registration" role="button">Регистрация</a>
+          
+        <a class="btn btn-warning" href="/profile/brochures_1819" role="button">Личный кабинет</a>
+        <a class="btn btn-danger" href="/logout" role="button">Выйти</a>
         
       </div>
     </nav>
@@ -120,73 +152,46 @@
     </nav>
   </header>
     
-
-
-
-
-<div class="container__login-registration d-flex justify-content-center">
-    <div class="card d-flex justify-content-center" style="width: 30rem;">
-        <div class="card-header text-center">
-            <h4>Вход через социальные сети</h4>
-        </div>
-        <div class="card-body d-flex justify-content-between">
-            <a class="navbar-brand" target="_parent" href="/google-login">
-                <img class="navbar-brand__login-img d-inline-block align-top" src="../static/img/social_media_ico/google.svg" width="50px" alt="">
-            </a>
-            <a class="navbar-brand" target="_parent" href="/vk-login">
-                <img class="navbar-brand__login-img d-inline-block align-top"  src="../static/img/social_media_ico/vk.svg" width="50px" alt="">
-            </a>
-            <a class="navbar-brand" target="_parent" href="/ok-login">
-                <img class="navbar-brand__login-img d-inline-block align-top" src="../static/img/social_media_ico/odnoklassniki.svg" width="50px" alt="">
-            </a>
-            <a class="navbar-brand" target="_parent" href="/yandex-login">
-                <img class="navbar-brand__login-img d-inline-block align-top" src="../static/img/social_media_ico/yandex.svg" width="50px" alt="">
-            </a>
-        </div>
-        <div class="card-body d-flex justify-content-center">
-            <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="metacognitive_bot" data-size="large" data-auth-url="https://localhost/telegram-callback" data-request-access="write"></script>
-        </div>
+<div class="container d-flex justify-content-center">
+    <div class="card contact-card" style="width: 50%;">
+      <div class="card-body">
+          <div class="d-flex justify-content-center">
+            <img src="/static/img/writing.webp" class="card-img-top pulse" alt="..." style="width: 10%; margin: auto;">
+          </div>
+          <div class="d-flex justify-content-between">
+            
+              <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#newdiaryModal">
+                Новая запись
+              </button>
+            
+            <a class="btn btn-secondary btn-lg" href="/profile/brochures_1819" role="button">Назад</a>
+          </div>
+          <br>
+        
+      </div>
     </div>
 </div>
 
-<div class="container__login-registration d-flex justify-content-center">
-    <div class="card d-flex justify-content-center" style="width: 30rem;">
-        <div class="card">
-            <div class="card-header text-center">
-                <h4>Войти через сайт</h4>
-            </div>
-            <div class="card-body">
-                <form action="" method="post" novalidate>
-                    
-                    <p class="p-for-label"><strong><label for="username">Имя пользователя</label></strong></p>
-                    <p class="p-for-input-field"><input class="form-control" id="username" name="username" placeholder="Введите имя пользователя" required type="text" value="">
-                    
-                        
-                          
-                                <span style="color: red;">Неверное имя пользователя или такого пользователя не существует</span>
-                          
-                        
-                    
-                    
-                    </p>
-                    <p class="p-for-label"><strong><label for="password">Пароль</label></strong></p>
-                    <p class="p-for-input-field"><input class="form-control" id="password" name="password" placeholder="Введите пароль" required type="password" value="">
-                    
-                        
-                    
-                    
-                     </p>
-                    <div class="d-grid gap-2">
-                        <input class="btn btn-warning" id="submit" name="submit" style="font-weight: bold;" type="submit" value="Войти">
-                    </div>
-                    <div class="forgot-password text-center">
-                        <a class="forgot-password-link" href="/reset-password">Забыли пароль?</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class="container d-flex justify-content-center">
+    <nav aria-label="..." class="nav-paginate">
+      <ul class="pagination">
+        
+          <li class="page-item disabled">
+            <a class="page-link">Назад</a>
+          </li>
+        
+        
+          
+        
+        
+          <li class="page-item disabled">
+            <a class="page-link">Далее</a>
+          </li>
+        
+      </ul>
+    </nav>
 </div>
+
 
   <!--Toast-->
   <!-- Footer -->
@@ -307,7 +312,7 @@
   </footer>
   <!-- Footer -->
   
-    
+  
     <!-- <script src="/static/js/bootstrap.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
@@ -324,6 +329,17 @@
       }
     </script>
   
-    <script src="/static/js/odnoklassniki.js"></script>
+  <script>
+      const newdiaryModal = bootstrap.Modal.getOrCreateInstance('#newdiaryModal');
+      document.addEventListener('DOMContentLoaded', function() {
+        var validationErrorElement = document.querySelector('.validation-error');
+        
+        if (validationErrorElement) {
+            newdiaryModal.show();
+            console.log('Форма не прошла валидацию при предыдущем запросе.');
+        }
+    });
+  </script>
+  
 
 </body>
