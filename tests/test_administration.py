@@ -1,6 +1,13 @@
 from http import HTTPStatus
 import os
 from mct_app.auth.models import User
+from mct_app.site.models import News, TextbookChapter
+from tests.conftest import title, last_update, content, image, sentence, generic
+from werkzeug.datastructures import FileStorage
+from werkzeug.datastructures.headers import Headers
+from tempfile import SpooledTemporaryFile
+
+new_title = generic.text.quote()
 
 
 def test_admin_was_created(app, admin):
@@ -28,6 +35,39 @@ def test_admin_pages_accessibility(client, app, admin_url):
 
     with app.app_context():
         assert response.status_code == HTTPStatus.OK, f'страница {response} недоступна'
+
+def test_admin_can_create_textbook_chapter(app, client):
+    client.post('/admin/textbookchapter/new/', data={
+        "name": title,
+        "description": sentence
+    })
+
+    with app.app_context():
+        chapter: TextbookChapter = TextbookChapter.query.first()
+        assert chapter is not None, 'Новый раздел учебника не был создан'
+        assert chapter.name == title, 'Название нового раздела учебника не совпадает'
+        assert chapter.description == sentence, 'Описание нового раздела учебника не совпадает'
+
+def test_admin_can_edit_textbook_chapter(app, client):
+    response = client.post(f'/admin/textbookchapter/edit/?id={1}&url=/admin/textbookchapter/', data={
+        'name': new_title
+    })
+
+    with app.app_context():
+        chapter: TextbookChapter = TextbookChapter.query.first()
+        assert chapter is not None, 'Отредактированный раздел учебника не существует'
+        assert chapter.name == new_title, 'Отредактированный заголовок раздела учебника не изменился'
+        assert chapter.description == sentence, 'Отредактированное описание учебника изменилось'
+
+def test_admin_can_delete_textbook_chapter(app, client):
+    client.post('/admin/textbookchapter/delete/', data={
+        "id": 1
+    })
+
+    with app.app_context():
+        chapter: TextbookChapter = TextbookChapter.query.first()
+        assert chapter is None, 'Новый раздел не был удален'
+
 
 def test_admin_success_logout(app, admin):
     response = admin.logout()

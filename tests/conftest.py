@@ -12,7 +12,12 @@ username = generic.person.username()
 password = generic.person.password()
 email = generic.person.email()
 phone = generic.person.telephone()
-text = generic.text.text()
+content = generic.text.text()
+title = generic.text.word()
+last_update = generic.datetime.formatted_datetime(r'%Y-%m-%d %H:%M:%S')
+image = generic.binaryfile.image()
+sentence = generic.text.sentence()
+
 
 
 @pytest.fixture(scope='session')
@@ -49,20 +54,31 @@ def admin_url(client, request):
     return request.param
 
 @pytest.fixture(scope='session', params=[
-    '/', '/home', '/articles', '/textbook', '/questions',
-    '/consultation', '/contacts', '/cookie-info'])
+    '/',
+    '/home',
+    '/articles',
+    '/textbook',
+    '/questions',
+    '/consultation',
+    '/contacts',
+    '/cookie-info'])
 def site_url(client, request):
     return request.param
 
 
 @pytest.fixture(scope='session', params=[
-    'registration', 'login', 'reset-password'])
+    'registration',
+    'login',
+    'reset-password'])
 def auth_url(client, request):
     return request.param
 
 
 @pytest.fixture(scope='session', params=[
-    'google-login', 'vk-login', 'ok-login', 'yandex-login'])
+    'google-login',
+    'vk-login',
+    'ok-login',
+    'yandex-login'])
 def social_url(client, request):
     return request.param
 
