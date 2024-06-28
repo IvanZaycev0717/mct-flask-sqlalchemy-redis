@@ -35,6 +35,8 @@ IMAGE_REL_PATHS = {
         ),
 }
 
+TEST_DB_PATH = os.path.join(basedir, 'instance', 'pytest.db')
+
 # Links
 SOICAL_MEDIA_LINKS = {
     'GitHub': r'https://github.com/IvanZaycev0717/mct-flask-sqlalchemy-redis',
@@ -93,7 +95,6 @@ class Config:
     GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY')
     GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY')
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 
 class ProductionConfig(Config):
@@ -108,6 +109,7 @@ class StagingConfig(Config):
 
 
 class DevelopmentConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     TESTING = False
     DEVELOPMENT = True
     DEBUG = True

@@ -3,9 +3,11 @@ from http import HTTPStatus
 import pytest
 
 
-from tests.conftest import expected_title, username, password, email, generic
+from tests.conftest import username, password, email, generic
 
 from mct_app.auth.models import User
+
+expected_title = "<title>Метакогнитивная терапия - новости, статьи, учебник, консультации</title>"
 
 
 def test_auth_pages_accessibility(client, auth_url):
@@ -22,7 +24,7 @@ def test_social_media_redirection(client, social_url):
     response = client.get(social_url)
     assert response.status_code == HTTPStatus.FOUND, f'страница {social_url} недоступна'
 
-def test_successful_registration(app, auth):
+def test_successful_registration(app, auth, admin):
     response = auth.register()
 
     with app.app_context():
@@ -54,7 +56,10 @@ def test_logout(app, client, auth):
         (('', generic.person.password(), generic.person.email(), bytes('Требуется ввести имя пользователя', 'utf-8')),
         (generic.person.username(), '', generic.person.email(), bytes('Требуется ввести пароль', 'utf-8')),
         (generic.person.username(), generic.person.password(), '', bytes('Требуется ввести адрес электронной почты', 'utf-8')),
-        (generic.person.username(), generic.person.password(), generic.person.username(), bytes('Неверно введён адрес электронной почты', 'utf-8'))
+        (generic.person.username(), generic.person.password(), generic.person.username(), bytes('Неверно введён адрес электронной почты', 'utf-8')),
+        (username + "(", generic.person.password(), generic.person.email(), bytes('недоупстимы', 'utf-8')),
+        (generic.person.username() + ')', generic.person.password(), generic.person.email(), bytes('недоупстимы', 'utf-8')),
+        ('(' + generic.person.username() + ')', generic.person.password(), generic.person.email(), bytes('недоупстимы', 'utf-8')),
         ))
 def test_empty_fields_registration(client, app, username, password, email, message):
     response = client.post('/registration', data={'username': username, 'password': password, 'email': email})
@@ -62,12 +67,14 @@ def test_empty_fields_registration(client, app, username, password, email, messa
     with app.app_context():
         assert message in response.data, f'Не было выведено {message}'
 
+
+
 @pytest.mark.parametrize(
         ('username', 'password', 'email', 'message'),
         ((username, password, generic.person.email(), bytes('Пользователь с таким именем уже существует', 'utf-8')),
         (generic.person.username(), password, email, bytes('Такой адрес электронной почты уже существует', 'utf-8'))
         ))
-def test_user_is_already_exists_registration(app, client, username, password, email, message):
+def test_user_already_exists_registration(app, client, username, password, email, message):
     response = client.post('/registration', data={'username': username, 'password': password, 'email': email})
 
     with app.app_context():
@@ -82,8 +89,7 @@ def test_successful_login(app, auth):
 @pytest.mark.parametrize(
         ('username', 'password', 'message'),
         (('', password, bytes('Требуется ввести имя пользователя', 'utf-8')),
-        (username, '', bytes('Требуется ввести пароль', 'utf-8'))
-        ))
+        (username, '', bytes('Требуется ввести пароль', 'utf-8'))))
 def test_empty_fields_login(app, auth, client, username, password, message):
     auth.logout()
     response = client.post('/login', data={'username': username, 'password': password})

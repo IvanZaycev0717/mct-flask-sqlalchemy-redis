@@ -14,7 +14,6 @@ email = generic.person.email()
 phone = generic.person.telephone()
 text = generic.text.text()
 
-expected_title = "<title>Метакогнитивная терапия - новости, статьи, учебник, консультации</title>"
 
 @pytest.fixture(scope='session')
 def app():
@@ -22,37 +21,50 @@ def app():
     with app.app_context():
         db.create_all()
         general_setup()
-    
+
     yield app
+
+    with app.app_context():
+        db.drop_all()
+
 
 @pytest.fixture(scope='session')
 def client(app):
     return app.test_client()
 
+@pytest.fixture(scope='session', params=[
+    '/admin/answer/',
+    '/admin/articlecard/',
+    '/admin/consultation/',
+    '/admin/textbookchapter/',
+    '/admin/diaryrecommendation/',
+    '/admin/news/',
+    '/admin/question/',
+    '/admin/user/',
+    '/admin/userdiary/',
+    '/admin/userrole/',
+    '/admin/usersession/',
+    ])
+def admin_url(client, request):
+    return request.param
 
-@pytest.fixture()
-def runner(app):
-    return app.test_cli_runner()
-
-
-@pytest.fixture(params=[
-    '/', '/home', '/articles', 'textbook', 'questions',
-    'consultation', 'contacts', 'cookie-info'])
+@pytest.fixture(scope='session', params=[
+    '/', '/home', '/articles', '/textbook', '/questions',
+    '/consultation', '/contacts', '/cookie-info'])
 def site_url(client, request):
     return request.param
 
 
-@pytest.fixture(params=[
+@pytest.fixture(scope='session', params=[
     'registration', 'login', 'reset-password'])
 def auth_url(client, request):
     return request.param
 
 
-@pytest.fixture(params=[
+@pytest.fixture(scope='session', params=[
     'google-login', 'vk-login', 'ok-login', 'yandex-login'])
 def social_url(client, request):
     return request.param
-
 
 
 class AuthActions:    

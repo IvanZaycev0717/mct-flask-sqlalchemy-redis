@@ -1,5 +1,6 @@
 from http import HTTPStatus
-from tests.conftest import expected_title, generic
+from tests.conftest import generic
+from tests.test_auth import expected_title
 
 def test_site_pages_accessibility(client, site_url):
     response = client.get(site_url)
