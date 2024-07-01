@@ -10,6 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from mct_app import db
 from mct_app.search import add_to_index, remove_from_index, query_index
+from flask import current_app
 
 
 class SearchableMixin:
@@ -47,7 +48,8 @@ class SearchableMixin:
                     remove_from_index(obj.__tablename__, obj)
             session._changes = None
         except elastic_transport.ConnectionError:
-            logging.info('Elasticsearch server error')
+            current_app.logger.exception('Elasticsearch server doesnt work')
+            pass
 
     @classmethod
     def reindex(cls):

@@ -1,3 +1,5 @@
+from datetime import datetime
+import logging
 import os
 
 
@@ -13,6 +15,7 @@ from flask_ckeditor import CKEditor
 from elasticsearch import Elasticsearch
 from celery import Celery, Task
 from flask_debugtoolbar import DebugToolbarExtension
+from mct_app.flask_log import LogSetup
 
 
 load_dotenv()
@@ -42,6 +45,8 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
             broker_connection_retry_on_startup=True
         ),
     )
+   
+    
     # init app
     CSRFProtect(app)
     db.init_app(app)
@@ -53,9 +58,12 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
     app.elasticsearch = Elasticsearch(os.environ.get('ELASTICSEARCH_URL')) if os.environ.get('ELASTICSEARCH_URL') else None
     app.config.from_prefixed_env()
     celery_init_app(app)
+    LogSetup().init_app(app)
+
 
     with app.app_context():
         db.create_all()
+    
 
     from mct_app.auth.views import auth
     app.register_blueprint(auth)
@@ -65,6 +73,24 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
     app.register_blueprint(administration)
     from mct_app.administration.views import MyAdminIndexView
     admin.init_app(app, index_view=MyAdminIndexView())
+
+    @app.after_request
+    def after_request(response):
+        """ Logging after every request. """
+        logger = logging.getLogger("app.access")
+        logger.info(
+            "%s [%s] %s %s %s %s %s %s %s",
+            request.remote_addr,
+            datetime.now().strftime("%d/%b/%Y:%H:%M:%S.%f")[:-3],
+            request.method,
+            request.path,
+            request.scheme,
+            response.status,
+            response.content_length,
+            request.referrer,
+            request.user_agent,
+        )
+        return response
 
     return app
 

@@ -7,6 +7,7 @@ from wtforms.validators import DataRequired, Optional, Length
 from flask_login import current_user
 
 from mct_app.utils import is_russian_name_correct
+from flask import current_app
 
 
 
@@ -23,6 +24,7 @@ class QuestionForm(FlaskForm):
     def validate_anon_name(self, anon_name):
         if not current_user.is_authenticated:
             if not self.anon_name.data:
+                current_app.logger.error('User dont enter a name')
                 raise ValidationError('Требуется ввести имя')
         return True
 
@@ -56,11 +58,13 @@ class ConsultationForm(FlaskForm):
 
     def validate_first_name(self, first_name):
         if not is_russian_name_correct(first_name.data):
+            current_app.logger.error(f'First name is not valid {first_name}')
             raise ValidationError('Недопустимые символы в имени')
         return True
 
     def validate_last_name(self, last_name):
         if not is_russian_name_correct(last_name.data):
+            current_app.logger.error(f'last name is not valid {last_name}')
             raise ValidationError('Недопустимые символы в фамилии')
         return True
 
@@ -70,6 +74,7 @@ class ConsultationForm(FlaskForm):
             if not phonenumbers.is_valid_number(p):
                 raise ValueError()
         except (phonenumbers.phonenumberutil.NumberParseException, ValueError):
+            current_app.logger.exception(f'Phone number is not valid {phone}')
             raise ValidationError('Неправильно введен номер телефона')
     
 class SearchForm(FlaskForm):

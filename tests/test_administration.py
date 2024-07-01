@@ -1,11 +1,11 @@
 from http import HTTPStatus
 import os
+from config import IMAGE_BASE_PATH
 from mct_app.auth.models import User
-from mct_app.site.models import News, TextbookChapter
-from tests.conftest import title, last_update, content, image, sentence, generic
-from werkzeug.datastructures import FileStorage
-from werkzeug.datastructures.headers import Headers
-from tempfile import SpooledTemporaryFile
+from mct_app.site.models import TextbookChapter
+from tests.conftest import title, sentence, generic, last_update, image
+from mct_app.administration.views import CustomImageUploadField, generate_image_name
+from wtforms.validators import DataRequired
 
 new_title = generic.text.quote()
 
@@ -74,6 +74,8 @@ def test_admin_success_logout(app, admin):
 
     with app.app_context():
         assert response.headers["Location"] == '/', 'После logout админ не переходит на главную страницу'
+
+
 
 def test_auth_user_hasnt_access_to_admin_panel(app, auth, client):
     auth.login()

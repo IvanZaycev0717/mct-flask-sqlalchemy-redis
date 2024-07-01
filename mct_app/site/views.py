@@ -22,6 +22,7 @@ from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, SOICAL_MEDIA_LINKS, basedir
 from mct_app.utils import get_articles_by_months
 from mct_app import csrf
 from mct_app.auth.models import Question, Answer, User, Consultation, UserStatistics
+from flask import current_app
 
 
 
@@ -36,18 +37,22 @@ site = Blueprint('site', __name__)
 
 @site.app_errorhandler(werkzeug.exceptions.Unauthorized)
 def page_not_found(e):
+    current_app.logger.error(f"There is 401 {e}")
     return render_template('errors/401.html'), 401
 
 @site.app_errorhandler(werkzeug.exceptions.NotFound)
 def page_not_found(e):
+    current_app.logger.error(f"There is 404 {e}")
     return render_template('errors/404.html'), 404
 
 @site.app_errorhandler(werkzeug.exceptions.Forbidden)
 def access_denied(e):
+    current_app.logger.error(f"There is 403 {e}")
     return render_template('errors/403.html'), 403
 
 @site.app_errorhandler(werkzeug.exceptions.InternalServerError)
 def server_error(e):
+    current_app.logger.error(f"There is 500 {e}")
     return render_template('errors/500.html'), 500
 
 @site.before_app_request
@@ -184,6 +189,7 @@ def questions():
         secret_response = request.form['g-recaptcha-response']
         verify_response = requests.post(url=f'{GOOGLE_VERIFY_URL}?secret={secret_key}&response={secret_response}').json()
         if not verify_response['success'] or verify_response['score'] < 0.5:
+            current_app.logger.warning("User can not pass reCaptcha")
             abort(401)
         question = Question(
             anon_name=form.anon_name.data,
@@ -241,6 +247,7 @@ def consultation():
         secret_response = request.form['g-recaptcha-response']
         verify_response = requests.post(url=f'{GOOGLE_VERIFY_URL}?secret={secret_key}&response={secret_response}').json()
         if not verify_response['success'] or verify_response['score'] < 0.5:
+            current_app.logger.warning("User can not pass reCaptcha")
             abort(401)
         consultation = Consultation(
             first_name=form.first_name.data,

@@ -45,6 +45,8 @@ SOICAL_MEDIA_LINKS = {
     'WhatsApp': r'https://www.whatsapp.com/?lang=ru_RU'
 }
 
+LOGS_DIR = os.path.join(basedir, 'logs')
+
 
 # Enum classes
 class Is(IntEnum):
@@ -95,6 +97,16 @@ class Config:
     GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY')
     GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY')
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
+    # Logging Setup
+    LOG_TYPE = "file"
+    LOG_LEVEL = "WARNING"
+
+    # File Logging Setup
+    LOG_DIR = LOGS_DIR
+    APP_LOG_NAME = "app.log"
+    WWW_LOG_NAME = "www.log"
+    LOG_MAX_BYTES = 100_000_000
+    LOG_COPIES = 5
 
 
 class ProductionConfig(Config):
