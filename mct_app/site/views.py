@@ -27,10 +27,10 @@ from flask import current_app
 
 
 GOOGLE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
-NEWS_PER_PAGE = 3
-ARTICLES_PER_PAGE = 2
-QUESTIONS_PER_PAGE = 6
-SEARCH_RESULTS_PER_PAGE = 4
+NEWS_PER_PAGE = 5
+ARTICLES_PER_PAGE = 5
+QUESTIONS_PER_PAGE = 5
+SEARCH_RESULTS_PER_PAGE = 5
 
 
 site = Blueprint('site', __name__)

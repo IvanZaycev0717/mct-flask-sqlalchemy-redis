@@ -22,6 +22,7 @@ from mct_app.email import send_email
 from mct_app.site.models import Article, TextbookParagraph
 from mct_app.utils import get_statistics_data, get_random_email
 import hashlib
+from flask import current_app
 
 
 auth = Blueprint('auth', __name__)
@@ -91,6 +92,7 @@ def profile(username):
     if current_user.username != request.view_args['username']:
         role_id = current_user.roles[0].role_id
         if role_id not in (Is.ADMIN, Is.DOCTOR):
+            current_app.logger.exception(f"User {username} is not ADMIN and DOCTOR")
             abort(403)
     user = db.first_or_404(select(User).where(User.username==username))
     correct_name: str = user.username
@@ -280,6 +282,7 @@ def google_callback():
     registration_result = social_registration(username, email, SocialPlatform.GOOGLE)
 
     if not registration_result:
+        current_app.logger.exception(f"Goggle enter FAIL")
         abort(500)
 
     return redirect(url_for('auth.profile', username=registration_result.username))
@@ -321,10 +324,12 @@ def vk_callback():
             registration_result = social_registration(username, email, SocialPlatform.VK)
 
             if not registration_result:
+                current_app.logger.exception(f"VK enter FAIL")
                 abort(500)
 
             return redirect(url_for('auth.profile', username=registration_result.username))
     else:
+        current_app.logger.exception(f"VK response FAIL")
         abort(500)
 
 @auth.route('/ok-login')
@@ -358,6 +363,7 @@ def ok_callback():
             registration_result = social_registration(username, email, SocialPlatform.ODNOKLASSNIKI)
 
             if not registration_result:
+                current_app.logger.exception(f"OK enter FAIL")
                 abort(500)
 
             return redirect(url_for('auth.profile', username=registration_result.username))
@@ -401,10 +407,12 @@ def yandex_callback():
             registration_result = social_registration(username, email, SocialPlatform.YANDEX)
 
             if not registration_result:
+                current_app.logger.exception(f"YANDEX enter FAIL")
                 abort(500)
 
             return redirect(url_for('auth.profile', username=registration_result.username))
     else:
+        current_app.logger.exception(f"YANDEX response FAIL")
         abort(500)
 
 @auth.route('/telegram-callback')
@@ -419,16 +427,19 @@ def telegram_callback():
         computed_hash = hmac.new(BOT_TOKEN_HASH.digest(), data_check_string.encode(), 'sha256').hexdigest()
         is_correct = hmac.compare_digest(computed_hash, query_hash)
         if not is_correct:
+            current_app.logger.exception(f"Telegram HASH problem")
             abort(403)
         
         email = get_random_email()
         registration_result = social_registration(username, email, SocialPlatform.TELEGRAM)
 
         if not registration_result:
+            current_app.logger.exception(f"TELEGRAM response FAIL")
             abort(500)
 
         return redirect(url_for('auth.profile', username=registration_result.username))
     else:
+        current_app.logger.exception(f"Telegram response FAIL")
         abort(500)
 
 
@@ -444,6 +455,7 @@ def social_registration(name, email, social_platform):
         _update_user_session(user)
         return user
     elif user and not user.has_social_account:
+        current_app.logger.exception(f"User has no social account tries to enter")
         abort(500)
     else:
         user = User(

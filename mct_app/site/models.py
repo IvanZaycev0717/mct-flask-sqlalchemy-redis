@@ -49,7 +49,6 @@ class SearchableMixin:
             session._changes = None
         except elastic_transport.ConnectionError:
             current_app.logger.exception('Elasticsearch server doesnt work')
-            pass
 
     @classmethod
     def reindex(cls):

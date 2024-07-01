@@ -15,6 +15,7 @@ from flask_login import UserMixin, AnonymousUserMixin
 
 from config import Is, Mood
 from mct_app import db, login_manager
+from flask import current_app
 
 
 class User(UserMixin, db.Model):
@@ -92,6 +93,7 @@ class User(UserMixin, db.Model):
         try:
             data = s.loads(token)
         except BadSignature:
+            current_app.logger.exception("Token is Wrong while reseting password")
             return False
         if data.get('reset') != self.id:
             return False

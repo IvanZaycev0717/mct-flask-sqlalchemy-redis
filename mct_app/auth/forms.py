@@ -9,6 +9,7 @@ from mct_app.auth.models import User
 from sqlalchemy import select
 from flask import request
 from config import Mood
+from flask import current_app
 
 class RegistrationForm(FlaskForm):
     username = StringField(
@@ -38,11 +39,13 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Символы "(" или ")" недоупстимы')
         user = db.session.scalar(select(User).where(User.username == username.data))
         if user is not None:
+            current_app.logger.warn(f'User does exist with name {username.data}')
             raise ValidationError('Пользователь с таким именем уже существует')
     
     def validate_email(self, email):
         user = db.session.scalar(select(User).where(User.email == email.data))
         if user is not None:
+            current_app.logger.warn(f'Email does exist {email.data}')
             raise ValidationError('Такой адрес электронной почты уже существует')
     
 
@@ -52,6 +55,7 @@ class RegistrationForm(FlaskForm):
             if not phonenumbers.is_valid_number(p):
                 raise ValueError()
         except (phonenumbers.phonenumberutil.NumberParseException, ValueError):
+            current_app.logger.warn(f'Phone does exist {phone.data}')
             raise ValidationError('Неправильно введен номер телефона')
 
 class LoginForm(FlaskForm):
@@ -79,6 +83,7 @@ class ResetPasswordForm(FlaskForm):
 
     def validate_email(self, email):
         if User.query.filter_by(email=email.data).first() is None:
+            current_app.logger.warn(f'Email doesnt exist {email.data}')
             raise ValidationError('Такого адреса электронной почты не существует')
     
 class NewDiaryForm(FlaskForm):

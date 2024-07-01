@@ -30,6 +30,7 @@ from flask_ckeditor import CKEditorField
 from werkzeug.datastructures import FileStorage
 import tempfile
 from werkzeug.datastructures.headers import Headers
+from flask import current_app
 
 
 
@@ -445,7 +446,7 @@ class TextbookParagraphView(AccessView):
         try:
             add_to_index(model.__tablename__, model)
         except elastic_transport.ConnectionError:
-            logging.info('Paragrapth created with out Elasticsearch')
+            current_app.logger.warn('Paragrapth created without Elasticsearch')
         super(TextbookParagraphView, self).on_model_change(form, model, is_created)
 
     def on_model_delete(self, model):
@@ -465,7 +466,7 @@ def delete_unused_news_images(mapper, connection, target: News):
         try:
             os.remove(target.image.absolute_path)
         except OSError:
-            pass
+            current_app.logger.exception('News images arent deleted after news deleting')
 
 @listens_for(News, 'before_update')
 def delete_unused_news_images_before_update(mapper, connection, target: News):
@@ -473,7 +474,7 @@ def delete_unused_news_images_before_update(mapper, connection, target: News):
         try:
             os.remove(target.image.absolute_path)
         except OSError:
-            pass
+            current_app.logger.exception('Unused News images arent deleted after update')
 
 
 @listens_for(ArticleCard, 'after_delete')
@@ -485,7 +486,7 @@ def delete_unused_articlecard_images(mapper, connection, target: ArticleCard):
                 for article_image in target.article.images:
                     os.remove(article_image.image.absolute_path)
         except OSError:
-            pass
+            current_app.logger.exception('Unused ArticleCard images arent deleted after article deleting')
 
 
 @listens_for(ArticleCard, 'before_update')
@@ -494,17 +495,17 @@ def delete_unused_articlecard_images_before_update(mapper, connection, target: A
         try:
             os.remove(target.image.absolute_path)
         except OSError:
-            pass
+            current_app.logger.exception('Unused ArticleCard images arent deleted after article updating')
 
 @listens_for(TextbookParagraph, 'after_delete')
-def delete_unused_articlecard_images(mapper, connection, target: TextbookParagraph):
+def delete_unused_textbookparagraph_images(mapper, connection, target: TextbookParagraph):
     if target:
         try:
             if target.images:
                 for image in target.images:
                     os.remove(image.image.absolute_path)
         except OSError:
-            pass
+            current_app.logger.exception('Unused TextbookParagraph images arent deleted after article deleting')
 
 
 @listens_for(db.session, 'after_flush')
@@ -517,7 +518,7 @@ def delete_images_from_content(session, flush_content):
                 if isinstance(item, TextbookParagraphImage):
                     os.remove(item.image.absolute_path)             
         except OSError:
-            pass
+            current_app.logger.exception('Unused TextbookPar/Article images arent deleted after article deleting')
 
 # Admin view fill
 admin.add_link(MenuLink(name='На сайт', url='/'))
