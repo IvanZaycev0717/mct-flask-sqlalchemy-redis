@@ -2,7 +2,7 @@ from http import HTTPStatus
 import os
 from config import IMAGE_BASE_PATH
 from mct_app.auth.models import User
-from mct_app.site.models import TextbookChapter
+from mct_app.site.models import TextbookChapter, TextbookParagraph
 from tests.conftest import title, sentence, generic, last_update, image
 from mct_app.administration.views import CustomImageUploadField, generate_image_name
 from wtforms.validators import DataRequired
@@ -48,6 +48,15 @@ def test_admin_can_create_textbook_chapter(app, client):
         assert chapter.name == title, 'Название нового раздела учебника не совпадает'
         assert chapter.description == sentence, 'Описание нового раздела учебника не совпадает'
 
+def test_admin_sent_empty_textbook_chapter_fields(app, client):
+    response = client.post('/admin/textbookchapter/new/', data={
+        "name": "",
+    })
+
+    with app.app_context():
+        assert b'This field is required.' in response.data, 'Был создан раздел учебника с пустым названием'
+
+
 def test_admin_can_edit_textbook_chapter(app, client):
     response = client.post(f'/admin/textbookchapter/edit/?id={1}&url=/admin/textbookchapter/', data={
         'name': new_title
@@ -67,6 +76,7 @@ def test_admin_can_delete_textbook_chapter(app, client):
     with app.app_context():
         chapter: TextbookChapter = TextbookChapter.query.first()
         assert chapter is None, 'Новый раздел не был удален'
+
 
 
 def test_admin_success_logout(app, admin):

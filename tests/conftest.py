@@ -132,10 +132,3 @@ def admin(client):
 def auth(client):
     return AuthActions(client)
 
-
-
-
-
-        
-    
-

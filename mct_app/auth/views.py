@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 import random
 from flask import Blueprint, jsonify, make_response, render_template, redirect, session, url_for, flash, request
+import kombu
 import requests
 from mct_app.auth.models import DiaryRecommendation, User, UserDiary, UserSession, UserStatistics, db, UserRole, Role, SocialAccount
 from mct_app.auth.forms import RecommendationForm, RegistrationForm, LoginForm, ResetPasswordForm, RequestResetPasswordForm, NewDiaryForm
@@ -223,12 +224,15 @@ def reset_password_request():
             else:
                 token = user.generate_password_reset_token()
                 reset_link = url_for('auth.reset_password', token=token, _external=True)
-                task = send_email.delay(
-                    recipient=user.email,
-                    subject='Сброс пароля',
-                    template='forms/email/reset_password',
-                    reset_link=reset_link,
-                    next=request.args.get('next'))
+                try:
+                    task = send_email.delay(
+                        recipient=user.email,
+                        subject='Сброс пароля',
+                        template='forms/email/reset_password',
+                        reset_link=reset_link,
+                        next=request.args.get('next'))
+                except kombu.exceptions.OperationalError:
+                    current_app.logger.exception("Redis sever is disconnected")
         flash(f'Сброс пароля был отправлен на почту {form.email.data}', 'send-reset-password')
         return redirect(url_for('auth.login'))
     return render_template('forms/reset_password_request.html', form=form)

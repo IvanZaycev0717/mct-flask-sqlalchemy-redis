@@ -25,7 +25,7 @@ def get_statistics_data(statistics: Dict[int, bool]) -> int:
         return int(done_amount*100/full_amount)
     return 0
 
-def generate_image_name(obj, file_data):
+def generate_image_name(obj=None, file_data=None):
     image_suffix = uuid.uuid4()
     return secure_filename(f"image_{image_suffix}")
 

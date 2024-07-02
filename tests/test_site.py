@@ -1,6 +1,10 @@
 from http import HTTPStatus
-from tests.conftest import generic
+from tests.conftest import generic, phone
 from tests.test_auth import expected_title
+from mct_app.auth.models import Consultation
+
+first_name = generic.person.first_name()
+last_name = generic.person.last_name()
 
 def test_site_pages_accessibility(client, site_url):
     response = client.get(site_url)

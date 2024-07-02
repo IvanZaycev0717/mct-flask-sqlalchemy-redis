@@ -36,6 +36,7 @@ IMAGE_REL_PATHS = {
 }
 
 TEST_DB_PATH = os.path.join(basedir, 'instance', 'pytest.db')
+LOGS_DIR = os.path.join(basedir, 'logs')
 
 # Links
 SOICAL_MEDIA_LINKS = {
@@ -44,9 +45,6 @@ SOICAL_MEDIA_LINKS = {
     'Telegram': r'https://t.me/ivanzaycev0717',
     'WhatsApp': r'https://www.whatsapp.com/?lang=ru_RU'
 }
-
-LOGS_DIR = os.path.join(basedir, 'logs')
-
 
 # Enum classes
 class Is(IntEnum):
@@ -138,4 +136,3 @@ class TestingConfig(Config):
     WTF_CSRF_CHECK_DEFAULT = False
     WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
-

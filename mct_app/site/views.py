@@ -3,6 +3,7 @@ import json
 import os
 import uuid
 from flask import Blueprint, abort, jsonify, render_template, request, send_from_directory, session, redirect, url_for, flash
+import kombu
 import werkzeug.exceptions
 from mct_app import db
 from flask import g
@@ -258,15 +259,18 @@ def consultation():
         )
         db.session.add(consultation)
         db.session.commit()
-        task = send_email.delay(
-            os.environ.get('ADMIN_EMAIL'),
-            'Запись на консультацию',
-            'forms/email/consultation',
-            first_name=form.first_name.data,
-            last_name=form.last_name.data,
-            phone=form.phone.data,
-            date=date,
-            next=request.args.get('next'))
+        try:
+            task = send_email.delay(
+                os.environ.get('ADMIN_EMAIL'),
+                'Запись на консультацию',
+                'forms/email/consultation',
+                first_name=form.first_name.data,
+                last_name=form.last_name.data,
+                phone=form.phone.data,
+                date=date,
+                next=request.args.get('next'))
+        except kombu.exceptions.OperationalError:
+            current_app.logger.exception("Redis sever is disconnected")
         flash(f'Уважаемый {form.first_name.data} {form.last_name.data}! Вы успешно записались на консультацию. С Вами свяжутся в ближайшее время!', 'send-consultation-message')
         return redirect(url_for('site.home'), code=302)
     return render_template('consultation.html', form=form, site_key=site_key)
