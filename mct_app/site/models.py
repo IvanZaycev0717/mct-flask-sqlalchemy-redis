@@ -136,7 +136,7 @@ class TextbookChapter(db.Model):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=True)
 
-    textbook_paragraphs: Mapped[List['TextbookParagraph']] = relationship(back_populates='textbook_chapter', passive_deletes=True, lazy='joined')
+    textbook_paragraphs: Mapped[List['TextbookParagraph']] = relationship(back_populates='textbook_chapter', passive_deletes=True)
 
     def __repr__(self) -> str:
         return str(self.name)
@@ -154,7 +154,7 @@ class TextbookParagraph(SearchableMixin, db.Model):
     textbook_chapter_id: Mapped[int] = mapped_column(ForeignKey('textbook_chapter.id', ondelete='SET NULL'), nullable=True)
 
     images: Mapped[List['TextbookParagraphImage']] = relationship(back_populates='textbook_paragraph', cascade='all, delete')
-    textbook_chapter: Mapped['TextbookChapter'] = relationship(back_populates='textbook_paragraphs', lazy='joined')
+    textbook_chapter: Mapped['TextbookChapter'] = relationship(back_populates='textbook_paragraphs')
 
     def __repr__(self) -> str:
         return str(self.name)

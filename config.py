@@ -75,26 +75,48 @@ class SocialPlatform(StrEnum):
 
 # Config classes
 class Config:
+    # General setup
     APP_NAME = os.environ.get('APP_NAME')
     SECRET_KEY = os.environ.get('SECRET_KEY')
+
+    # SQL Database setup
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SQL_HOST = os.environ.get('SQL_HOST')
+    SQL_PORT = os.environ.get('SQL_PORT')
+    DATABASE = os.environ.get('DATABASE')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+    # Mail
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
     MAIL_PORT = os.environ.get('MAIL_PORT')
     MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL')
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('PASS_2')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
+
+    # Admin panel apperance
     FLASK_ADMIN_SWATCH = os.environ.get('FLASK_ADMIN_SWATCH')
+
+    # Uploads
     UPLOAD_FOLDER = os.path.join(
         basedir, 'mct_app', 'static', 'uploads', 'news'
         )
     ALLOWED_EXTENSIONS = ALLOWED_EXTENSIONS
+
+    # Ckeditor
     CKEDITOR_SERVE_LOCAL = True
     CKEDITOR_FILE_UPLOADER = 'administration.upload'
     CKEDITOR_ENABLE_CSRF = True
     CKEDITOR_HEIGHT = 720
+
+    # reCaptcha
     GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY')
     GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY')
+
+    # Elasticsearch setup
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
+    
     # Logging Setup
     LOG_TYPE = "file"
     LOG_LEVEL = "WARNING"
@@ -108,31 +130,44 @@ class Config:
 
 
 class ProductionConfig(Config):
+
+    # Modes
     DEBUG = False
     TESTING = False
     DEVELOPMENT = False
+    ASSETS_DEBUG = False
+    DEBUG_TB_ENABLED = False
 
-
-class StagingConfig(Config):
-    DEVELOPMENT = True
-    DEBUG = True
+    # Protection
+    WTF_CSRF_CHECK_DEFAULT = True
+    WTF_CSRF_ENABLED = True
 
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+
+
+    # Modes
     TESTING = False
     DEVELOPMENT = True
     DEBUG = True
     ASSETS_DEBUG = True
-    DEBUG_TB_ENABLED = True
+    DEBUG_TB_ENABLED = False
     SQLALCHEMY_RECORD_QUERIES = True
-    WTF_CSRF_CHECK_DEFAULT = True
 
+    # Protection
+    WTF_CSRF_CHECK_DEFAULT = True
+    WTF_CSRF_ENABLED = True
 
 class TestingConfig(Config):
-    DEBUG_TB_ENABLED = False
+    # Database setup
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
+
+    # Modes
     TESTING = True
     DEBUG = False
+    DEVELOPMENT = False
+    DEBUG_TB_ENABLED = False
+
+    # Protection
     WTF_CSRF_CHECK_DEFAULT = False
     WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
