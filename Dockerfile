@@ -16,7 +16,7 @@ COPY . ./
 
 RUN poetry install --without dev
 
-ENTRYPOINT ["poetry", "run", "python", "-m", "manage", "app"]
+ENTRYPOINT ["poetry", "run", "./start_app.sh"]
 
 
 
