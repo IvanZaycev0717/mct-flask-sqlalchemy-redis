@@ -23,6 +23,7 @@ from mct_app.email import send_email
 from mct_app.site.models import Article, TextbookParagraph
 from mct_app.utils import get_statistics_data, get_random_email
 import hashlib
+from mct_app import cache
 from flask import current_app
 
 
@@ -104,6 +105,7 @@ def profile(username):
 
 @auth.route('/profile/<username>/statistics')
 @login_required
+@cache.cached(timeout=300)
 def user_statistics(username):
     articles = json.loads(current_user.user_statistics.articles_statistics)
     textbooks = json.loads(current_user.user_statistics.textbook_statistics)

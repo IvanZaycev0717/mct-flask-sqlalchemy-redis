@@ -1,3 +1,4 @@
+{% cache 86400 %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -40,6 +41,7 @@
           <img class="navbar-brand__header-img d-inline-block align-top" src="{{ url_for('static', filename='img/social_media_ico/youtube.svg') }}" width="45px" alt="">
         </a>
       </div>
+{% endcache %}
       <div class="button-login-registratition">
         {% if current_user.is_anonymous %}
         <a class="btn btn-secondary" href="{{ url_for('auth.login') }}" role="button">Войти</a>
@@ -144,6 +146,7 @@
     {% endblock %}
   <!--Toast-->
   <!-- Footer -->
+{% cache 86400 %}
   <footer class="text-center text-lg-start bg-body-tertiary text-muted">
     <!-- Section: Social media -->
     <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
@@ -259,6 +262,7 @@
     </div>
     <!-- Copyright -->
   </footer>
+{% endcache %}
   <!-- Footer -->
   {% block scripts %}
     <!-- <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script> -->

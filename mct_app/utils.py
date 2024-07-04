@@ -32,7 +32,7 @@ def generate_image_name(obj=None, file_data=None):
 def get_articles_by_months(article_cards: List[ArticleCard]) -> dict:
     acticles_by_month = {}
     for time, article_id, title in article_cards:
-        head = f'{time.strftime('%B')} {time.year}'
+        head = f'{get_month_in_russian(time.strftime('%B'))} {time.year}'
         if head not in acticles_by_month:
             acticles_by_month[head] = {title: article_id}
         else:
@@ -81,3 +81,18 @@ def is_russian_name_correct(name: str) -> bool:
         if letter not in ALLOWED_RUS_SYMBOLS:
             return False
     return True
+
+def get_month_in_russian(month: str) -> str:
+    match month:
+        case 'January': return 'Январь'
+        case 'February': return 'Февраль'
+        case 'March': return 'Март'
+        case 'April': return 'Апрель'
+        case 'May': return 'Май'
+        case 'June': return 'Июнь'
+        case 'July': return 'Июль'
+        case 'August': return 'Август'
+        case 'September': return 'Сентябрь'
+        case 'October': return 'Октябрь'
+        case 'November': return 'Ноябрь'
+        case 'December': return 'Декабрь'

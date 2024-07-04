@@ -16,6 +16,7 @@ from elasticsearch import Elasticsearch
 from celery import Celery, Task
 from flask_debugtoolbar import DebugToolbarExtension
 from mct_app.flask_log import LogSetup
+from flask_caching import Cache
 
 
 load_dotenv()
@@ -31,6 +32,7 @@ admin = Admin(template_mode='bootstrap4')
 ckeditor = CKEditor()
 csrf = CSRFProtect()
 toolbar = DebugToolbarExtension()
+cache = Cache()
 
 def create_app(mode=os.environ.get('APP_SETTINGS')):
     app = Flask(__name__)
@@ -59,6 +61,7 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
     app.config.from_prefixed_env()
     celery_init_app(app)
     LogSetup().init_app(app)
+    cache.init_app(app)
 
 
     with app.app_context():

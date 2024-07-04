@@ -43,7 +43,7 @@ from mct_app.site.models import (ArticleCard, ArticleImage,
                                  TextbookParagraph, TextbookParagraphImage,
                                  )
 
-from mct_app import db
+from mct_app import db, cache
 from mct_app.site.models import Article, ArticleCard, News
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, basedir
 from mct_app import csrf
@@ -204,6 +204,7 @@ class NewsView(AccessView):
             model.image.filename = filename
             model.image.absolute_path = os.path.join(IMAGE_BASE_PATH['news'], filename)
             model.image.relative_path = os.path.join(IMAGE_REL_PATHS['news'], filename)
+        cache.clear()
         super(NewsView, self).on_model_change(form, model, is_created)
 
 
@@ -334,7 +335,7 @@ class ArticleCardView(AccessView):
                      )
                     article_image.image = image
                     model.article.images.append(article_image)
-            
+        cache.clear()
         super(ArticleCardView, self).on_model_change(form, model, is_created)
     
     def on_model_delete(self, model):
@@ -344,6 +345,7 @@ class ArticleCardView(AccessView):
                 del stat_dict[str(model.article.id)]
                 stat.articles_statistics = json.dumps(stat_dict)
                 db.session.commit()
+        cache.clear()
         return super().on_model_delete(model)
 
 class TextbookChapterView(AccessView):
@@ -358,6 +360,7 @@ class TextbookChapterView(AccessView):
                     del stat_dict[str(id)]
                 stat.textbook_statistics = json.dumps(stat_dict)
                 db.session.commit()
+        cache.clear()
         return super().on_model_delete(model)
 
 class TextbookParagraphView(AccessView):
@@ -447,6 +450,7 @@ class TextbookParagraphView(AccessView):
             add_to_index(model.__tablename__, model)
         except elastic_transport.ConnectionError:
             current_app.logger.warn('Paragrapth created without Elasticsearch')
+        cache.clear()
         super(TextbookParagraphView, self).on_model_change(form, model, is_created)
 
     def on_model_delete(self, model):
@@ -456,6 +460,7 @@ class TextbookParagraphView(AccessView):
                 del stat_dict[str(model.id)]
                 stat.textbook_statistics = json.dumps(stat_dict)
                 db.session.commit()
+        cache.clear()
         return super().on_model_delete(model)
 
 

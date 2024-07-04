@@ -128,6 +128,12 @@ class Config:
     LOG_MAX_BYTES = 100_000_000
     LOG_COPIES = 5
 
+    # Caching
+    CACHE_TYPE = 'RedisCache'
+    CACHE_IGNORE_ERRORS = False
+    CACHE_REDIS_URL = os.environ.get('REDIS_URL')
+
+
 
 class ProductionConfig(Config):
 
@@ -142,6 +148,8 @@ class ProductionConfig(Config):
     WTF_CSRF_CHECK_DEFAULT = True
     WTF_CSRF_ENABLED = True
 
+    # Caching
+    CACHE_IGNORE_ERRORS = True
 
 class DevelopmentConfig(Config):
 
@@ -151,7 +159,7 @@ class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
     ASSETS_DEBUG = True
-    DEBUG_TB_ENABLED = False
+    DEBUG_TB_ENABLED = True
     SQLALCHEMY_RECORD_QUERIES = True
 
     # Protection

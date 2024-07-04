@@ -17,7 +17,7 @@ from flask_ckeditor import CKEditor
 import requests
 from flask_login import current_user
 from mct_app.email import send_email
-from mct_app import csrf
+from mct_app import csrf, cache
 
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, SOICAL_MEDIA_LINKS, basedir
 from mct_app.utils import get_articles_by_months
@@ -67,7 +67,7 @@ def base_template_data_processor() -> dict[str, str]:
         'current_year': datetime.now().year,
     }
 
-
+@cache.cached(timeout=60, key_prefix='articles_list')
 def create_articles_list():
     articles_by_month_list = db.session.query(
         ArticleCard.last_update,
@@ -77,6 +77,7 @@ def create_articles_list():
 
 @site.route('/')
 @site.route('/home')
+@cache.cached(timeout=86400)
 def home():
     return render_template('home.html')
 
@@ -102,6 +103,7 @@ def search():
 
 
 @site.route('/news')
+@cache.cached(timeout=300)
 def news():
     flash('news', 'active_links')
     query = select(News).order_by(News.last_update.desc())
@@ -116,6 +118,7 @@ def news():
 
 @site.route('/articles')
 @csrf.exempt
+@cache.cached(timeout=300)
 def articles():
     flash('articles', 'active_links')
 
@@ -154,6 +157,7 @@ def article(article_id, has_read=False, statisticts_dict=None):
 
 
 @site.route('/textbook')
+@cache.cached(timeout=40)
 def textbook(statisticts_dict=None):
     flash('textbook', 'active_links')
     textbook_data = TextbookChapter.query.all()
@@ -276,10 +280,12 @@ def consultation():
     return render_template('consultation.html', form=form, site_key=site_key)
 
 @site.route('/contacts')
+@cache.cached(timeout=86400)
 def contacts():
     flash('contacts', 'active_links')
     return render_template('contacts.html')
 
 @site.route('/cookie-info')
+@cache.cached(timeout=86400)
 def cookie_info():
     return render_template('cookie-info.html')
