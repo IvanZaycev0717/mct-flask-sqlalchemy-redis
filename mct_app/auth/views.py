@@ -3,6 +3,7 @@ import json
 import os
 from datetime import datetime
 import random
+import uuid
 from flask import Blueprint, jsonify, make_response, render_template, redirect, session, url_for, flash, request
 import kombu
 import requests
@@ -466,7 +467,7 @@ def social_registration(name, email, social_platform):
     else:
         user = User(
             username=name,
-            password=os.environ['SOCIAL_USER_PASS'],
+            password=str(uuid.uuid4()),
             email=email,
             has_social_account=True
             )
