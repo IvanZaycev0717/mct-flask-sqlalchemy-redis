@@ -1,4 +1,0 @@
-pytest -rP
-
-docker build . -t mct-app:1.0
-docker run -p 443:80 mct-app:1.0
