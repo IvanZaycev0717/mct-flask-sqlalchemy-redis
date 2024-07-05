@@ -87,6 +87,9 @@ class Config:
     DATABASE = os.environ.get('DATABASE')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # Banned IP path
+    BANNED_IP_PATH = BANNED_IP_FILE
+
 
     # Mail
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
@@ -160,7 +163,7 @@ class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
     ASSETS_DEBUG = True
-    DEBUG_TB_ENABLED = True
+    DEBUG_TB_ENABLED = False
     SQLALCHEMY_RECORD_QUERIES = True
 
     # Protection

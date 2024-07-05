@@ -18,8 +18,7 @@ from celery import Celery, Task
 from flask_debugtoolbar import DebugToolbarExtension
 from mct_app.flask_log import LogSetup
 from flask_caching import Cache
-
-
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv()
 
@@ -49,8 +48,10 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
             broker_connection_retry_on_startup=True
         ),
     )
-   
-    
+
+    # Configure app to get a real IP of visitor
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
     # init app
     CSRFProtect(app)
     db.init_app(app)
@@ -59,17 +60,32 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
     ckeditor.init_app(app)
     csrf.init_app(app)
     toolbar.init_app(app)
-    app.elasticsearch = Elasticsearch(os.environ.get('ELASTICSEARCH_URL')) if os.environ.get('ELASTICSEARCH_URL') else None
+    app.elasticsearch = Elasticsearch(
+        os.environ.get('ELASTICSEARCH_URL')
+        ) if os.environ.get('ELASTICSEARCH_URL') else None
     app.config.from_prefixed_env()
     celery_init_app(app)
     LogSetup().init_app(app)
     cache.init_app(app)
 
-
+    # create database
     with app.app_context():
         db.create_all()
     
+    # check whether visitor is banned
+    @app.before_request
+    def check_ip_in_blacklist():
+        current_ip = request.remote_addr
+        banned_ip_path = app.config.get('BANNED_IP_PATH')
+        if os.path.exists(banned_ip_path):
+            with open(banned_ip_path) as  file:
+                blacklist = json.load(file)
+            if current_ip in blacklist:
+                cache.clear()
+                session.clear()
+                abort(403)
 
+    # register blueprints
     from mct_app.auth.views import auth
     app.register_blueprint(auth)
     from mct_app.site.views import site
@@ -78,7 +94,6 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
     app.register_blueprint(administration)
     from mct_app.administration.views import MyAdminIndexView
     admin.init_app(app, index_view=MyAdminIndexView())
-
 
     @app.after_request
     def after_request(response):

@@ -27,6 +27,7 @@ from flask import current_app
 
 
 
+
 GOOGLE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
 NEWS_PER_PAGE = 5
 ARTICLES_PER_PAGE = 5
@@ -74,6 +75,7 @@ def create_articles_list():
         ArticleCard.article_id,
         ArticleCard.title).order_by(ArticleCard.last_update.desc()).all()
     return get_articles_by_months(articles_by_month_list)
+
 
 @site.route('/')
 @site.route('/home')

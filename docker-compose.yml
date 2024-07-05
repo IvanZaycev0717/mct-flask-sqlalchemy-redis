@@ -32,7 +32,8 @@ services:
       - redis
       - elasticsearch
     restart: always
-  
+
+
   db:
     image: postgres:16.3
     volumes:
@@ -44,12 +45,14 @@ services:
       POSTGRES_INITDB_ARGS: "--locale-provider=icu --icu-locale=ru"
     restart: always
 
+
   redis:
     image: redis:latest
     container_name: redis
     ports:
       - 6379:6379
     restart: always
+
 
   pg_admin:
     image: dpage/pgadmin4
@@ -72,6 +75,7 @@ services:
       - xpack.security.enabled=false
     mem_limit: 2GB
     restart: always
+
 
 volumes:
   postgres_data:
