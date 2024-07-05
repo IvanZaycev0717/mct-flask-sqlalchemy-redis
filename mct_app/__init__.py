@@ -1,6 +1,7 @@
 from datetime import datetime
 import logging
 import os
+import json
 
 
 from dotenv import load_dotenv
@@ -77,12 +78,6 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
     app.register_blueprint(administration)
     from mct_app.administration.views import MyAdminIndexView
     admin.init_app(app, index_view=MyAdminIndexView())
-
-
-
-    @app.before_request
-    def before_request():
-        ip_address = request.remote_addr
 
 
     @app.after_request
