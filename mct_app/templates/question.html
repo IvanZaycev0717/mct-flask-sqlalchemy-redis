@@ -3,6 +3,10 @@
 {% block content %}
 <br>
 <div class="container d-flex justify-content-center">
+  <a class="btn btn-secondary btn-lg" href="{{ url_for('site.questions') }}" role="button">Назад к списку вопросов</a>
+</div>
+<br>
+<div class="container d-flex justify-content-center">
   <div class="card" style="width: 90%;">
     <div class="card-header d-flex justify-content-between">
         {% if question.anon_name %}

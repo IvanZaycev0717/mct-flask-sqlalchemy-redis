@@ -18,7 +18,7 @@ from flask_admin.contrib.sqla import ModelView
 import flask_admin
 from flask_admin import expose
 from wtforms_alchemy.fields import QuerySelectMultipleField
-from config import ALLOWED_EXTENSIONS, FILE_BASE_PATH, FILE_REL_PATH, IMAGE_BASE_PATH
+from config import ALLOWED_EXTENSIONS, BANNED_IP_FILE, FILE_BASE_PATH, FILE_REL_PATH, IMAGE_BASE_PATH
 from wtforms.validators import DataRequired
 from flask_admin.menu import MenuLink
 from flask_admin.form.upload import ImageUploadField
@@ -47,7 +47,8 @@ from mct_app import db, cache
 from mct_app.site.models import Article, ArticleCard, News
 from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, basedir
 from mct_app import csrf
-from mct_app.utils import get_images_names, save_image_as_webp, generate_image_name
+from mct_app.utils import get_images_names, save_banned_ip_file, save_image_as_webp, generate_image_name
+from mct_app.administration.models import BannedIPs
 
 administration = Blueprint('administration', __name__)
 
@@ -463,6 +464,23 @@ class TextbookParagraphView(AccessView):
         cache.clear()
         return super().on_model_delete(model)
 
+class BannedIPsView(AccessView):
+    can_edit = False
+
+    def on_model_change(self, form, model, is_created: bool) -> None:
+        banned_ip = [ip.banned_ip for ip in BannedIPs.query.all()]
+        if form.banned_ip.data not in banned_ip:
+            banned_ip.append(form.banned_ip.data)
+        save_banned_ip_file(banned_ip)
+        super(BannedIPsView, self).on_model_change(form, model, is_created)
+
+    def on_model_delete(self, model):
+        banned_ip = [ip.banned_ip for ip in BannedIPs.query.all()]
+        if model.banned_ip in banned_ip:
+            banned_ip.remove(model.banned_ip)
+        save_banned_ip_file(banned_ip) 
+        return super().on_model_delete(model)
+
 
 # SQLAlchemy Events
 @listens_for(News, 'after_delete')
@@ -539,3 +557,4 @@ admin.add_views(AccessView(Answer, db.session, 'Ответы'))
 admin.add_views(AccessView(UserDiary, db.session, 'Дневник пользователя'))
 admin.add_views(AccessView(DiaryRecommendation, db.session, 'Рекомендации'))
 admin.add_views(AccessView(Consultation, db.session, 'Консультации'))
+admin.add_views(BannedIPsView(BannedIPs, db.session, 'Забанить по IP'))

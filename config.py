@@ -37,6 +37,7 @@ IMAGE_REL_PATHS = {
 
 TEST_DB_PATH = os.path.join(basedir, 'instance', 'pytest.db')
 LOGS_DIR = os.path.join(basedir, 'logs')
+BANNED_IP_FILE = os.path.join(basedir, 'banned_ip', 'banned_ip.json')
 
 # Links
 SOICAL_MEDIA_LINKS = {

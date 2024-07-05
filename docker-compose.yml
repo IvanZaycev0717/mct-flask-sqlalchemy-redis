@@ -17,6 +17,8 @@ services:
       - app_files:/app/mct_app/files
       - app_uploads:/app/mct_app/static/uploads
       - logs:/app/logs
+      - migrations:/app/migrations
+      - banned_ip:/app/banned_ip
 
   celery:
     build:
@@ -77,3 +79,5 @@ volumes:
   app_uploads:
   logs:
   pgadmin_data:
+  migrations:
+  banned_ip:

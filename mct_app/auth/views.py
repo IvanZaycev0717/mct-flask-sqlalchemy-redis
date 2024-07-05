@@ -64,6 +64,7 @@ def registration():
         _create_user_statistics(user.id)
         _create_user_session(user)
         login_user(user)
+        cache.clear()
         return redirect(url_for('auth.profile', username=user.username))
     return render_template('forms/registration.html', form=form)
 
@@ -85,6 +86,7 @@ def login():
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('auth.profile', username=user.username)
+        cache.clear()
         return redirect(url_for('auth.profile', username=user.username))
     return render_template('forms/login.html', form=form)
 
@@ -210,6 +212,7 @@ def delete_recommendation(username, recommed_id):
 @auth.route('/logout')
 def logout():
     logout_user()
+    cache.clear()
     session.clear()
     return redirect('/')
 

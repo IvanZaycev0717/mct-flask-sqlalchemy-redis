@@ -2,9 +2,10 @@ import uuid
 import re
 from typing import Dict, List, Tuple
 
-from flask import Flask
-from config import ALLOWED_RUS_SYMBOLS
+from flask import Flask, json
+from config import ALLOWED_RUS_SYMBOLS, BANNED_IP_FILE
 from mct_app.site.models import ArticleCard
+from mct_app.administration.models import BannedIPs
 from PIL import Image
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
@@ -96,3 +97,7 @@ def get_month_in_russian(month: str) -> str:
         case 'October': return 'Октябрь'
         case 'November': return 'Ноябрь'
         case 'December': return 'Декабрь'
+
+def save_banned_ip_file(banned_ip: str) -> None:
+    with open(BANNED_IP_FILE, 'w') as file:
+        json.dump(banned_ip, file)

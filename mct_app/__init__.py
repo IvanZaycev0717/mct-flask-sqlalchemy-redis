@@ -4,7 +4,7 @@ import os
 
 
 from dotenv import load_dotenv
-from flask import Flask, request, session, url_for
+from flask import Flask, abort, request, session, url_for
 from flask_admin import Admin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -17,6 +17,7 @@ from celery import Celery, Task
 from flask_debugtoolbar import DebugToolbarExtension
 from mct_app.flask_log import LogSetup
 from flask_caching import Cache
+
 
 
 load_dotenv()
@@ -76,6 +77,13 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
     app.register_blueprint(administration)
     from mct_app.administration.views import MyAdminIndexView
     admin.init_app(app, index_view=MyAdminIndexView())
+
+
+
+    @app.before_request
+    def before_request():
+        ip_address = request.remote_addr
+
 
     @app.after_request
     def after_request(response):
