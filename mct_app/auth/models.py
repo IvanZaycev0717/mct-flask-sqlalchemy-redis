@@ -142,12 +142,10 @@ class Role(db.Model):
     @staticmethod
     def insert_roles(csv_file_path):
         with open(csv_file_path, mode='r', encoding='utf-8') as csvfile:
-            data = csv.reader(csvfile)
-            for role in data:
-                name = role[0]
-                description = role[1]
-                if not Role.query.filter_by(name=name).first():
-                    roles = Role(name=name, description=description)
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                if not Role.query.filter_by(name=row['name']).first():
+                    roles = Role(**row)
                     db.session.add(roles)
             db.session.commit()
 

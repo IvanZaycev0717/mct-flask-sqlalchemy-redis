@@ -289,7 +289,7 @@ class ArticleCardView(AccessView):
                 stat_dict = json.loads(stat.articles_statistics)
                 stat_dict.update({model.id: False})
                 stat.articles_statistics = json.dumps(stat_dict)
-                db.session.commit()
+            db.session.commit()
 
         else:
             # We are EDITING an articlecard and aricle
@@ -322,7 +322,7 @@ class ArticleCardView(AccessView):
                     'article_id': model.article.id})
                 if obj_to_delete:
                     db.session.delete(obj_to_delete)
-                    db.session.commit()
+            db.session.commit()
             
             # Get images after editing
             if image_names:
@@ -346,7 +346,7 @@ class ArticleCardView(AccessView):
                 stat_dict = json.loads(stat.articles_statistics)
                 del stat_dict[str(model.article.id)]
                 stat.articles_statistics = json.dumps(stat_dict)
-                db.session.commit()
+        db.session.commit()
         cache.clear()
         return super().on_model_delete(model)
 
@@ -357,11 +357,11 @@ class TextbookChapterView(AccessView):
         deleted_keys = [paragraph.id for paragraph in model.textbook_paragraphs]
         statistics = UserStatistics.query.all()
         for stat in statistics:
-                stat_dict = json.loads(stat.textbook_statistics)
-                for id in deleted_keys:
-                    del stat_dict[str(id)]
-                stat.textbook_statistics = json.dumps(stat_dict)
-                db.session.commit()
+            stat_dict = json.loads(stat.textbook_statistics)
+            for id in deleted_keys:
+                del stat_dict[str(id)]
+            stat.textbook_statistics = json.dumps(stat_dict)
+        db.session.commit()
         cache.clear()
         return super().on_model_delete(model)
 
@@ -408,7 +408,7 @@ class TextbookParagraphView(AccessView):
                 stat_dict = json.loads(stat.textbook_statistics)
                 stat_dict.update({model.id: False})
                 stat.textbook_statistics = json.dumps(stat_dict)
-                db.session.commit()
+            db.session.commit()
         else:
             # We are EDITING a paragraph in the textbook
             # write paragraph content to model content
@@ -433,7 +433,7 @@ class TextbookParagraphView(AccessView):
                     'textbook_paragraph_id': model.id})
                 if obj_to_delete:
                     db.session.delete(obj_to_delete)
-                    db.session.commit()
+            db.session.commit()
 
             # Get images after editing
             if image_names:
@@ -463,7 +463,7 @@ class TextbookParagraphView(AccessView):
                 stat_dict = json.loads(stat.textbook_statistics)
                 del stat_dict[str(model.id)]
                 stat.textbook_statistics = json.dumps(stat_dict)
-                db.session.commit()
+        db.session.commit()
         try:
             TextbookParagraph.reindex()
         except elastic_transport.ConnectionError:
