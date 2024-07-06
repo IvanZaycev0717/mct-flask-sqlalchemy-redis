@@ -7,6 +7,7 @@ from typing import List
 
 
 import elastic_transport
+import elasticsearch
 from flask import Blueprint, flash, request, send_from_directory, url_for, g
 from flask_ckeditor import upload_success, upload_fail
 from flask import abort, url_for
@@ -450,7 +451,9 @@ class TextbookParagraphView(AccessView):
         try:
             add_to_index(model.__tablename__, model)
         except elastic_transport.ConnectionError:
-            current_app.logger.warn('Paragrapth created without Elasticsearch')
+            current_app.logger.exception('Paragrapth created without Elasticsearch')
+        except elasticsearch.NotFoundError:
+            current_app.logger.exception('Paragrapth has no Elasticsearch')
         cache.clear()
         super(TextbookParagraphView, self).on_model_change(form, model, is_created)
 
@@ -461,6 +464,12 @@ class TextbookParagraphView(AccessView):
                 del stat_dict[str(model.id)]
                 stat.textbook_statistics = json.dumps(stat_dict)
                 db.session.commit()
+        try:
+            TextbookParagraph.reindex()
+        except elastic_transport.ConnectionError:
+            current_app.logger.exception('Paragrapth deleted without Elasticsearch')
+        except elasticsearch.NotFoundError:
+            current_app.logger.exception('Paragrapth has no Elasticsearch')
         cache.clear()
         return super().on_model_delete(model)
 

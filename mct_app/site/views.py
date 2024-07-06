@@ -2,6 +2,7 @@ from datetime import datetime
 import json
 import os
 import uuid
+import elasticsearch
 from flask import Blueprint, abort, jsonify, render_template, request, send_from_directory, session, redirect, url_for, flash
 import kombu
 import werkzeug.exceptions
@@ -87,21 +88,25 @@ def home():
 def search():
     if not g.search_form.validate():
         return redirect(url_for('site.home'))
-    page = request.args.get('page', 1, type=int)
-    paragraphs, total = TextbookParagraph.search(
-        g.search_form.q.data,
-        page,
-        SEARCH_RESULTS_PER_PAGE
-    )
-    next_url = url_for('site.search', q=g.search_form.q.data, page=page + 1) if total > page * SEARCH_RESULTS_PER_PAGE else None
-    prev_url = url_for('site.search', q=g.search_form.q.data, page=page - 1) if page > 1 else None
-    return render_template(
-        'search_result.html',
-        title='Результаты поиска',
-        paragraphs=paragraphs,
-        next_url=next_url,
-        prev_url=prev_url
+    try:
+        page = request.args.get('page', 1, type=int)
+        paragraphs, total = TextbookParagraph.search(
+            g.search_form.q.data,
+            page,
+            SEARCH_RESULTS_PER_PAGE
         )
+        next_url = url_for('site.search', q=g.search_form.q.data, page=page + 1) if total > page * SEARCH_RESULTS_PER_PAGE else None
+        prev_url = url_for('site.search', q=g.search_form.q.data, page=page - 1) if page > 1 else None
+        return render_template(
+            'search_result.html',
+            title='Результаты поиска',
+            paragraphs=paragraphs,
+            next_url=next_url,
+            prev_url=prev_url
+            )
+    except elasticsearch.NotFoundError:
+        current_app.logger.exception('Paragrapth has no Elasticsearch')
+        return redirect(url_for('site.home'))
 
 
 @site.route('/news')

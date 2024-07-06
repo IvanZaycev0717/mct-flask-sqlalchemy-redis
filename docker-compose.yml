@@ -42,7 +42,6 @@ services:
       POSTGRES_DB: mct_app_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_INITDB_ARGS: "--locale-provider=icu --icu-locale=ru"
     restart: always
 
 
@@ -75,6 +74,8 @@ services:
       - xpack.security.enabled=false
     mem_limit: 2GB
     restart: always
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
 
 
 volumes:
@@ -85,3 +86,4 @@ volumes:
   pgadmin_data:
   migrations:
   banned_ip:
+  esdata:

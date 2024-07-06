@@ -5,7 +5,7 @@ import json
 
 
 from dotenv import load_dotenv
-from flask import Flask, abort, request, session, url_for
+from flask import Flask, abort, request, session
 from flask_admin import Admin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -50,7 +50,13 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
     )
 
     # Configure app to get a real IP of visitor
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+    app.wsgi_app = ProxyFix(
+        app.wsgi_app,
+        x_for=1,
+        x_proto=1,
+        x_host=1,
+        x_prefix=1
+        )
 
     # init app
     CSRFProtect(app)
@@ -78,7 +84,7 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
         current_ip = request.remote_addr
         banned_ip_path = app.config.get('BANNED_IP_PATH')
         if os.path.exists(banned_ip_path):
-            with open(banned_ip_path) as  file:
+            with open(banned_ip_path) as file:
                 blacklist = json.load(file)
             if current_ip in blacklist:
                 cache.clear()
