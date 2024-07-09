@@ -1,10 +1,9 @@
-
 from typing import Any
 
 from flask_migrate import Migrate
 
-from config import CSV_FILE_PATHS
 from mct_app import create_app, db
+from config import CSV_FILE_PATHS
 from mct_app.auth.models import Role, User, UserRole
 from mct_app.site.models import Article, Image, News, TextbookParagraph
 

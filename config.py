@@ -164,6 +164,8 @@ class DevelopmentConfig(Config):
     DEBUG = True
     ASSETS_DEBUG = True
     DEBUG_TB_ENABLED = False
+
+    # SQL
     SQLALCHEMY_RECORD_QUERIES = True
 
     # Protection

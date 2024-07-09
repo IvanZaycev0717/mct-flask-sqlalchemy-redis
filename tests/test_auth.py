@@ -9,7 +9,6 @@ from mct_app.auth.models import User
 
 expected_title = "<title>Метакогнитивная терапия - новости, статьи, учебник, консультации</title>"
 
-
 def test_auth_pages_accessibility(client, auth_url):
     response = client.get(auth_url)
     assert response.status_code == HTTPStatus.OK, f'страница {auth_url} недоступна'
@@ -24,7 +23,7 @@ def test_social_media_redirection(client, social_url):
     response = client.get(social_url)
     assert response.status_code == HTTPStatus.FOUND, f'страница {social_url} недоступна'
 
-def test_successful_registration(app, auth, admin):
+def test_successful_registration(app, auth):
     response = auth.register()
 
     with app.app_context():
