@@ -1,32 +1,25 @@
 from datetime import datetime
 import json
 import os
-import uuid
-import elasticsearch
-from flask import Blueprint, abort, jsonify, render_template, request, send_from_directory, session, redirect, url_for, flash
 import kombu
-import werkzeug.exceptions
-from mct_app import db
-from flask import g
 
-from mct_app.site.forms import ConsultationForm, QuestionForm, AnswerForm, SearchForm
-from mct_app.site.models import Article, ArticleCard, News, TextbookChapter, TextbookParagraph
-from sqlalchemy import select, func
-from sqlalchemy.orm import aliased
-from flask_ckeditor import upload_success, upload_fail
-from flask_ckeditor import CKEditor
-import requests
+
+import elasticsearch
+from flask import Blueprint, abort, render_template, request, redirect, url_for, flash, g, current_app
 from flask_login import current_user
-from mct_app.email import send_email
-from mct_app import csrf, cache
+import requests
+from sqlalchemy import select
+import werkzeug.exceptions
 
-from config import IMAGE_BASE_PATH, IMAGE_REL_PATHS, SOICAL_MEDIA_LINKS, basedir
+
+from config import SOICAL_MEDIA_LINKS
+from mct_app import db, csrf, cache
 from mct_app.utils import get_articles_by_months
 from mct_app import csrf
-from mct_app.auth.models import Question, Answer, User, Consultation, UserStatistics
-from flask import current_app
-
-
+from mct_app.auth.models import Question, Answer, Consultation, UserStatistics
+from mct_app.email import send_email
+from mct_app.site.forms import ConsultationForm, QuestionForm, AnswerForm, SearchForm
+from mct_app.site.models import Article, ArticleCard, News, TextbookChapter, TextbookParagraph
 
 
 GOOGLE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
@@ -39,31 +32,37 @@ SEARCH_RESULTS_PER_PAGE = 5
 site = Blueprint('site', __name__)
 
 @site.app_errorhandler(werkzeug.exceptions.Unauthorized)
-def page_not_found(e):
+def unauthorized(e):
+    """Render 401 page - Unauthorized."""
     current_app.logger.error(f"There is 401 {e}")
     return render_template('errors/401.html'), 401
 
 @site.app_errorhandler(werkzeug.exceptions.NotFound)
 def page_not_found(e):
+    """Render 404 page - Page Not Found."""
     current_app.logger.error(f"There is 404 {e}")
     return render_template('errors/404.html'), 404
 
 @site.app_errorhandler(werkzeug.exceptions.Forbidden)
 def access_denied(e):
+    """Render 403 page - Forbidden."""
     current_app.logger.error(f"There is 403 {e}")
     return render_template('errors/403.html'), 403
 
 @site.app_errorhandler(werkzeug.exceptions.InternalServerError)
 def server_error(e):
+    """Render 500 page - InternalServerError."""
     current_app.logger.error(f"There is 500 {e}")
     return render_template('errors/500.html'), 500
 
 @site.before_app_request
 def before_request():
+    """Create an instance of Search form."""
     g.search_form = SearchForm()
 
 @site.app_context_processor
 def base_template_data_processor() -> dict[str, str]:
+    """Create context using in any place on website."""
     return {
         'links': SOICAL_MEDIA_LINKS,
         'current_year': datetime.now().year,
