@@ -1,28 +1,31 @@
 from datetime import datetime
+import json
 import logging
 import os
-import json
 
-
-from dotenv import load_dotenv
-from flask import Flask, abort, request, session
-from flask_admin import Admin
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase
-from flask_login import LoginManager
-from flask_wtf.csrf import CSRFProtect
-from flask_mailman import Mail
-from flask_ckeditor import CKEditor
-from elasticsearch import Elasticsearch
 from celery import Celery, Task
-from flask_debugtoolbar import DebugToolbarExtension
-from mct_app.flask_log import LogSetup
+from dotenv import load_dotenv
+from elasticsearch import Elasticsearch
+from flask import abort, Flask, request, Response, session
+from flask_admin import Admin
 from flask_caching import Cache
+from flask_ckeditor import CKEditor
+from flask_debugtoolbar import DebugToolbarExtension
+from flask_login import LoginManager
+from flask_mailman import Mail
+from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
+from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
+
+from mct_app.flask_log import LogSetup
 
 load_dotenv()
 
+
 class Base(DeclarativeBase):
+    """Class for using SQLAlchemy 2.0 as declarative language."""
+
     pass
 
 
@@ -35,7 +38,9 @@ csrf = CSRFProtect()
 toolbar = DebugToolbarExtension()
 cache = Cache()
 
-def create_app(mode=os.environ.get('APP_SETTINGS')):
+
+def create_app(mode=os.environ.get('APP_SETTINGS')) -> Flask:
+    """Create Flask app using application factory pattern."""
     app = Flask(__name__)
 
     # config setUp
@@ -55,8 +60,7 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
         x_for=1,
         x_proto=1,
         x_host=1,
-        x_prefix=1
-        )
+        x_prefix=1)
 
     # init app
     CSRFProtect(app)
@@ -67,8 +71,8 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
     csrf.init_app(app)
     toolbar.init_app(app)
     app.elasticsearch = Elasticsearch(
-        os.environ.get('ELASTICSEARCH_URL')
-        ) if os.environ.get('ELASTICSEARCH_URL') else None
+        os.environ.get('ELASTICSEARCH_URL')) \
+        if os.environ.get('ELASTICSEARCH_URL') else None
     app.config.from_prefixed_env()
     celery_init_app(app)
     LogSetup().init_app(app)
@@ -77,10 +81,10 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
     # create database
     with app.app_context():
         db.create_all()
-    
+
     # check whether visitor is banned
     @app.before_request
-    def check_ip_in_blacklist():
+    def check_ip_in_blacklist() -> None:
         current_ip = request.remote_addr
         banned_ip_path = app.config.get('BANNED_IP_PATH')
         if os.path.exists(banned_ip_path):
@@ -102,13 +106,13 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
     admin.init_app(app, index_view=MyAdminIndexView())
 
     @app.after_request
-    def after_request(response):
-        """ Logging after every request. """
-        logger = logging.getLogger("app.access")
+    def after_request(response: Response) -> Response:
+        """Do logging after every request."""
+        logger = logging.getLogger('app.access')
         logger.info(
-            "%s [%s] %s %s %s %s %s %s %s",
+            '%s [%s] %s %s %s %s %s %s %s',
             request.remote_addr,
-            datetime.now().strftime("%d/%b/%Y:%H:%M:%S.%f")[:-3],
+            datetime.now().strftime('%d/%b/%Y:%H:%M:%S.%f')[:-3],
             request.method,
             request.path,
             request.scheme,
@@ -121,14 +125,17 @@ def create_app(mode=os.environ.get('APP_SETTINGS')):
 
     return app
 
+
 def celery_init_app(app: Flask) -> Celery:
+    """Initialize celery app."""
     class FlaskTask(Task):
         def __call__(self, *args: object, **kwargs: object) -> object:
             with app.app_context():
                 return self.run(*args, **kwargs)
 
     celery = Celery(app.name, task_cls=FlaskTask)
-    celery.config_from_object(app.config["CELERY"])
+    celery.config_from_object(app.config['CELERY'])
     celery.set_default()
-    app.extensions["celery"] = celery
+    app.extensions['celery'] = celery
+
     return celery

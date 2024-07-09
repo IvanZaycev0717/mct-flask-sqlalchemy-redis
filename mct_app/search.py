@@ -1,20 +1,35 @@
+from typing import Any
+
 from flask import current_app
 
-def add_to_index(index, model):
+"""
+These are the main functions for manipulating Elasticsearch.
+You can do a full-text search.
+"""
+
+
+def add_to_index(index: int, model: Any) -> None:
+    """Add a new index to Elasticsearch."""
     if not current_app.elasticsearch:
         return
     payload = {}
     for field in model.__searchable__:
-        print(model, model.__dict__)
         payload[field] = getattr(model, field)
     current_app.elasticsearch.index(index=index, id=model.id, document=payload)
 
-def remove_from_index(index, model):
+
+def remove_from_index(index: int, model: Any) -> None:
+    """Remove a chosen index from Elasticsearch."""
     if not current_app.elasticsearch:
         return
     current_app.elasticsearch.delete(index=index, id=model.id)
 
-def query_index(index, query, page, per_page):
+
+def query_index(index: int,
+                query,
+                page: int,
+                per_page: int) -> tuple[int, dict[str, str]]:
+    """Add query for chosen index."""
     if not current_app.elasticsearch:
         return [], 0
     search = current_app.elasticsearch.search(
