@@ -14,25 +14,19 @@ FILE_BASE_PATH = os.path.join(basedir, 'mct_app', 'files')
 FILE_REL_PATH = os.path.join('..', '..', '..', 'files')
 IMAGE_BASE_PATH = {
     'news': os.path.join(
-        basedir, 'mct_app', 'static', 'uploads', 'news'
-        ),
+        basedir, 'mct_app', 'static', 'uploads', 'news'),
     'articles': os.path.join(
-        basedir, 'mct_app', 'static', 'uploads', 'articles'
-        ),
+        basedir, 'mct_app', 'static', 'uploads', 'articles'),
     'textbook': os.path.join(
-        basedir, 'mct_app', 'static', 'uploads', 'textbook'
-        ),
+        basedir, 'mct_app', 'static', 'uploads', 'textbook'),
 }
 IMAGE_REL_PATHS = {
     'news': os.path.join(
-        '..', '..', '..', 'static', 'uploads', 'news'
-        ),
+        '..', '..', '..', 'static', 'uploads', 'news'),
     'articles': os.path.join(
-        '..', '..', '..', 'static', 'uploads', 'articles'
-        ),
+        '..', '..', '..', 'static', 'uploads', 'articles'),
     'textbook': os.path.join(
-        '..', '..', '..', 'static', 'uploads', 'textbook'
-        ),
+        '..', '..', '..', 'static', 'uploads', 'textbook'),
 }
 
 TEST_DB_PATH = os.path.join(basedir, 'instance', 'pytest.db')
@@ -47,6 +41,7 @@ SOICAL_MEDIA_LINKS = {
     'WhatsApp': r'https://www.whatsapp.com/?lang=ru_RU'
 }
 
+
 # Enum classes
 class Is(IntEnum):
     """Class of digits for a current role."""
@@ -58,6 +53,8 @@ class Is(IntEnum):
 
 
 class Mood(Enum):
+    """Class for choosing the patient mood."""
+
     HAPPY = '😊Счастливый😊'
     IRRITATED = '😡Раздраженный😡'
     RELAXED = '😌Расслабленный😌'
@@ -67,6 +64,8 @@ class Mood(Enum):
 
 
 class SocialPlatform(StrEnum):
+    """Class for choosing social platform registering from."""
+
     GOOGLE = '(Google)'
     VK = '(VK)'
     ODNOKLASSNIKI = '(Odnoklassniki)'
@@ -76,6 +75,8 @@ class SocialPlatform(StrEnum):
 
 # Config classes
 class Config:
+    """Main config for all the modes."""
+
     # General setup
     APP_NAME = os.environ.get('APP_NAME')
     SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -90,7 +91,6 @@ class Config:
     # Banned IP path
     BANNED_IP_PATH = BANNED_IP_FILE
 
-
     # Mail
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
     MAIL_PORT = os.environ.get('MAIL_PORT')
@@ -104,8 +104,7 @@ class Config:
 
     # Uploads
     UPLOAD_FOLDER = os.path.join(
-        basedir, 'mct_app', 'static', 'uploads', 'news'
-        )
+        basedir, 'mct_app', 'static', 'uploads', 'news')
     ALLOWED_EXTENSIONS = ALLOWED_EXTENSIONS
 
     # Ckeditor
@@ -120,15 +119,15 @@ class Config:
 
     # Elasticsearch setup
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
-    
+
     # Logging Setup
-    LOG_TYPE = "file"
-    LOG_LEVEL = "WARNING"
+    LOG_TYPE = 'file'
+    LOG_LEVEL = 'WARNING'
 
     # File Logging Setup
     LOG_DIR = LOGS_DIR
-    APP_LOG_NAME = "app.log"
-    WWW_LOG_NAME = "www.log"
+    APP_LOG_NAME = 'app.log'
+    WWW_LOG_NAME = 'www.log'
     LOG_MAX_BYTES = 100_000_000
     LOG_COPIES = 5
 
@@ -138,8 +137,8 @@ class Config:
     CACHE_REDIS_URL = os.environ.get('REDIS_URL')
 
 
-
 class ProductionConfig(Config):
+    """Class for app config on a real server in production."""
 
     # Modes
     DEBUG = False
@@ -155,8 +154,9 @@ class ProductionConfig(Config):
     # Caching
     CACHE_IGNORE_ERRORS = True
 
-class DevelopmentConfig(Config):
 
+class DevelopmentConfig(Config):
+    """Class for app config while developing."""
 
     # Modes
     TESTING = False
@@ -170,7 +170,10 @@ class DevelopmentConfig(Config):
     WTF_CSRF_CHECK_DEFAULT = True
     WTF_CSRF_ENABLED = True
 
+
 class TestingConfig(Config):
+    """Class for app config while testing."""
+
     # Database setup
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
 

@@ -108,7 +108,7 @@ def profile(username):
 
 @auth.route('/profile/<username>/statistics')
 @login_required
-@cache.cached(timeout=300)
+@cache.cached(timeout=30)
 def user_statistics(username):
     articles = json.loads(current_user.user_statistics.articles_statistics)
     textbooks = json.loads(current_user.user_statistics.textbook_statistics)

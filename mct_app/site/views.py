@@ -80,7 +80,7 @@ def create_articles_list():
 
 @site.route('/')
 @site.route('/home')
-@cache.cached(timeout=86400)
+@cache.cached(timeout=30)
 def home():
     return render_template('home.html')
 
@@ -110,7 +110,7 @@ def search():
 
 
 @site.route('/news')
-@cache.cached(timeout=300)
+@cache.cached(timeout=30)
 def news():
     flash('news', 'active_links')
     query = select(News).order_by(News.last_update.desc())
@@ -125,7 +125,7 @@ def news():
 
 @site.route('/articles')
 @csrf.exempt
-@cache.cached(timeout=300)
+@cache.cached(timeout=30)
 def articles():
     flash('articles', 'active_links')
 
