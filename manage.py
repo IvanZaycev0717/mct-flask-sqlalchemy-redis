@@ -17,7 +17,8 @@ migrate = Migrate(app, db)
 @app.shell_context_processor
 def make_shell_context() -> dict[str, Any]:
     """Make access to Flask from terminal."""
-    return {'app': app, 'db': db,
+    return {'app': app,
+            'db': db,
             'general_setup': general_setup,
             'recreate_db': recreate_db,
             'User': User,
