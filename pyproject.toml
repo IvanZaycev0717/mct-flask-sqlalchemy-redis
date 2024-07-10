@@ -45,7 +45,6 @@ flake8-docstrings = "^1.7.0"
 flake8-import-order = "^0.18.2"
 ruff = "^0.4.9"
 coverage = "^7.5.4"
-flake8-quotes2 = "^0.0.1"
 
 [build-system]
 requires = ["poetry-core"]
