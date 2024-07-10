@@ -31,7 +31,7 @@ def get_statistics_data(statistics: Dict[int, bool]) -> int:
     return 0
 
 
-def generate_image_name():
+def generate_image_name() -> str:
     """Generate a random picture name."""
     image_suffix = uuid.uuid4()
     return secure_filename(f"image_{image_suffix}")
