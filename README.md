@@ -30,12 +30,14 @@
 :green_book: PostgreSQL (production)  
 :green_book: SQLite (testing)  
 :green_book: Elasticsearch  
+:green_book: Регулярные выражения RegExp  
 :green_book: Redis (cache server, message broker)  
 :green_book: Celery  
 :green_book: Pytest  
 :green_book: Google OAuth 2.0  
 :green_book: Google reCAPTCHA  
 :green_book: Poetry  
+:green_book: Логирование  
 :green_book: Docker  
 :green_book: CI/CD (GitHub Actions)
 
