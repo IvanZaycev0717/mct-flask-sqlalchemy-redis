@@ -31,6 +31,7 @@
 :green_book: SQLite (testing)  
 :green_book: Elasticsearch  
 :green_book: Регулярные выражения RegExp  
+:green_book: WYSIWYG-редактор  
 :green_book: Redis (cache server, message broker)  
 :green_book: Celery  
 :green_book: Pytest  
