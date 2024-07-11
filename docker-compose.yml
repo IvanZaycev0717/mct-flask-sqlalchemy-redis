@@ -33,7 +33,6 @@ services:
       - elasticsearch
     restart: always
 
-
   db:
     image: postgres:16.3
     container_name: db
@@ -77,7 +76,7 @@ services:
     restart: always
     volumes:
       - esdata:/usr/share/elasticsearch/data
-
+    
 
 volumes:
   postgres_data:
