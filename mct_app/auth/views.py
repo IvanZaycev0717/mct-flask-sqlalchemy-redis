@@ -43,10 +43,10 @@ client_secrets_file = os.path.join(basedir, 'client_secret.json')
 flow = Flow.from_client_secrets_file(
     client_secrets_file=client_secrets_file,
     scopes=[
-        "https://www.googleapis.com/auth/userinfo.profile",
-        "https://www.googleapis.com/auth/userinfo.email",
-        "openid"],
-    redirect_uri="https://localhost/google-callback"
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email',
+        'openid'],
+    redirect_uri='https://localhost/google-callback'
 )
 
 
@@ -116,7 +116,7 @@ def profile(username):
         role_id = current_user.roles[0].role_id
         if role_id not in (Is.ADMIN, Is.DOCTOR):
             current_app.logger.exception(
-                f"User {username} is not ADMIN and DOCTOR")
+                f'User {username} is not ADMIN and DOCTOR')
             abort(403)
     user = db.first_or_404(select(User).where(User.username == username))
     correct_name: str = user.username
@@ -420,14 +420,14 @@ def vk_callback():
                 SocialPlatform.VK)
 
             if not registration_result:
-                current_app.logger.exception("VK enter FAIL")
+                current_app.logger.exception('VK enter FAIL')
                 abort(500)
 
             return redirect(
                 url_for('auth.profile',
                         username=registration_result.username))
     else:
-        current_app.logger.exception("VK response FAIL")
+        current_app.logger.exception('VK response FAIL')
         abort(500)
 
 
@@ -470,7 +470,7 @@ def ok_callback():
                 SocialPlatform.ODNOKLASSNIKI)
 
             if not registration_result:
-                current_app.logger.exception("OK enter FAIL")
+                current_app.logger.exception('OK enter FAIL')
                 abort(500)
 
             return redirect(
@@ -531,7 +531,7 @@ def yandex_callback():
                         username=registration_result.username))
     else:
         current_app.logger.exception(
-            "YANDEX response FAIL")
+            'YANDEX response FAIL')
         abort(500)
 
 
@@ -552,7 +552,7 @@ def telegram_callback():
             'sha256').hexdigest()
         is_correct = hmac.compare_digest(computed_hash, query_hash)
         if not is_correct:
-            current_app.logger.exception("Telegram HASH problem")
+            current_app.logger.exception('Telegram HASH problem')
             abort(403)
 
         email = get_random_email()
@@ -562,7 +562,7 @@ def telegram_callback():
             SocialPlatform.TELEGRAM)
 
         if not registration_result:
-            current_app.logger.exception("TELEGRAM response FAIL")
+            current_app.logger.exception('TELEGRAM response FAIL')
             abort(500)
 
         return redirect(url_for('auth.profile',
@@ -586,7 +586,7 @@ def social_registration(name, email, social_platform):
         return user
     elif user and not user.has_social_account:
         current_app.logger.exception(
-            "User has no social account tries to enter")
+            'User has no social account tries to enter')
         abort(500)
     else:
         user = User(
