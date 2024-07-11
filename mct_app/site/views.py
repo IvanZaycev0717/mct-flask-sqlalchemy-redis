@@ -131,7 +131,6 @@ def search():
 
 
 @site.route('/news')
-@cache.cached(timeout=30)
 def news():
     """Render news page."""
     flash('news', 'active_links')
@@ -144,12 +143,8 @@ def news():
         error_out=False)
     pages_amount = news.pages
     active_page = news.page
-    next_url = url_for(
-        'site.news',
-        page=news.next_num) if news.has_next else None
-    prev_url = url_for(
-        'site.news',
-        page=news.prev_num) if news.has_prev else None
+    next_url = url_for('site.news', page=news.next_num) if news.has_next else None
+    prev_url = url_for('site.news', page=news.prev_num) if news.has_prev else None
     current_site = 'site.news'
     return render_template(
         'news.html',
@@ -163,7 +158,6 @@ def news():
 
 @site.route('/articles')
 @csrf.exempt
-@cache.cached(timeout=30)
 def articles():
     """Render list of articles cards."""
     flash('articles', 'active_links')
@@ -256,6 +250,7 @@ def textbook_paragraph(paragraph, has_read=None):
             statisticts_dict[str(paragraph.id)] = has_read
             statistics_instance.textbook_statistics = json.dumps(
                 statisticts_dict)
+            cache.clear()
             db.session.commit()
     return render_template(
         'paragraph.html',

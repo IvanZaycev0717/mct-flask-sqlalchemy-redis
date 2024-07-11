@@ -130,6 +130,7 @@ def create_app(mode=os.environ.get('APP_SETTINGS')) -> Flask:
         )
         return response
 
+    cache.clear()
     return app
 
 

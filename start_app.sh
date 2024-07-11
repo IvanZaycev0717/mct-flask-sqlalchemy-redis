@@ -10,4 +10,4 @@ flask db upgrade
 
 pytest
 
-gunicorn -w 4 -c gunicorn_config.py manage:app
+python -m manage app
