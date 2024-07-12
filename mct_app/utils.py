@@ -18,7 +18,7 @@ def get_images_names(text: str) -> List[str]:
 
 def get_random_email() -> str:
     """Generate a random email address for social registration."""
-    return f'{uuid.uuid4()}@metacognitive.ru'
+    return f'{uuid.uuid4()}@metacognitive-therapy.ru'
 
 
 def get_statistics_data(statistics: Dict[int, bool]) -> int:

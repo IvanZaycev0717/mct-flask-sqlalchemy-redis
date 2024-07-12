@@ -34,7 +34,7 @@ def test_generate_image_name():
 def test_get_random_email():
     """Test generating a random email address for social registration."""
     result = get_random_email()
-    assert result.endswith('@metacognitive.ru'), \
+    assert result.endswith('@metacognitive-therapy.ru'), \
         'Неверно сгенерирован случайный email'
 
 
