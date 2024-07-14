@@ -15,6 +15,7 @@ from flask_login import LoginManager
 from flask_mailman import Mail
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+import pytz
 from sqlalchemy import MetaData
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -60,6 +61,8 @@ def create_app(mode=os.environ.get('APP_SETTINGS')) -> Flask:
             broker_connection_retry_on_startup=True
         ),
     )
+    # Jinja2 filters
+    app.jinja_env.filters['datetimefilter'] = datetimefilter
 
     # Configure app to get a real IP of visitor
     app.wsgi_app = ProxyFix(
@@ -147,3 +150,12 @@ def celery_init_app(app: Flask) -> Celery:
     app.extensions['celery'] = celery
 
     return celery
+
+
+def datetimefilter(value, format='%d.%m.%Y в %H:%M'):
+    """Show date on a template as DAY.MONTH.YEAR HOURS:MINUTES."""
+    tz = pytz.timezone('Europe/Moscow')
+    utc = pytz.timezone('UTC')
+    value = utc.localize(value, is_dst=None).astimezone(pytz.utc)
+    local_dt = value.astimezone(tz)
+    return local_dt.strftime(format)

@@ -131,11 +131,7 @@ class User(UserMixin, db.Model):
 
     def __repr__(self) -> str:
         """Show user data in the terminal."""
-        return f'User({self.id} {self.username})'
-
-    def __str__(self) -> str:
-        """Show user data on the website."""
-        return f'User({self.id} {self.username})'
+        return f'{self.__class__.__name__}(id={self.id}name={self.username})'
 
 
 class UserRole(db.Model):
@@ -189,11 +185,7 @@ class Role(db.Model):
 
     def __repr__(self) -> str:
         """Show role in the terminal."""
-        return f'Role({self.id} {self.name})'
-
-    def __str__(self) -> str:
-        """Show role on the website."""
-        return f'Role({self.id} {self.name})'
+        return f'{self.__class__.__name__}(id={self.id}name={self.name})'
 
 
 class UserSession(db.Model):
@@ -245,11 +237,7 @@ class Question(db.Model):
 
     def __repr__(self) -> str:
         """Show question instance in the terminal."""
-        return f'Question({self.id} {self.body})'
-
-    def __str__(self) -> str:
-        """Show question instance on the website."""
-        return f'{self.id} {self.body}'
+        return f'{self.__class__.__name__}(id={self.id}body={self.body})'
 
 
 class Answer(db.Model):
@@ -271,11 +259,7 @@ class Answer(db.Model):
 
     def __repr__(self) -> str:
         """Show Answer instance in the terminal."""
-        return f'Answer({self.id} {self.body})'
-
-    def __str__(self) -> str:
-        """Show Answer instance on the website."""
-        return f'Answer({self.id} {self.body})'
+        return f'{self.__class__.__name__}(id={self.id}body={self.body})'
 
 
 class Consultation(db.Model):
@@ -324,11 +308,7 @@ class UserDiary(db.Model):
 
     def __repr__(self) -> str:
         """Show UserDiary instance in the terminal."""
-        return f'UserDiary({self.user.username} Запись {self.id})'
-
-    def __str__(self) -> str:
-        """Show UserDiary instance on the website."""
-        return f'UserDiary({self.user.username} Запись {self.id})'
+        return f'{self.__class__.__name__}(username={self.user.username} Запись {self.id})'
 
 
 class DiaryRecommendation(db.Model):

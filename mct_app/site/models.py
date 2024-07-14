@@ -79,11 +79,7 @@ class Image(db.Model):
 
     def __repr__(self) -> str:
         """Show an image's filename in the terminal."""
-        return str(self.filename)
-
-    def __str__(self) -> str:
-        """Show an image's filename on the website."""
-        return f'{self.filename}'
+        return f'{self.__class__.__name__}(file={self.filename})'
 
 
 class ArticleCard(db.Model):
@@ -122,11 +118,7 @@ class Article(db.Model):
 
     def __repr__(self) -> str:
         """Show article body in the terminal."""
-        return str(self.body)
-
-    def __str__(self) -> str:
-        """Show article title and body on the website."""
-        return f'{self.title} {self.body}'
+        return f'{self.__class__.__name__} - {self.body}'
 
 
 class ArticleImage(db.Model):
@@ -174,11 +166,7 @@ class TextbookChapter(db.Model):
 
     def __repr__(self) -> str:
         """Show name of textbook chapter in the terminal."""
-        return str(self.name)
-
-    def __str__(self) -> str:
-        """Show name of textbook chapter on the website."""
-        return str(self.name)
+        return f'{self.__class__.__name__}({self.name})'
 
 
 class TextbookParagraph(SearchableMixin, db.Model):
@@ -200,11 +188,7 @@ class TextbookParagraph(SearchableMixin, db.Model):
 
     def __repr__(self) -> str:
         """Show name of textbook paragraph in the terminal."""
-        return str(self.name)
-
-    def __str__(self) -> str:
-        """Show name of textbook paragraph on the website."""
-        return str(self.name)
+        return f'{self.__class__.__name__}({self.name})'
 
 
 class TextbookParagraphImage(db.Model):

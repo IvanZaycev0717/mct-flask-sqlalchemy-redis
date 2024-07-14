@@ -14,7 +14,7 @@
         {% else %}
             <h5>Автор вопроса: {{ question.user.username }}</h5>
         {% endif %}
-        <h5>Вопрос задан {{ question.date.strftime('%d.%m.%Y')}} в {{ question.date.strftime('%H:%M') }}</h5>
+        <h5>Вопрос задан {{ question.date | datetimefilter }}</h5>
     </div>
     <div class="card-body">
       <p class="card-text"><strong>Вопрос: </strong>{{ question.body }}</p>

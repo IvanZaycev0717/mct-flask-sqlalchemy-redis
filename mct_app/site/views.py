@@ -11,6 +11,7 @@ from flask import (abort, Blueprint,
                    url_for)
 from flask_login import current_user
 import kombu
+import pytz
 import requests
 from sqlalchemy import select
 import werkzeug.exceptions
@@ -77,7 +78,7 @@ def base_template_data_processor() -> dict[str, str]:
     """Create context using in any place on website."""
     return {
         'links': SOICAL_MEDIA_LINKS,
-        'current_year': datetime.now().year,
+        'current_year': datetime.now(tz=pytz.timezone('Europe/Moscow')).year,
     }
 
 
@@ -280,7 +281,7 @@ def questions():
             anon_name=form.anon_name.data,
             user_id=None if current_user.is_anonymous else current_user.id,
             body=form.body.data,
-            date=datetime.now(),
+            date=datetime.now(tz=pytz.timezone('Europe/Moscow')),
             ip_address=request.remote_addr
         )
         db.session.add(question)
@@ -336,7 +337,7 @@ def consultation():
     secret_key = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY')
     form = ConsultationForm()
     if form.validate_on_submit():
-        date = datetime.now()
+        date = datetime.now(tz=pytz.timezone('Europe/Moscow'))
         secret_response = request.form['g-recaptcha-response']
         verify_response = requests.post(
             url=f'{GOOGLE_VERIFY_URL}?secret={secret_key}&response={

@@ -533,19 +533,31 @@
 }
 
 /* line 373, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+[data-bs-theme=dark] .diary-card {
+  background-image: none;
+  background-color: black;
+  color: white;
+}
+
+/* line 378, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .recommendation-card {
   padding: 10px 10px 10px 10px;
   background-color: rgba(252, 252, 214, 0.801);
   border-radius: 10px;
 }
 
-/* line 377, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 382, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .recommendation-card a {
   text-align: center;
 }
 
+/* line 385, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+[data-bs-theme=dark] .recommendation-card {
+  background-color: #28172f;
+}
+
 @media (max-width: 768px) {
-  /* line 383, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+  /* line 390, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
   .popup-image img {
     width: 95%;
   }

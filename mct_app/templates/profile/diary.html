@@ -26,7 +26,7 @@
             <div class="card">
               <div class="card-body diary-card">
                 <h5 class="card-title">Настроение: {{ record.mood.value }}</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">Дата записи: {{ record.date.strftime('%d.%m.%Y') }} в {{ record.date.strftime('%H:%M') }}</h6>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Дата записи: {{ record.date | datetimefilter }}</h6>
                 <p class="card-text">{{ record.record }}</p>
                 {% if record.diary_recommendations %}
                   {% for recommend in record.diary_recommendations%}

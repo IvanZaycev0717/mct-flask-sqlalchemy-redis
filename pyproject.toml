@@ -37,6 +37,7 @@ psycopg2-binary = "^2.9.9"
 gunicorn = "^22.0.0"
 flask-debugtoolbar = "^0.15.1"
 flask-caching = "^2.3.0"
+pytz = "^2024.1"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.10.0"

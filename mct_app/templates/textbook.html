@@ -16,17 +16,17 @@
         <div class="list-group">
           {% if statisticts_dict %}
             {% if statisticts_dict[paragraph.id|string] %}
-              <a href="{{ url_for('site.textbook_paragraph', paragraph=paragraph) }}" class="list-group-item list-group-item-action" aria-current="true">
-                ✅ {{ paragraph }}
+              <a href="{{ url_for('site.textbook_paragraph', paragraph=paragraph.name) }}" class="list-group-item list-group-item-action" aria-current="true">
+                ✅ {{ paragraph.name }}
               </a>
             {% else %}
-            <a href="{{ url_for('site.textbook_paragraph', paragraph=paragraph) }}" class="list-group-item list-group-item-action" aria-current="true">
+            <a href="{{ url_for('site.textbook_paragraph', paragraph=paragraph.name) }}" class="list-group-item list-group-item-action" aria-current="true">
                {{ paragraph.name }}
             </a>
             {% endif %}
           {% else %}
-            <a href="{{ url_for('site.textbook_paragraph', paragraph=paragraph) }}" class="list-group-item list-group-item-action" aria-current="true">
-              {{ paragraph }}
+            <a href="{{ url_for('site.textbook_paragraph', paragraph=paragraph.name) }}" class="list-group-item list-group-item-action" aria-current="true">
+              {{ paragraph.name }}
             </a>
           {% endif %}
         </div>

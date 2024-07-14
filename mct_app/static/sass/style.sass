@@ -370,6 +370,11 @@
     background-image: url("/static/img/diary-texture.webp")
     font-weight: bold
 
+[data-bs-theme=dark] .diary-card
+    background-image: none
+    background-color: black
+    color: white
+
 .recommendation-card
     padding: 10px 10px 10px 10px
     background-color: rgba(252, 252, 214, 0.801)
@@ -377,6 +382,8 @@
     a
         text-align: center
 
+[data-bs-theme=dark] .recommendation-card
+    background-color: 	#28172f
 
 @media (max-width:768px)
     .popup-image
