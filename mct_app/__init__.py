@@ -47,7 +47,7 @@ toolbar = DebugToolbarExtension()
 cache = Cache()
 
 
-def create_app(mode=os.environ.get('APP_SETTINGS')) -> Flask:
+def create_app(mode=os.environ.get('APP_DEV_MODE')) -> Flask:
     """Create Flask app using application factory pattern."""
     app = Flask(__name__)
 

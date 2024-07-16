@@ -24,9 +24,8 @@ from wtforms_alchemy.fields import QuerySelectMultipleField
 from wtforms.validators import DataRequired
 
 
-from config import (ALLOWED_EXTENSIONS, basedir,
-                    FILE_BASE_PATH, FILE_REL_PATH,
-                    IMAGE_BASE_PATH, IMAGE_REL_PATHS,)
+from config import (basedir,
+                    FILE_BASE_PATH, FILE_REL_PATH)
 from mct_app import admin, cache, csrf, db
 from mct_app.administration.models import BannedIPs
 from mct_app.auth.models import (Answer, Consultation,
@@ -60,7 +59,7 @@ def upload(format='webp'):
     """Upload and save images as WEBP."""
     image = request.files.get('upload')
     extension = image.filename.split('.')[-1].lower()
-    if extension not in ALLOWED_EXTENSIONS:
+    if extension not in current_app.config.get('ALLOWED_EXTENSIONS'):
         return upload_fail(message='Это не изображение')
     unique_filename = str(uuid.uuid4())
     image.filename = unique_filename + '.' + format
@@ -198,7 +197,7 @@ class NewsView(AccessView):
         form_class.extra = CustomImageUploadField(
             'Загрузите картинку',
             validators=[DataRequired()],
-            base_path=IMAGE_BASE_PATH['news'],
+            base_path=FILE_BASE_PATH,
             namegen=generate_image_name,
             max_size=(300, 300, True),
             allow_overwrite=False,)
@@ -210,15 +209,15 @@ class NewsView(AccessView):
         if is_created:
             my_image = MyImage(
                 filename=filename,
-                absolute_path=os.path.join(IMAGE_BASE_PATH['news'], filename),
-                relative_path=os.path.join(IMAGE_REL_PATHS['news'], filename))
+                absolute_path=os.path.join(FILE_BASE_PATH, filename),
+                relative_path=os.path.join(FILE_REL_PATH, filename))
             model.image = my_image
         else:
             model.image.filename = filename
             model.image.absolute_path = os.path.join(
-                IMAGE_BASE_PATH['news'], filename)
+                FILE_BASE_PATH, filename)
             model.image.relative_path = os.path.join(
-                IMAGE_REL_PATHS['news'], filename)
+                FILE_REL_PATH, filename)
         cache.clear()
         super(NewsView, self).on_model_change(form, model, is_created)
 
@@ -273,7 +272,7 @@ class ArticleCardView(AccessView):
         form_class.card_image = CustomImageUploadField(
             'Загрузите картинку карточки',
             validators=[DataRequired()],
-            base_path=IMAGE_BASE_PATH['articles'],
+            base_path=FILE_BASE_PATH,
             namegen=generate_image_name,
             max_size=(300, 300, True),
             allow_overwrite=True,)
@@ -292,9 +291,9 @@ class ArticleCardView(AccessView):
             my_image = MyImage(
                 filename=filename,
                 absolute_path=os.path.join(
-                    IMAGE_BASE_PATH['articles'], filename),
+                    FILE_BASE_PATH, filename),
                 relative_path=os.path.join(
-                    IMAGE_REL_PATHS['articles'], filename))
+                    FILE_REL_PATH, filename))
             model.image = my_image
 
             # a new article inside the card
@@ -327,9 +326,9 @@ class ArticleCardView(AccessView):
             # change image of the current card
             model.image.filename = filename
             model.image.absolute_path = os.path.join(
-                IMAGE_BASE_PATH['articles'], filename)
+                FILE_BASE_PATH, filename)
             model.image.relative_path = os.path.join(
-                IMAGE_REL_PATHS['articles'], filename)
+                FILE_REL_PATH, filename)
 
             # take articlecard title to current article
             model.article.title = model.title

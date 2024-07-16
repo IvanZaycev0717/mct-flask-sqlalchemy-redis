@@ -3,7 +3,7 @@ from typing import Any
 from flask_migrate import Migrate
 
 from mct_app import create_app, db
-from config import CSV_FILE_PATHS
+from config import CSV_FILE_PATH
 from mct_app.auth.models import Role, User, UserRole
 from mct_app.site.models import Article, Image, News, TextbookParagraph
 
@@ -42,7 +42,7 @@ def recreate_search_indexes() -> None:
 
 def general_setup() -> None:
     """Generate roles and admin."""
-    Role.insert_roles(CSV_FILE_PATHS.get('roles'))
+    Role.insert_roles(CSV_FILE_PATH)
     User.create_admin()
     UserRole.create_admin_role()
 

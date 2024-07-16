@@ -3,7 +3,7 @@ from typing import Dict, List
 import uuid
 
 from flask import json
-from config import ALLOWED_RUS_SYMBOLS, BANNED_IP_FILE
+from config import ALLOWED_RUS_SYMBOLS, BANNED_IP_FILE_PATH
 from mct_app.site.models import ArticleCard
 from PIL import Image
 from werkzeug.datastructures import FileStorage
@@ -113,5 +113,5 @@ def get_month_in_russian(month: str) -> str:
 
 def save_banned_ip_file(banned_ip: str) -> None:
     """Write and overwrite banned IPs into JSON file."""
-    with open(BANNED_IP_FILE, 'w') as file:
+    with open(BANNED_IP_FILE_PATH, 'w') as file:
         json.dump(banned_ip, file)

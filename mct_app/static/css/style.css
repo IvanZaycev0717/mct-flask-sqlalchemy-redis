@@ -34,96 +34,106 @@
   margin-bottom: 10px;
 }
 
-/* line 28, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+@media (max-width: 1440px) {
+  /* line 28, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+  .navbar-expand-lg {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+  }
+}
+
+/* line 35, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .container__login-registration {
   margin-top: 1%;
   margin-bottom: 1%;
 }
 
-/* line 32, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 39, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .nav-item {
   margin-right: 5rem;
 }
 
-/* line 34, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 41, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .nav-item:last-child {
   margin-right: 0rem;
 }
 
-/* line 38, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 45, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .carousel-item img {
   height: 770px;
   object-fit: cover;
 }
 
-/* line 43, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 50, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .me-5 a {
   padding-left: 40px;
 }
 
-/* line 46, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 53, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .button-login-registratition {
   margin-right: 1%;
 }
 
-/* line 50, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 57, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .navbar-brand__header-img {
   filter: grayscale(100%);
   transition: filter 0.5s;
 }
 
-/* line 53, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 60, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .navbar-brand__header-img:hover {
   filter: grayscale(0%);
   animation: pulse 2s infinite alternate;
 }
 
-/* line 56, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 63, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .navbar-brand__footer-img {
   filter: grayscale(100%);
   transition: filter 0.5s;
 }
 
-/* line 59, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 66, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .navbar-brand__footer-img:hover {
   filter: grayscale(0%);
 }
 
-/* line 61, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 68, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .navbar-brand__login-img {
   filter: grayscale(100%);
   transition: filter 0.2s;
 }
 
-/* line 64, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 71, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .navbar-brand__login-img:hover {
   animation: pulse 2s infinite alternate;
   filter: grayscale(0%);
 }
 
-/* line 68, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 75, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .btn-articles {
   margin-bottom: 20px;
 }
 
-/* line 72, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 79, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .card-title {
   margin-bottom: 10px;
 }
 
-/* line 75, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 82, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .list-group {
   margin-left: 20px;
   margin-right: 10px;
   margin-bottom: 20px;
 }
 
-/* line 81, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 88, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .list-group-item:hover {
   font-weight: bold;
 }
 
-/* line 85, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 92, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .textbook-title {
   background-color: #ffcc00;
   padding: 20px;
@@ -132,80 +142,80 @@
   color: black;
 }
 
-/* line 92, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 99, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .profile-card {
   transition: transform 0.5s;
   transition: box-shadow 0.5s;
 }
 
-/* line 96, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 103, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .profile-card__yellow:hover {
   transform: scale(1.01);
   box-shadow: 0 0 10px #ff8a01;
 }
 
-/* line 100, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 107, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .profile-card__green:hover {
   transform: scale(1.01);
   box-shadow: 0 0 10px #23ff01;
 }
 
-/* line 104, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 111, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .profile-card__red:hover {
   transform: scale(1.01);
   box-shadow: 0 0 10px #ff0101;
 }
 
-/* line 108, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 115, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .progress-bar {
   color: black;
 }
 
-/* line 111, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 118, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .offcanvas-body > .card-body > .list-group > .article-bg {
   background-color: #ffcc00;
 }
 
-/* line 114, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 121, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .offcanvas-body > .card-body > .list-group > .article-bg {
   color: black;
 }
 
-/* line 117, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 124, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .accordion {
   padding-left: 20%;
   margin-right: 20%;
   margin-bottom: 20px;
 }
 
-/* line 122, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 129, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .error-card {
   margin: 50px 0px 50px 0px;
 }
 
-/* line 127, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 134, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .nav-item > a:hover {
   background-color: #ffcc00;
   color: black;
 }
 
-/* line 131, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 138, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .navbar-nav > .nav-item > .nav-link.active {
   background-color: #ffa600;
   color: black;
 }
 
-/* line 134, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 141, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .nav-paginate > .pagination > .page-item > .page-link {
   color: black;
 }
 
-/* line 136, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 143, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .nav-paginate > .pagination > .page-item > .page-link:hover {
   background-color: #ffcc00;
 }
 
-/* line 139, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 146, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .nav-paginate > .pagination > .page-item.active > .page-link {
   background-color: #ffcc00;
   color: black;
@@ -213,18 +223,18 @@
   border-color: #ffa600;
 }
 
-/* line 145, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 152, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .nav-paginate > .pagination > .page-item > .page-link {
   color: #ffcc00;
 }
 
-/* line 147, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 154, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .nav-paginate > .pagination > .page-item > .page-link:hover {
   color: black;
   background-color: #ffcc00;
 }
 
-/* line 151, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 158, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .nav-paginate > .pagination > .page-item.active > .page-link {
   background-color: #ffcc00;
   color: black;
@@ -232,12 +242,12 @@
   border-color: #ffa600;
 }
 
-/* line 159, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 166, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .carousel-item {
   position: relative;
 }
 
-/* line 163, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 170, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .content__first {
   position: absolute;
   max-width: 600px;
@@ -247,7 +257,7 @@
   font-size: 18px;
 }
 
-/* line 170, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 177, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .content__second {
   position: absolute;
   max-width: 700px;
@@ -256,7 +266,7 @@
   color: #ffa600;
 }
 
-/* line 176, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 183, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .content__third {
   position: absolute;
   max-width: 900px;
@@ -266,71 +276,71 @@
   font-size: 18px;
 }
 
-/* line 184, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 191, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .p-for-label {
   margin-bottom: 0px;
 }
 
-/* line 187, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 194, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .p-for-input-field {
   padding-bottom: 5%;
 }
 
-/* line 190, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 197, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .p-phone-special {
   padding-bottom: 20px;
 }
 
-/* line 193, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 200, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .card-header {
   background-color: #ffa600;
 }
 
-/* line 196, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 203, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .card-header {
   background-color: #17212c;
 }
 
-/* line 199, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 206, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .answer-card {
   background-color: #dcf8c6;
 }
 
-/* line 202, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 209, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .answer-card {
   background-color: #1a472a;
 }
 
-/* line 205, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 212, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .modal-header {
   background-color: #ffa600;
 }
 
-/* line 208, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 215, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .modal-header {
   color: black;
 }
 
-/* line 211, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 218, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .forgot-password {
   margin-top: 10px;
 }
 
-/* line 214, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 221, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .forgot-password-link {
   color: #1e00ff;
   text-decoration: none;
   font-weight: bold;
 }
 
-/* line 220, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 227, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .form-control:focus {
   background-color: #fffefb;
   border-color: #e89f18;
   box-shadow: 0 0 5px 0 	#ff8a01;
 }
 
-/* line 226, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 233, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .form-control:focus {
   color: white;
   background-color: #000000;
@@ -338,7 +348,7 @@
   box-shadow: 0 0 5px 0 	#ff8a01;
 }
 
-/* line 234, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 241, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .news-bg {
   border-color: #6fc7f9;
   transition: box-shadow 0.3s;
@@ -346,21 +356,21 @@
   background-image: linear-gradient(45deg, #f7fbfd, #feffff);
 }
 
-/* line 239, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 246, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .news-bg:hover {
   box-shadow: 0 0 10px #6fc7f9;
   z-index: 1;
   transform: scale(1.02);
 }
 
-/* line 244, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 251, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .news-bg {
   border-color: transparent;
   color: white;
   background-image: linear-gradient(225deg, #251f21, #232e3e);
 }
 
-/* line 249, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 256, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .arcticles-bg {
   border-color: transparent;
   transition: box-shadow 0.3s;
@@ -369,26 +379,26 @@
   background-image: linear-gradient(45deg, #fcfcfa 0%, #ffedcb 100%);
 }
 
-/* line 255, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 262, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .arcticles-bg:hover {
   box-shadow: 0 0 10px #ffa600;
   z-index: 1;
   transform: scale(1.02);
 }
 
-/* line 261, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 268, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .arcticles-bg {
   border-color: transparent;
   background-image: linear-gradient(50deg, #311d05 0%, #232e3e 100%);
 }
 
-/* line 265, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 272, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .article-card {
   width: 80%;
   text-align: justify;
 }
 
-/* line 268, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 275, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .article-card h2 {
   font-size: 36px;
   font-weight: bold;
@@ -397,7 +407,7 @@
   text-transform: uppercase;
 }
 
-/* line 275, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 282, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .article-card p img {
   width: 50%;
   overflow: auto;
@@ -411,12 +421,12 @@
   margin: 0 auto;
 }
 
-/* line 286, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 293, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .article-card p img:hover {
   transform: scale(1.02);
 }
 
-/* line 289, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 296, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .popup-image {
   position: fixed;
   top: 0;
@@ -428,7 +438,7 @@
   display: none;
 }
 
-/* line 298, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 305, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .popup-image span {
   position: absolute;
   top: 0;
@@ -440,7 +450,7 @@
   z-index: 100;
 }
 
-/* line 307, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 314, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .popup-image img {
   position: absolute;
   overflow: auto;
@@ -455,13 +465,13 @@
   object-fit: cover;
 }
 
-/* line 320, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 327, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .article-buttons {
   padding-top: 20px;
   margin-bottom: 20px;
 }
 
-/* line 324, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 331, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .tooltip-text {
   visibility: hidden;
   position: absolute;
@@ -474,35 +484,35 @@
   padding: 10px 15px 10px 15px;
 }
 
-/* line 335, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 342, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .accordion {
   padding-top: 3%;
   margin-bottom: 3%;
 }
 
-/* line 339, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 346, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .accordion > .accordion-item > .accordion-header > .accordion-button {
   background-image: linear-gradient(45deg, #FAD961 0%, #ffa600 100%);
 }
 
-/* line 342, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 349, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .accordion > .accordion-item > .accordion-header > .accordion-button {
   background-image: linear-gradient(-45deg, #241034 0%, #0e0515 100%);
   color: white;
 }
 
-/* line 346, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 353, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .contact-card {
   border-color: transparent;
 }
 
-/* line 349, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 356, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .button-pos {
   margin-top: 5%;
   margin-bottom: 10%;
 }
 
-/* line 353, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 360, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .pulse {
   animation: pulse 2s infinite;
 }
@@ -519,45 +529,45 @@
   }
 }
 
-/* line 364, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 371, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .progress {
   height: 50px;
   font-size: 18px;
   font-weight: bold;
 }
 
-/* line 369, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 376, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .diary-card {
   background-image: url("/static/img/diary-texture.webp");
   font-weight: bold;
 }
 
-/* line 373, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 380, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .diary-card {
   background-image: none;
   background-color: black;
   color: white;
 }
 
-/* line 378, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 385, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .recommendation-card {
   padding: 10px 10px 10px 10px;
   background-color: rgba(252, 252, 214, 0.801);
   border-radius: 10px;
 }
 
-/* line 382, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 389, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 .recommendation-card a {
   text-align: center;
 }
 
-/* line 385, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+/* line 392, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
 [data-bs-theme=dark] .recommendation-card {
   background-color: #28172f;
 }
 
 @media (max-width: 768px) {
-  /* line 390, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+  /* line 397, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
   .popup-image img {
     width: 95%;
   }

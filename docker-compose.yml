@@ -15,7 +15,6 @@ services:
     restart: always
     volumes:
       - app_files:/app/mct_app/files
-      - app_uploads:/app/mct_app/static/uploads
       - logs:/app/logs
       - migrations:/app/migrations
       - banned_ip:/app/banned_ip
@@ -81,7 +80,6 @@ services:
 volumes:
   postgres_data:
   app_files:
-  app_uploads:
   logs:
   pgadmin_data:
   migrations:

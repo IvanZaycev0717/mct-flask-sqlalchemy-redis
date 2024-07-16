@@ -3,35 +3,14 @@ from enum import Enum, IntEnum, StrEnum
 
 # Constants
 ALLOWED_RUS_SYMBOLS = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя -'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 # Paths
 basedir = os.path.abspath(os.path.dirname(__file__))
-CSV_FILE_PATHS = {
-    'roles': os.path.join(basedir, 'csv', 'roles.csv'),
-}
+CSV_FILE_PATH = os.path.join(basedir, 'csv', 'roles.csv')
 FILE_BASE_PATH = os.path.join(basedir, 'mct_app', 'files')
 FILE_REL_PATH = os.path.join('..', '..', '..', 'files')
-IMAGE_BASE_PATH = {
-    'news': os.path.join(
-        basedir, 'mct_app', 'static', 'uploads', 'news'),
-    'articles': os.path.join(
-        basedir, 'mct_app', 'static', 'uploads', 'articles'),
-    'textbook': os.path.join(
-        basedir, 'mct_app', 'static', 'uploads', 'textbook'),
-}
-IMAGE_REL_PATHS = {
-    'news': os.path.join(
-        '..', '..', '..', 'static', 'uploads', 'news'),
-    'articles': os.path.join(
-        '..', '..', '..', 'static', 'uploads', 'articles'),
-    'textbook': os.path.join(
-        '..', '..', '..', 'static', 'uploads', 'textbook'),
-}
-
-TEST_DB_PATH = os.path.join(basedir, 'instance', 'pytest.db')
-LOGS_DIR = os.path.join(basedir, 'logs')
-BANNED_IP_FILE = os.path.join(basedir, 'banned_ip', 'banned_ip.json')
+LOGS_DIR_PATH = os.path.join(basedir, 'logs')
+BANNED_IP_FILE_PATH = os.path.join(basedir, 'banned_ip', 'banned_ip.json')
 
 # Links
 SOICAL_MEDIA_LINKS = {
@@ -89,7 +68,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Banned IP path
-    BANNED_IP_PATH = BANNED_IP_FILE
+    BANNED_IP_PATH = BANNED_IP_FILE_PATH
 
     # Mail
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
@@ -99,13 +78,11 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
 
-    # Admin panel apperance
+    # Admin panel appearance
     FLASK_ADMIN_SWATCH = os.environ.get('FLASK_ADMIN_SWATCH')
 
     # Uploads
-    UPLOAD_FOLDER = os.path.join(
-        basedir, 'mct_app', 'static', 'uploads', 'news')
-    ALLOWED_EXTENSIONS = ALLOWED_EXTENSIONS
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
     # Ckeditor
     CKEDITOR_SERVE_LOCAL = True
@@ -113,7 +90,7 @@ class Config:
     CKEDITOR_ENABLE_CSRF = True
     CKEDITOR_HEIGHT = 720
 
-    # reCaptcha
+    # Google reCaptcha
     GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY')
     GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY')
 
@@ -125,7 +102,7 @@ class Config:
     LOG_LEVEL = 'WARNING'
 
     # File Logging Setup
-    LOG_DIR = LOGS_DIR
+    LOG_DIR = LOGS_DIR_PATH
     APP_LOG_NAME = 'app.log'
     WWW_LOG_NAME = 'www.log'
     LOG_MAX_BYTES = 100_000_000
