@@ -35,7 +35,7 @@
 :green_book: Redis (cache server, message broker)  
 :green_book: Celery  
 :green_book: Pytest  
-:green_book: Google OAuth 2.0  
+:green_book: OAuth 2.0 (Google, VK, Одноклассники, Яндекс, Telegram)  
 :green_book: Google reCAPTCHA  
 :green_book: Poetry  
 :green_book: Логирование  
@@ -118,7 +118,7 @@ cd <путь к директории с проектом>
 5. **Откройте файл .env и измените электронную почту администратора на свою:**
 ```
 # Secrets
-ADMIN_EMAIL='your-email-address@you-domain.com'
+ADMIN_EMAIL=your-email-address@you-domain.com
 ```
 **Сохраните этот файл**    
 
