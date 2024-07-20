@@ -58,7 +58,14 @@ def create_app(mode=os.environ.get('APP_DEV_MODE')) -> Flask:
             broker_url=os.environ.get('BROKER_URL'),
             result_backend=os.environ.get('RESULT_BACKEND'),
             task_ignore_results=True,
-            broker_connection_retry_on_startup=True
+            broker_connection_retry_on_startup=True,
+            broker_transport_options={
+                'visibility_timeout': 3600,
+                'fanout_prefix': True,
+                'fanout_patterns': True,
+                'max_connections': 1,
+                'password': os.environ.get('REDIS_PASSWORD')
+            }
         ),
     )
     # Jinja2 filters

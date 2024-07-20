@@ -94,6 +94,9 @@ class Config:
     GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY')
     GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY')
 
+    # Redis Setup
+    REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
+
     # Elasticsearch setup
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 

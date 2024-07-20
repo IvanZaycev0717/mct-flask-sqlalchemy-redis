@@ -120,6 +120,14 @@ cd <путь к директории с проектом>
 # Secrets
 ADMIN_EMAIL=your-email-address@you-domain.com
 ```
+**Далее, если требуется, установите свои параметры конфигурации Redis**
+```
+# Redis setup
+BROKER_URL=redis://redis:6379
+RESULT_BACKEND=redis://redis:6379
+REDIS_URL=redis://redis:6379
+REDIS_PASSWORD=your_redis_password
+```
 **Сохраните этот файл**    
 
 6. **Выполнитете команду создания и запуска контейнеров в фоновом режиме**
