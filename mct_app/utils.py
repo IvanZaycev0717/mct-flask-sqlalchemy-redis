@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List
+from typing import Dict, List, Literal
 import uuid
 
 from flask import json
@@ -37,7 +37,10 @@ def generate_image_name(obj=None, file_data=None) -> str:
     return secure_filename(f"image_{image_suffix}")
 
 
-def get_articles_by_months(article_cards: List[ArticleCard]) -> dict[str, str]:
+def create_articles_dictionary_by_month(article_cards: List[ArticleCard]
+                                        ) -> dict[str,
+                                                  dict[Literal['title'],
+                                                       Literal['article_id']]]:
     """Create a dictionary of articles by month and year."""
     acticles_by_month = {}
     for time, article_id, title in article_cards:

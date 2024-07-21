@@ -26,7 +26,7 @@ from mct_app.site.forms import (AnswerForm, ConsultationForm,
 from mct_app.site.models import (Article, ArticleCard,
                                  News, TextbookChapter,
                                  TextbookParagraph)
-from mct_app.utils import get_articles_by_months
+from mct_app.utils import create_articles_dictionary_by_month
 
 
 GOOGLE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
@@ -89,7 +89,7 @@ def create_articles_list():
         ArticleCard.last_update,
         ArticleCard.article_id,
         ArticleCard.title).order_by(ArticleCard.last_update.desc()).all()
-    return get_articles_by_months(articles_by_month_list)
+    return create_articles_dictionary_by_month(articles_by_month_list)
 
 
 @site.route('/')
