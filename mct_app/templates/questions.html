@@ -32,8 +32,7 @@
 
 {% block scripts %}
 {{ super() }}
-
-<script src="https://www.google.com/recaptcha/api.js"></script>
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
 <script>
   function onSubmit(token) {
     document.getElementById("question-form").submit();
