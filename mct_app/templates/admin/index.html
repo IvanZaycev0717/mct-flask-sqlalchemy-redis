@@ -10,7 +10,7 @@
   {{ super() }}
   <h1 class="text-center">Админ панель</h1>
   <div class="container-fluid article-card text-center">
-    <img src="../../static/er/er.png" alt="">
+    <img src="{{ url_for('static', filename='er/er.png') }}" alt="">
   </div>
 {% endblock %}
 
