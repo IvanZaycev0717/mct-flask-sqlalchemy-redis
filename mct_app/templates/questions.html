@@ -3,7 +3,7 @@
 {% block content %}
 {% include 'forms/ask_question.html' %}
 
-{% for question in questions %}
+{% for question in data['questions'] %}
   <br>
   <div class="container d-flex justify-content-center">
     <div class="card" style="width: 70%;">

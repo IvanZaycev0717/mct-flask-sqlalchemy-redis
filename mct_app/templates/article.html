@@ -3,14 +3,14 @@
 {% block content %}
     {% include 'articles_list.html' %}
     <div class="container-fluid article-card">
-        <h2>{{ article.title }}</h2>
-        {{ article.body|safe }}
+        <h2>{{ data['article'].title }}</h2>
+        {{ data['article'].body|safe }}
         <div class="article-buttons text-center">
             <hr>
             <a class="btn btn-primary btn-lg" href="#" role="button">⬆️ Вверх</a>
             {% if current_user.is_authenticated %}
                 <a id="readButton" class="btn {% if not has_read %}btn-success{% else %}btn-danger{% endif %} btn-lg" role="button" onclick="toggleButton()">
-                    {% if not has_read %} ✅ Отметить как прочитанное {% else %} ❌ Отметить как непрочитанное {% endif %}
+                    {% if not data['has_read'] %} ✅ Отметить как прочитанное {% else %} ❌ Отметить как непрочитанное {% endif %}
                 </a>
             {% endif %}
             <a class="btn btn-warning btn-lg" href="{{ url_for('site.articles') }}" role="button">📒 К статьям</a>
@@ -52,7 +52,7 @@
                 }
                 formData.append('has_read', newState);
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST', '/articles/{{ article.id }}', true);
+                xhr.open('POST', '/articles/{{ data['article'].id }}', true);
                 xhr.setRequestHeader('X-CSRFToken', csrf_token);
                 xhr.onreadystatechange = function (e) {
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {

@@ -8,14 +8,14 @@
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-      {% for month_year, article_list in articles_by_month.items() %}
+      {% for month_year, article_list in data['articles_by_month'].items() %}
         <div class="card-body">
           <h5 class="card-title">{{ month_year }}</h5>
           <div class="list-group">
             {% for article_title, article_id in article_list.items() %}
-              <a href="{{ url_for('site.article', article_id=article_id) }}" class="list-group-item list-group-item-action {% if article.id == article_id%}disabled article-bg{% endif %}" aria-current="true">
-                {% if statisticts_dict %}
-                  {% if statisticts_dict[article_id|string] %}
+              <a href="{{ url_for('site.article', article_id=article_id) }}" class="list-group-item list-group-item-action {% if data['article'].id == article_id%}disabled article-bg{% endif %}" aria-current="true">
+                {% if data['statisticts_dict'] %}
+                  {% if data['statisticts_dict'][article_id|string] %}
                   ✅ {{ article_title }}
                   {% else %}
                    {{ article_title }}

@@ -147,14 +147,15 @@ def news():
     next_url = url_for('site.news', page=news.next_num) if news.has_next else None
     prev_url = url_for('site.news', page=news.prev_num) if news.has_prev else None
     current_site = 'site.news'
-    return render_template(
-        'news.html',
-        news=news.items,
-        next_url=next_url,
-        prev_url=prev_url,
-        pages_amount=pages_amount,
-        active_page=active_page,
-        current_site=current_site)
+    
+    data = {'news': news.items,
+            'next_url': next_url,
+            'prev_url': prev_url,
+            'pages_amount': pages_amount,
+            'active_page': active_page,
+            'current_site': current_site}
+
+    return render_template('news.html', data=data)
 
 
 @site.route('/articles')
@@ -179,14 +180,15 @@ def articles():
         'site.articles',
         page=articles.prev_num) if articles.has_prev else None
     current_site = 'site.articles'
-    articles_by_month = create_articles_list()
-    return render_template(
-        'articles.html',
-        articles=articles.items,
-        next_url=next_url, prev_url=prev_url,
-        pages_amount=pages_amount, active_page=active_page,
-        current_site=current_site,
-        articles_by_month=articles_by_month)
+
+    data = {'articles': articles.items,
+            'next_url': next_url,
+            'prev_url': prev_url,
+            'pages_amount': pages_amount,
+            'active_page': active_page,
+            'current_site': current_site}
+
+    return render_template('articles.html', data=data)
 
 
 @site.route('/articles/<article_id>', methods=['GET', 'POST'])
@@ -205,12 +207,13 @@ def article(article_id, has_read=False, statisticts_dict=None):
             db.session.commit()
     articles_by_month = create_articles_list()
     article = Article.query.filter_by(id=article_id).first()
-    return render_template(
-        'article.html',
-        article=article,
-        articles_by_month=articles_by_month,
-        has_read=has_read,
-        statisticts_dict=statisticts_dict)
+
+    data = {'article': article,
+            'articles_by_month': articles_by_month,
+            'has_read': has_read,
+            'statisticts_dict': statisticts_dict}
+
+    return render_template('article.html', data=data)
 
 
 @site.route('/textbook')
@@ -253,13 +256,14 @@ def textbook_paragraph(paragraph, has_read=None):
                 statisticts_dict)
             cache.clear()
             db.session.commit()
-    return render_template(
-        'paragraph.html',
-        paragraph=paragraph,
-        paragraphs=paragraphs,
-        prev_index=prev_index,
-        next_index=next_index,
-        has_read=has_read)
+    
+    data = {'paragraph': paragraph,
+            'paragraphs': paragraphs,
+            'prev_index': prev_index,
+            'next_index': next_index,
+            'has_read': has_read}
+
+    return render_template('paragraph.html', data=data)
 
 
 @site.route('/questions', methods=['GET', 'POST'])
@@ -300,16 +304,17 @@ def questions():
     prev_url = url_for(
         'site.questions',
         page=questions.prev_num) if questions.has_prev else None
-    return render_template(
-        'questions.html',
-        form=form,
-        site_key=site_key,
-        current_site=current_site,
-        questions=questions.items,
-        next_url=next_url,
-        prev_url=prev_url,
-        pages_amount=pages_amount,
-        active_page=active_page)
+    
+    data = {'form': form,
+            'site_key': site_key,
+            'current_site': current_site,
+            'questions': questions.items,
+            'next_url': next_url,
+            'prev_url': prev_url,
+            'pages_amount': pages_amount,
+            'active_page': active_page}
+
+    return render_template('questions.html', data=data)
 
 
 @site.route('/questions/<question_id>', methods=['GET', 'POST'])

@@ -15,23 +15,23 @@
         </div>
         <div class="modal-body">
           <form method="post" id="question-form" novalidate>
-            {{ form.hidden_tag() }}
+            {{ data['form'].hidden_tag() }}
             <div class="mb-3">
               {% if current_user.is_authenticated %}
                 <label for="exampleFormControlInput1" class="form-label"><stong>Уважаемый, {{ current_user.username }}</stong></label>
               {% else %}
-                <p class="p-for-label"><strong>{{ form.anon_name.label }}</strong></p>
-                <p class="p-for-input-field">{{ form.anon_name(class="form-control") }}
-                  {% for error in form.anon_name.errors %}
+                <p class="p-for-label"><strong>{{ data['form'].anon_name.label }}</strong></p>
+                <p class="p-for-input-field">{{ data['form'].anon_name(class="form-control") }}
+                  {% for error in data['form'].anon_name.errors %}
                     <span class="validation-error" style="color: red;">{{ error }}</span>
                   {% endfor %}
                 </p>
               {% endif %}
             </div>
             <div class="mb-3">
-              <p class="p-for-label"><strong>{{ form.body.label }}</strong></p>
-                <p class="p-for-input-field">{{ form.body(class="form-control") }}
-                  {% for error in form.body.errors %}
+              <p class="p-for-label"><strong>{{ data['form'].body.label }}</strong></p>
+                <p class="p-for-input-field">{{ data['form'].body(class="form-control") }}
+                  {% for error in data['form'].body.errors %}
                     <span class="validation-error" style="color: red;">{{ error }}</span>
                   {% endfor %}
                 </p>
@@ -39,7 +39,7 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
               <button class="g-recaptcha btn btn-warning"
-                data-sitekey={{ site_key }}
+                data-sitekey={{ data['site_key'] }}
                 data-callback='onSubmit'
                 data-action='submit'>Задать вопрос</button>
             </div>

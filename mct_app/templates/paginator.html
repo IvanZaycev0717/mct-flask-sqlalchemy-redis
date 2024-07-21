@@ -1,7 +1,7 @@
 <div class="container d-flex justify-content-center">
     <nav aria-label="..." class="nav-paginate">
       <ul class="pagination">
-        {% if prev_url %}
+        {% if data['prev_url'] %}
           <li class="page-item">
             <a class="page-link" href="{{ prev_url }}">Назад</a>
           </li>
@@ -10,18 +10,18 @@
             <a class="page-link">Назад</a>
           </li>
         {% endif %}
-        {% if pages_amount > 10 %}
-          {% if active_page <= 10 %}
+        {% if data['pages_amount'] > 10 %}
+          {% if data['active_page'] <= 10 %}
             {% for page_num in range(1, 11) %}
-              {% if page_num == active_page %}
+              {% if page_num == data['active_page'] %}
                 <li class="page-item active"><a class="page-link">{{ page_num }}</a></li>
               {% else %}
                 <li class="page-item"><a class="page-link" href="{{ url_for(current_site, page=page_num) }}">{{ page_num }}</a></li>
               {% endif %}
             {% endfor %}
           {% else %}
-            {% for page_num in range(active_page - 9, active_page + 1) %}
-              {% if page_num == active_page %}
+            {% for page_num in range(data['active_page'] - 9, data['active_page'] + 1) %}
+              {% if page_num == data['active_page'] %}
                 <li class="page-item active"><a class="page-link">{{ page_num }}</a></li>
               {% else %}
                 <li class="page-item"><a class="page-link" href="{{ url_for(current_site, page=page_num) }}">{{ page_num }}</a></li>
@@ -29,8 +29,8 @@
             {% endfor %}
           {% endif %}
         {% else %}
-          {% for page_num in range(1, pages_amount + 1) %}
-            {% if page_num == active_page %}
+          {% for page_num in range(1, data['pages_amount'] + 1) %}
+            {% if page_num == data['active_page'] %}
               <li class="page-item active"><a class="page-link">{{ page_num }}</a></li>
             {% else %}
               <li class="page-item"><a class="page-link" href="{{ url_for(current_site, page=page_num) }}">{{ page_num }}</a></li>

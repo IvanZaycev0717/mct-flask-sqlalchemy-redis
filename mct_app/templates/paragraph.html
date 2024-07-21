@@ -2,25 +2,25 @@
 
 {% block content %}
     <div class="container-fluid article-card">
-        <h2>{{ paragraph.name }}</h2>
-        {{ paragraph.content|safe }}
+        <h2>{{ data['paragraph'].name }}</h2>
+        {{ data['paragraph'].content|safe }}
         <hr>
         <div class="article-buttons text-center d-flex justify-content-between">
             <div>
-                {% if prev_index is not none %}
-                    <a class="btn btn-warning btn-lg" href="{{ url_for('site.textbook_paragraph', paragraph=paragraphs[prev_index].name) }}" role="button">⬅️ К прошлому параграфу</a>
+                {% if data['prev_index'] is not none %}
+                    <a class="btn btn-warning btn-lg" href="{{ url_for('site.textbook_paragraph', paragraph=data['paragraphs'][data['prev_index']].name) }}" role="button">⬅️ К прошлому параграфу</a>
                 {% else %}
                     <a class="btn btn-secondary btn-lg disabled" href="" role="button">К прошлому параграфу</a>
                 {% endif %}
                 <a class="btn btn-primary btn-lg" href="#" role="button">⬆️ Вверх</a>
-                {% if next_index is not none %}
-                    <a class="btn btn-warning btn-lg" href="{{ url_for('site.textbook_paragraph', paragraph=paragraphs[next_index].name) }}" role="button">➡️ К следующему параграфу</a>
+                {% if data['next_index'] is not none %}
+                    <a class="btn btn-warning btn-lg" href="{{ url_for('site.textbook_paragraph', paragraph=data['paragraphs'][data['next_index']].name) }}" role="button">➡️ К следующему параграфу</a>
                 {% else %}
                     <a class="btn btn-secondary btn-lg disabled" href="" role="button">К следующему параграфу</a>
                 {% endif %}
                 {% if current_user.is_authenticated %}
-                <a id="readButton" class="btn {% if not has_read %}btn-success{% else %}btn-danger{% endif %} btn-lg" role="button" onclick="toggleButton()">
-                    {% if not has_read %} 📗 Отметить как изученное {% else %} 🧧 Отметить как неизученное {% endif %}
+                <a id="readButton" class="btn {% if not data['has_read'] %}btn-success{% else %}btn-danger{% endif %} btn-lg" role="button" onclick="toggleButton()">
+                    {% if not data['has_read'] %} 📗 Отметить как изученное {% else %} 🧧 Отметить как неизученное {% endif %}
                 </a>
                 {% endif %}
             </div>
@@ -66,7 +66,7 @@
 
             formData.append('has_read', newState);
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', '/textbook/{{ paragraph.name }}', true);
+            xhr.open('POST', '/textbook/{{ data['paragraph'].name }}', true);
             xhr.setRequestHeader('X-CSRFToken', csrf_token);
             xhr.onreadystatechange = function (e) {
                 if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
