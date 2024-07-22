@@ -182,15 +182,19 @@ def user_diary(username):
         'auth.user_diary',
         username=current_user.username, page=diary_records.prev_num) \
         if diary_records.has_prev else None
-    return render_template('profile/diary.html',
-                           form=form,
-                           current_site=current_site,
-                           diary_records=diary_records.items,
-                           next_url=next_url, prev_url=prev_url,
-                           pages_amount=pages_amount,
-                           active_page=active_page,
-                           edit_mode=False
-                           )
+    
+    data = {
+        'form': form,
+        'current_site': current_site,
+        'diary_records': diary_records.items,
+        'next_url': next_url,
+        'prev_url': prev_url,
+        'pages_amount': pages_amount,
+        'active_page': active_page,
+        'edit_mode': False,
+        'diary_username': username}
+
+    return render_template('profile/diary.html', data=data)
 
 
 @auth.route('/profile/<username>/patient_list', methods=['GET'])

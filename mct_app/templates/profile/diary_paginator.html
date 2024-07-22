@@ -2,45 +2,45 @@
 <div class="container d-flex justify-content-center">
     <nav aria-label="..." class="nav-paginate">
       <ul class="pagination">
-        {% if prev_url %}
+        {% if data['prev_url'] %}
           <li class="page-item">
-            <a class="page-link" href="{{ prev_url }}">Назад</a>
+            <a class="page-link" href="{{ data['prev_url'] }}">Назад</a>
           </li>
         {% else %}
           <li class="page-item disabled">
             <a class="page-link">Назад</a>
           </li>
         {% endif %}
-        {% if pages_amount > 10 %}
-          {% if active_page <= 10 %}
+        {% if data['pages_amount'] > 10 %}
+          {% if data['active_page'] <= 10 %}
             {% for page_num in range(1, 11) %}
               {% if page_num == active_page %}
                 <li class="page-item active"><a class="page-link">{{ page_num }}</a></li>
               {% else %}
-                <li class="page-item"><a class="page-link" href="{{ url_for(current_site, username=current_user.username, page=page_num) }}">{{ page_num }}</a></li>
+                <li class="page-item"><a class="page-link" href="{{ url_for(data['current_site'], username=data['diary_username'].username, page=page_num) }}">{{ page_num }}</a></li>
               {% endif %}
             {% endfor %}
           {% else %}
-            {% for page_num in range(active_page - 9, active_page + 1) %}
-              {% if page_num == active_page %}
+            {% for page_num in range(data['active_page'] - 9, data['active_page'] + 1) %}
+              {% if page_num == data['active_page'] %}
                 <li class="page-item active"><a class="page-link">{{ page_num }}</a></li>
               {% else %}
-                <li class="page-item"><a class="page-link" href="{{ url_for(current_site, username=current_user.username, page=page_num) }}">{{ page_num }}</a></li>
+                <li class="page-item"><a class="page-link" href="{{ url_for(data['current_site'], username=data['diary_username'].username, page=page_num) }}">{{ page_num }}</a></li>
               {% endif %}
             {% endfor %}
           {% endif %}
         {% else %}
-          {% for page_num in range(1, pages_amount + 1) %}
-            {% if page_num == active_page %}
+          {% for page_num in range(1, data['pages_amount'] + 1) %}
+            {% if page_num == data['active_page'] %}
               <li class="page-item active"><a class="page-link">{{ page_num }}</a></li>
             {% else %}
-              <li class="page-item"><a class="page-link" href="{{ url_for(current_site, username=current_user.username, page=page_num) }}">{{ page_num }}</a></li>
+              <li class="page-item"><a class="page-link" href="{{ url_for(data['current_site'], username=data['diary_username'].username, page=page_num) }}">{{ page_num }}</a></li>
             {% endif %}
           {% endfor %}
         {% endif %}
-        {% if next_url %}
+        {% if data['next_url'] %}
           <li class="page-item">
-            <a class="page-link" href="{{ next_url }}">Далее</a>
+            <a class="page-link" href="{{ data['next_url'] }}">Далее</a>
           </li>
         {% else %}
           <li class="page-item disabled">

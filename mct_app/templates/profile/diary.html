@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% include 'forms/new_diary.html'%}
-{% if edit_mode %}
+{% if data['edit_mode'] %}
 {% include 'forms/edit_diary.html'%}
 {% endif %}
 
@@ -13,7 +13,7 @@
             <img src="{{ url_for('static', filename='img/writing.webp') }}" class="card-img-top pulse" alt="..." style="width: 10%; margin: auto;">
           </div>
           <div class="d-flex justify-content-between">
-            {% if not edit_mode %}
+            {% if not data['edit_mode'] %}
               <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#newdiaryModal">
                 Новая запись
               </button>
@@ -21,8 +21,8 @@
             <a class="btn btn-secondary btn-lg" href="{{ url_for('auth.profile', username=current_user.username) }}" role="button">Назад</a>
           </div>
           <br>
-        {% if diary_records %}
-          {% for record in diary_records %}
+        {% if data['diary_records'] %}
+          {% for record in data['diary_records'] %}
             <div class="card">
               <div class="card-body diary-card">
                 <h5 class="card-title">Настроение: {{ record.mood.value }}</h5>
@@ -69,7 +69,7 @@
         }
     });
   </script>
-  {% if edit_mode %}
+  {% if data['edit_mode'] %}
   <script>
     const editdiaryModal = bootstrap.Modal.getOrCreateInstance('#editdiaryModal');
     document.addEventListener('DOMContentLoaded', function() {

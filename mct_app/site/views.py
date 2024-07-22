@@ -144,9 +144,9 @@ def news():
         error_out=False)
     pages_amount = news.pages
     active_page = news.page
-    next_url = url_for('site.news', page=news.next_num) if news.has_next else None
-    prev_url = url_for('site.news', page=news.prev_num) if news.has_prev else None
     current_site = 'site.news'
+    next_url = url_for(current_site, page=news.next_num) if news.has_next else None
+    prev_url = url_for(current_site, page=news.prev_num) if news.has_prev else None
     
     data = {'news': news.items,
             'next_url': next_url,

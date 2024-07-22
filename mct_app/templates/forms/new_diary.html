@@ -8,25 +8,25 @@
         </div>
         <div class="modal-body">
           <form method="post" id="question-form" novalidate>
-            {{ form.hidden_tag() }}
+            {{ data['form'].hidden_tag() }}
             <div class="mb-3">
-                <p class="p-for-label"><strong>{{ form.mood.label }}</strong>{{ form.mood(class="btn dropdown-toggle") }}</p>
-                  {% for error in form.mood.errors %}
+                <p class="p-for-label"><strong>{{ data['form'].mood.label }}</strong>{{ data['form'].mood(class="btn dropdown-toggle") }}</p>
+                  {% for error in data['form'].mood.errors %}
                     <span class="validation-error" style="color: red;">{{ error }}</span>
                   {% endfor %}
                 </p>
             </div>
             <div class="mb-3">
-              <p class="p-for-label"><strong>{{ form.record.label }}</strong></p>
-                <p class="p-for-input-field">{{ form.record(class="form-control") }}
-                  {% for error in form.record.errors %}
+              <p class="p-for-label"><strong>{{ data['form'].record.label }}</strong></p>
+                <p class="p-for-input-field">{{ data['form'].record(class="form-control") }}
+                  {% for error in data['form'].record.errors %}
                     <span class="validation-error" style="color: red;">{{ error }}</span>
                   {% endfor %}
                 </p>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-              {{ form.submit(class="btn btn-warning", style="font-weight: bold;") }}
+              {{ data['form'].submit(class="btn btn-warning", style="font-weight: bold;") }}
             </div>
           </form>
         </div>

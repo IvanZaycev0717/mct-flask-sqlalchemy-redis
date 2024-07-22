@@ -4,7 +4,7 @@
     {% if links %}
         {% for diary_link, username in links %}
             <p style="text-align: center;">
-                <a href="{{diary_link }}">Дневник пользователя {{ username }}</a>
+                <a href="{{ diary_link }}">Дневник пользователя {{ username }}</a>
             </p>
         {% endfor %}
     {% endif %}
