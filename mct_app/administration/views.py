@@ -94,7 +94,7 @@ class UserView(AccessView):
     column_display_pk = True
     column_sortable_list = ['id', 'username', 'has_social_account']
     column_searchable_list = ['id', 'username', 'email', 'phone']
-    column_exclude_list = ['password_hash',]
+    column_exclude_list = ['password_hash', 'social_uid']
     form_excluded_columns = ['password_hash',]
 
     def scaffold_form(self):

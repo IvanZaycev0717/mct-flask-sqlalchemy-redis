@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 83b03ffae1cc
+Revision ID: 95305370a8c5
 Revises: 
-Create Date: 2024-07-09 22:21:10.961822
+Create Date: 2024-07-22 21:39:43.673940
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '83b03ffae1cc'
+revision = '95305370a8c5'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('banned_ips',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('banned_ip', sa.String(length=15), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_banned_ips'))
     )
     # ### end Alembic commands ###
 

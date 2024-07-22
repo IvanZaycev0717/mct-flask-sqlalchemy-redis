@@ -362,15 +362,18 @@ def google_callback():
         audience=os.environ.get('GOOGLE_CLIENT_ID'),
         clock_skew_in_seconds=10
     )
-    username = id_info.get("name")
-    email = id_info.get("email")
+    social_uid = str(id_info.get('sub'))
+    username = id_info.get('name')
+    email = id_info.get('email')
 
     if not email:
         email = get_random_email()
 
     registration_result = social_registration(
-        username, email,
-        SocialPlatform.GOOGLE)
+        name=username,
+        email=email,
+        social_platform=SocialPlatform.GOOGLE,
+        uid=social_uid)
 
     if not registration_result:
         current_app.logger.exception("Goggle enter FAIL")
@@ -413,15 +416,20 @@ def vk_callback():
         if user_info_response.status_code == HTTPStatus.OK:
             user_info = user_info_response.json()['response'][0]
             user_data = {
-                'id': user_info['id'],
+                'id': user_info.get('id'),
                 'first_name': user_info.get('first_name'),
                 'last_name': user_info.get('last_name'),
             }
+
             username = f'{user_data['first_name']} {user_data['last_name']}'
             email = get_random_email()
+            social_uid = str(user_data['id'])
+
             registration_result = social_registration(
-                username, email,
-                SocialPlatform.VK)
+                name=username,
+                email=email,
+                social_platform=SocialPlatform.VK,
+                uid=social_uid)
 
             if not registration_result:
                 current_app.logger.exception('VK enter FAIL')
@@ -462,16 +470,19 @@ def ok_callback():
         ok_response = requests.get(url, params=params)
         if ok_response.status_code == HTTPStatus.OK:
             ok_user_data = ok_response.json()
+
             username = ok_user_data.get('name')
             email = ok_user_data.get('email')
+            social_uid = str(ok_user_data.get('uid'))
 
             if not email:
                 email = get_random_email()
 
             registration_result = social_registration(
-                username,
-                email,
-                SocialPlatform.ODNOKLASSNIKI)
+                name=username,
+                email=email,
+                social_platform=SocialPlatform.ODNOKLASSNIKI,
+                uid=social_uid)
 
             if not registration_result:
                 current_app.logger.exception('OK enter FAIL')
@@ -512,22 +523,27 @@ def yandex_callback():
         data = response.json()
         if 'access_token' in data:
             user_info_url = 'https://login.yandex.ru/info'
-            headers = {'Authorization': f'OAuth {data["access_token"]}'}
+            headers = {'Authorization': f'OAuth {data['access_token']}'}
             user_info_response = requests.get(user_info_url, headers=headers)
             user_info = user_info_response.json()
-            username = user_info['login']
-            email = user_info['default_email']
+
+            username = user_info.get('login')
+            email = user_info.get('default_email')
+            social_uid = str(user_info.get('id'))
+            phone = user_info.get('default_phone').get('number')
 
             if not email:
                 email = get_random_email()
 
             registration_result = social_registration(
-                username,
-                email,
-                SocialPlatform.YANDEX)
+                name=username,
+                email=email,
+                social_platform=SocialPlatform.YANDEX,
+                uid=social_uid,
+                phone=phone)
 
             if not registration_result:
-                current_app.logger.exception("YANDEX enter FAIL")
+                current_app.logger.exception('YANDEX enter FAIL')
                 abort(500)
 
             return redirect(
@@ -542,7 +558,10 @@ def yandex_callback():
 @auth.route('/telegram-callback')
 def telegram_callback():
     """Reginster or sign in by means of Telegram Account."""
+
     username = request.args.get('username')
+    social_uid = str(request.args.get('id'))
+    email = get_random_email()
 
     if username:
         # check security
@@ -559,11 +578,12 @@ def telegram_callback():
             current_app.logger.exception('Telegram HASH problem')
             abort(403)
 
-        email = get_random_email()
+        
         registration_result = social_registration(
-            username,
-            email,
-            SocialPlatform.TELEGRAM)
+            name=username,
+            email=email,
+            social_platform=SocialPlatform.TELEGRAM,
+            uid=social_uid)
 
         if not registration_result:
             current_app.logger.exception('TELEGRAM response FAIL')
@@ -576,7 +596,7 @@ def telegram_callback():
         abort(500)
 
 
-def social_registration(name, email, social_platform):
+def social_registration(name, email, social_platform, uid, phone=None):
     """Sign in via social platform."""
     if current_user.is_authenticated:
         return redirect('/')
@@ -584,20 +604,22 @@ def social_registration(name, email, social_platform):
     name += social_platform
     user = db.session.scalar(select(User).where(User.username == name))
 
-    if user and user.has_social_account:
+    if user and user.has_social_account and user.social_uid == uid:
         login_user(user)
         _update_user_session(user)
         return user
-    elif user and not user.has_social_account:
-        current_app.logger.exception(
-            'User has no social account tries to enter')
-        abort(500)
+    elif user and user.has_social_account and user.social_uid != uid:
+        current_app.logger.error(
+            'User needs to register via another social media')
+        abort(451)
     else:
         user = User(
             username=name,
             password=str(uuid.uuid4()),
             email=email,
-            has_social_account=True)
+            has_social_account=True,
+            phone=phone,
+            social_uid=uid)
         db.session.add(user)
         db.session.commit()
 

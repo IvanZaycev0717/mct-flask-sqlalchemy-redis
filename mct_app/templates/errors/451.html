@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+  <div class="error-card text-center">
+      <div class="card-body">
+        <h2 class="card-title">Ошибка 451</h2>
+        <h6 class="card-text">Просим Вас зарегистрироваться через другую социальную сеть или через сайт.</h6>
+        <a href="{{ url_for('site.home') }}" class="btn btn-warning">На главную</a>
+      </div>
+  </div>
+</div>
+{% endblock %}

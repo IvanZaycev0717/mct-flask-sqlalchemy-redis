@@ -60,6 +60,13 @@ def access_denied(e):
     return render_template('errors/403.html'), 403
 
 
+@site.app_errorhandler(werkzeug.exceptions.UnavailableForLegalReasons)
+def unavailable_for_legal_reasons(e):
+    """Render 451 page - Unavailable For Legal Reasons."""
+    current_app.logger.error(f"There is 451 {e}")
+    return render_template('errors/451.html'), 451
+
+
 @site.app_errorhandler(werkzeug.exceptions.InternalServerError)
 def server_error(e):
     """Render 500 page - InternalServerError."""

@@ -35,6 +35,7 @@ class User(UserMixin, db.Model):
     email: Mapped[str] = mapped_column(String(120), nullable=False)
     phone: Mapped[str] = mapped_column(String(12), unique=True, nullable=True)
     has_social_account: Mapped[bool] = mapped_column(Boolean, default=False)
+    social_uid: Mapped[str] = mapped_column(String(255), nullable=True, unique=True, index=True)
 
     roles: Mapped[List['UserRole']] = relationship(
         back_populates='user',
