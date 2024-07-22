@@ -1,5 +1,6 @@
 {% if not edit_mode %}
 <div class="container d-flex justify-content-center">
+    {% if current_user.is_patient() %}
     <nav aria-label="..." class="nav-paginate">
       <ul class="pagination">
         {% if data['prev_url'] %}
@@ -49,5 +50,6 @@
         {% endif %}
       </ul>
     </nav>
+  {% endif %}
 </div>
 {% endif %}
