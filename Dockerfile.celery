@@ -16,6 +16,6 @@ COPY . ./
 
 RUN poetry install --without dev
 
-RUN chmod +x start_celery.sh
+RUN chmod u+x start_celery.sh
 
 ENTRYPOINT ["poetry", "run", "./start_celery.sh"]

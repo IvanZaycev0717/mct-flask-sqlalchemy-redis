@@ -16,7 +16,10 @@ COPY . ./
 
 RUN poetry install --without dev
 
+RUN chmod u+x start_app.sh
+
 EXPOSE 443
+
 
 ENTRYPOINT ["poetry", "run", "./start_app.sh"]
 
