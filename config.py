@@ -3,6 +3,7 @@ from enum import Enum, IntEnum, StrEnum
 
 # Constants
 ALLOWED_RUS_SYMBOLS = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя -'
+TIME_ZONE = 'Europe/Moscow'
 
 # Paths
 basedir = os.path.abspath(os.path.dirname(__file__))

@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 import json
 import logging
 import os
@@ -70,6 +71,7 @@ def create_app(mode=os.environ.get('APP_DEV_MODE')) -> Flask:
     )
     # Jinja2 filters
     app.jinja_env.filters['datetimefilter'] = datetimefilter
+    app.jinja_env.filters['removetagsfilter'] = removetagsfilter
 
     # Configure app to get a real IP of visitor
     app.wsgi_app = ProxyFix(
@@ -166,3 +168,10 @@ def datetimefilter(value, format='%d.%m.%Y в %H:%M'):
     value = utc.localize(value, is_dst=None).astimezone(pytz.utc)
     local_dt = value.astimezone(tz)
     return local_dt.strftime(format)
+
+
+def removetagsfilter(html_code, symbols=100):
+    """Show text without HTML tags."""
+    remove_tags = re.sub(r'<.*?>', '', html_code)
+    clean_text = re.sub(r'&\w+;', '', remove_tags)
+    return clean_text.strip()[:symbols]

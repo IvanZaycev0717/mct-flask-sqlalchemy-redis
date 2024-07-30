@@ -582,4 +582,10 @@
   }
 }
 
+/* line 409, ../../PETS/mct-flask-sqlalchemy-redis/mct_app/static/sass/style.sass */
+.error-center {
+  margin-top: 10%;
+  margin-bottom: 20%;
+}
+
 /*# sourceMappingURL=style.css.map */

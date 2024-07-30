@@ -19,7 +19,7 @@
                 <div class="card-body">
                 <h5 class="card-title">Глава учебника</h5>
                 <h6 class="card-title">{{ paragraph.name }}</h6>
-                <p class="card-text">{{paragraph.content[:100] }}...</p>
+                <p class="card-text">{{paragraph.content|removetagsfilter }}...</p>
                 <p class="card-text">
                     <a href="{{ url_for('site.textbook_paragraph', paragraph=paragraph.name, _external=true) }}">
                         Перейти к прочтению

@@ -150,7 +150,7 @@ def user_diary(username):
     form = NewDiaryForm()
     if form.validate_on_submit():
         diary_record = UserDiary(
-            date=datetime.now(tz=pytz.timezone('Europe/Moscow')),
+            date=datetime.now(),
             mood=Mood(form.mood.data).name,
             record=form.record.data,
             user_id=current_user.id
@@ -647,7 +647,7 @@ def social_registration(name, email, social_platform, uid, phone=None):
 
 def _create_user_session(user):
     user_sessions = UserSession(ip_address=request.remote_addr,
-                                last_activity=datetime.now(tz=pytz.timezone('Europe/Moscow')),
+                                last_activity=datetime.now(),
                                 user_id=user.id,
                                 attendance=1)
     db.session.add(user_sessions)
@@ -659,7 +659,7 @@ def _update_user_session(user):
     user_session = db.session.scalar(query)
     if user_session:
         user_session.ip_address = request.remote_addr
-        user_session.last_activity = datetime.now(tz=pytz.timezone('Europe/Moscow'))
+        user_session.last_activity = datetime.now()
         if not user_session.attendance:
             user_session.attendance = 1
         else:
