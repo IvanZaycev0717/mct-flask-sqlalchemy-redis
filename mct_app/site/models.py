@@ -66,7 +66,7 @@ class Image(db.Model):
     __tablename__ = 'image'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    filename: Mapped[str] = mapped_column(String)
+    filename: Mapped[str] = mapped_column(String(255))
     absolute_path: Mapped[str] = mapped_column(String(255))
     relative_path: Mapped[str] = mapped_column(String(255))
 

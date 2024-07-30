@@ -168,7 +168,7 @@ class Role(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(80), unique=True,
                                       nullable=False, index=True)
-    description: Mapped[str] = mapped_column(String, nullable=False)
+    description: Mapped[str] = mapped_column(String(255), nullable=False)
 
     users: Mapped[List['UserRole']] = relationship(back_populates='role')
 
@@ -210,7 +210,7 @@ class SocialAccount(db.Model):
     __tablename__ = 'social_account'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    platform: Mapped[str] = mapped_column(String, nullable=True)
+    platform: Mapped[str] = mapped_column(String(45), nullable=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'))
 
     user: Mapped['User'] = relationship(back_populates='social_account')
