@@ -17,7 +17,6 @@ import google.auth.transport.requests
 from google.oauth2 import id_token
 import kombu
 from pip._vendor import cachecontrol
-import pytz
 import requests
 from sqlalchemy import select
 
@@ -395,7 +394,7 @@ def vk_login():
 def vk_callback():
     """Fetch a response from VK."""
     code = request.args.get('code')
-    response = requests.get('https://oauth.vk.com/access_token', params={
+    response = requests.post('https://oauth.vk.com/access_token', params={
         'client_id': os.environ.get('SOCIAL_AUTH_VK_OAUTH2_KEY'),
         'client_secret': os.environ.get('SOCIAL_AUTH_VK_OAUTH2_SECRET'),
         'redirect_uri': os.environ.get('SOCIAL_AUTH_VK_REDIRECT'),
@@ -407,7 +406,7 @@ def vk_callback():
         access_token = data['access_token']
         user_id = data['user_id']
 
-        user_info_response = requests.get(
+        user_info_response = requests.post(
             'https://api.vk.com/method/users.get',
             params={
                 'access_token': access_token,
@@ -467,7 +466,7 @@ def ok_callback():
             'format': 'json'
         }
 
-        ok_response = requests.get(url, params=params)
+        ok_response = requests.post(url, params=params)
         if ok_response.status_code == HTTPStatus.OK:
             ok_user_data = ok_response.json()
 
@@ -524,7 +523,7 @@ def yandex_callback():
         if 'access_token' in data:
             user_info_url = 'https://login.yandex.ru/info'
             headers = {'Authorization': f'OAuth {data['access_token']}'}
-            user_info_response = requests.get(user_info_url, headers=headers)
+            user_info_response = requests.post(user_info_url, headers=headers)
             user_info = user_info_response.json()
 
             username = user_info.get('login')
