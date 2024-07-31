@@ -70,6 +70,7 @@
  Сайт        | Ссылка           | 
 | ------------- |:-------------:|
 | ![yandex](https://github.com/IvanZaycev0717/python_interview_assistant_rus/assets/111955306/df5ff781-7cdd-4be5-9359-113b3706324e)| [PDF-файл "Руководство по OAuth 2.0"](https://disk.yandex.ru/i/YGXCyFmgACyr5Q)|
+
 Также данное PDF-руководство доступно в корневой папке репозитория
 
 ## :lock: Защиты сайта
