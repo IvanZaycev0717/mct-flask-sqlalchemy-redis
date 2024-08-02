@@ -70,7 +70,7 @@
 В связи с тем, что авторизация через социальные сети Google, VK, Одноклассники, Яндекс и Telegram - это очень объёмная тема, я составил подробнейшее руководство по авторизации через эти сервисы. В данном руководстве я шаг за шагом объясняю, как реализовать OAuth 2.0, иллюстрируя каждый шаг.
  Сайт        | Ссылка           | 
 | ------------- |:-------------:|
-| ![yandex](https://github.com/IvanZaycev0717/python_interview_assistant_rus/assets/111955306/df5ff781-7cdd-4be5-9359-113b3706324e)| [PDF-файл "Руководство по OAuth 2.0"](https://disk.yandex.ru/i/YGXCyFmgACyr5Q)|
+| ![yandex](https://github.com/IvanZaycev0717/python_interview_assistant_rus/assets/111955306/df5ff781-7cdd-4be5-9359-113b3706324e)| [PDF-файл "Руководство по OAuth 2.0"](https://disk.yandex.ru/i/D0aXCOwhgR33og)|
 
 Также данное PDF-руководство доступно в корневой папке репозитория
 
